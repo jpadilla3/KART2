@@ -74,10 +74,10 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
+  #fonts:
+  #   - family: Jomhuria
   #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  #      - asset: fonts/Jomhuria-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro
@@ -88,3 +88,5 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+  
