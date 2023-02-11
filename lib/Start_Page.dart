@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kart2/Login_Page.dart';
+import 'package:kart2/Signup_Page.dart';
 
 bool checked = false;
 void wasPressed(value) {
@@ -35,7 +36,10 @@ class _StartPageState extends State<StartPage> {
               Center(
                 child: ElevatedButton(
                   onPressed: () {
-                    wasPressed(checked);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SignupPage()));
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
