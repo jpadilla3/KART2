@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kart2/Login_Page.dart';
 
 bool checked = false;
 void wasPressed(value) {
@@ -52,7 +53,12 @@ class _StartPageState extends State<StartPage> {
                 width: 200,
                 height: 70,
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LoginPage()));
+                  },
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.blue,
                   ),
