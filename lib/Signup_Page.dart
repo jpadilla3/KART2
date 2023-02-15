@@ -15,15 +15,19 @@ class _SignupPageState extends State<SignupPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          AppBar(
-            leading: BackButton(
-              color: Colors.blue,
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            backgroundColor: Colors.white,
-            elevation: 5,
+          Row(
+            children: <Widget>[
+              TextButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: const BackButton(color: Colors.blue),
+                label: const Text(
+                  "BACK",
+                  style: TextStyle(fontSize: 15),
+                ),
+              )
+            ],
           ),
           const SizedBox(
             height: 20,
@@ -35,8 +39,7 @@ class _SignupPageState extends State<SignupPage> {
           ),
           Padding(
             padding: const EdgeInsets.only(top: 5),
-            child: Image.network(
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtZxFPUzP3SCunzDpa2zTnm3NoRyI2R7ZmLA&usqp=CAU"),
+            child: Image.asset("assets/images/logo.png"),
           ),
           const Padding(
             padding: EdgeInsets.only(left: 8, right: 8, top: 90),
