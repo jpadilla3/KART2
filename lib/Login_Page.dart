@@ -20,31 +20,6 @@ class _LoginPageState extends State<LoginPage> {
         mainAxisAlignment: MainAxisAlignment.center,
 
         children: [
-          //add back button
-
-          Row(
-            children: <Widget>[
-              TextButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                style: TextButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.indigo[400]),
-                icon: BackButton(
-                  color: Colors.indigo[400],
-                ),
-                label: Text(
-                  "BACK",
-                  style: GoogleFonts.bebasNeue(
-                    color: Colors.indigo[400],
-                    fontSize: 20,
-                  ),
-                ),
-              )
-            ],
-          ),
-
           //add gif
           const Padding(
             padding: EdgeInsets.only(right: 35),
@@ -54,10 +29,6 @@ class _LoginPageState extends State<LoginPage> {
                   image: NetworkImage(
                       'https://cdn.dribbble.com/users/2046015/screenshots/5973727/media/4ff4b63efa7ca092c3402f2881750a44.gif')),
             ),
-          ),
-
-          const SizedBox(
-            height: 0,
           ),
 
           //KART
@@ -142,23 +113,24 @@ class _LoginPageState extends State<LoginPage> {
           ),
 
           const SizedBox(
-            height: 15,
+            height: 10,
           ),
 
           //register option
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Text(
+            children: [
+              const Text(
                 'New to KART?',
                 style:
                     TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
               ),
-              Text(
-                ' Register here',
-                style:
-                    TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
-              )
+              TextButton(
+                  onPressed: () {},
+                  child: const Text(
+                    'Register here',
+                    style: TextStyle(color: Colors.blue),
+                  ))
             ],
           ),
 

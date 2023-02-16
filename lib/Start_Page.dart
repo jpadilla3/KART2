@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:kart2/Login_Page.dart';
 import 'package:kart2/Signup_Page.dart';
 
@@ -18,62 +19,156 @@ class _StartPageState extends State<StartPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(children: [
-              const SizedBox(
-                height: 185,
-                width: double.infinity,
+        body: SafeArea(
+            child: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+            children: <Widget>[
+              TextButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                style: TextButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.indigo[400]),
+                icon: BackButton(
+                  color: Colors.indigo[400],
+                ),
+                label: Text(
+                  "BACK",
+                  style: GoogleFonts.bebasNeue(
+                    color: Colors.indigo[400],
+                    fontSize: 20,
+                  ),
+                ),
+              )
+            ],
+          ),
+
+          //image gif
+
+          const Padding(
+            padding: EdgeInsets.only(right: 35),
+            child: SizedBox(
+              height: 300,
+              child: Image(
+                  image: NetworkImage(
+                      'https://cdn.dribbble.com/users/2046015/screenshots/5973727/media/4ff4b63efa7ca092c3402f2881750a44.gif')),
+            ),
+          ),
+
+          //kart
+          Text("KART", style: GoogleFonts.bebasNeue(fontSize: 50)),
+
+          const SizedBox(
+            height: 10,
+          ),
+
+          //welcome
+
+          const Text("Welcome!", style: TextStyle(fontSize: 25)),
+
+          const SizedBox(
+            height: 15,
+          ),
+
+          //username
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  border: Border.all(color: Colors.white),
+                  borderRadius: BorderRadius.circular(12)),
+              child: const Padding(
+                padding: EdgeInsets.only(left: 20),
+                child: TextField(
+                  decoration: InputDecoration(
+                      border: InputBorder.none, hintText: 'Username'),
+                ),
               ),
-              const Text(
-                "KART",
-                style: TextStyle(fontSize: 50),
+            ),
+          ),
+
+          const SizedBox(
+            height: 10,
+          ),
+
+          //password
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  border: Border.all(color: Colors.white),
+                  borderRadius: BorderRadius.circular(12)),
+              child: const Padding(
+                padding: EdgeInsets.only(left: 20),
+                child: TextField(
+                  obscureText: true,
+                  decoration: InputDecoration(
+                      border: InputBorder.none, hintText: 'Password'),
+                ),
               ),
-              Image.network(
-                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtZxFPUzP3SCunzDpa2zTnm3NoRyI2R7ZmLA&usqp=CAU"),
-              const Expanded(child: SizedBox()),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const SignupPage()));
-                  },
+            ),
+          ),
+
+          const SizedBox(
+            height: 10,
+          ),
+
+          //confirm password
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  border: Border.all(color: Colors.white),
+                  borderRadius: BorderRadius.circular(12)),
+              child: const Padding(
+                padding: EdgeInsets.only(left: 20),
+                child: TextField(
+                  obscureText: true,
+                  decoration: InputDecoration(
+                      border: InputBorder.none, hintText: 'Confirm Password'),
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(
+            height: 20,
+          ),
+
+          //sign up button
+          SizedBox(
+            height: 65,
+            width: 350,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: ElevatedButton(
+                  onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.black,
-                    minimumSize: const Size.fromHeight(70),
-                  ),
-                  child: const Text(
-                    "Sign up",
-                    style: TextStyle(fontSize: 25, color: Colors.white),
-                  ),
-                ),
-              ),
-              Center(
-                  child: SizedBox(
-                width: 200,
-                height: 70,
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginPage()));
-                  },
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.blue,
-                  ),
-                  child: const Text(
-                    "Login",
-                    style: TextStyle(fontSize: 20),
-                  ),
-                ),
-              ))
-            ])),
+                      backgroundColor: Colors.indigo[400],
+                      foregroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12))),
+                  child: Text(
+                    'Login',
+                    style: GoogleFonts.bebasNeue(
+                        color: Colors.white, fontSize: 25),
+                  )),
+            ),
+          ),
+
+          const SizedBox(
+            height: 15,
+          ),
+        ],
       ),
-    );
+    )));
   }
 }
