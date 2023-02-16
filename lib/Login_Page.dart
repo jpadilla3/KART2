@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kart2/Start_Page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -126,7 +127,12 @@ class _LoginPageState extends State<LoginPage> {
                     TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
               ),
               TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const StartPage()));
+                  },
                   child: const Text(
                     'Register here',
                     style: TextStyle(color: Colors.blue),
