@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:kart2/Start_Page.dart';
+import 'package:kart2/onboarding/Start_Page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
