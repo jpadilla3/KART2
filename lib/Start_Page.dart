@@ -1,12 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:kart2/Login_Page.dart';
-import 'package:kart2/Signup_Page.dart';
-
-bool checked = false;
-void wasPressed(value) {
-  checked = !checked;
-}
 
 class StartPage extends StatefulWidget {
   const StartPage({super.key});
@@ -157,7 +150,7 @@ class _StartPageState extends State<StartPage> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12))),
                   child: Text(
-                    'Login',
+                    'Sign Up',
                     style: GoogleFonts.bebasNeue(
                         color: Colors.white, fontSize: 25),
                   )),
