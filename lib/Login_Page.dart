@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -11,75 +12,161 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
+        //backgroundColor: Colors.grey[300],
+        body: SafeArea(
+            child: Center(
+      child: Column(
+        //align to middle
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+
         children: [
+          //add back button
+
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               TextButton.icon(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                icon: const BackButton(color: Colors.blue),
-                label: const Text(
+                style: TextButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.indigo[400]),
+                icon: BackButton(
+                  color: Colors.indigo[400],
+                ),
+                label: Text(
                   "BACK",
-                  style: TextStyle(fontSize: 15),
+                  style: GoogleFonts.bebasNeue(
+                    color: Colors.indigo[400],
+                    fontSize: 20,
+                  ),
                 ),
               )
             ],
           ),
-          const SizedBox(
-            height: 20,
-            width: double.infinity,
-          ),
-          const Text(
-            "KART",
-            style: TextStyle(fontSize: 50),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 5),
-            child: Image.network(
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtZxFPUzP3SCunzDpa2zTnm3NoRyI2R7ZmLA&usqp=CAU"),
-          ),
+
+          //add gif
           const Padding(
-            padding: EdgeInsets.only(left: 8, right: 8, top: 90),
-            child: TextField(
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelStyle:
-                      TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                  labelText: 'Username'),
+            padding: EdgeInsets.only(right: 35),
+            child: SizedBox(
+              height: 300,
+              child: Image(
+                  image: NetworkImage(
+                      'https://cdn.dribbble.com/users/2046015/screenshots/5973727/media/4ff4b63efa7ca092c3402f2881750a44.gif')),
             ),
           ),
-          const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-              child: TextField(
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelStyle:
-                        TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                    labelText: 'Password'),
-              )),
+
+          const SizedBox(
+            height: 0,
+          ),
+
+          //KART
+          Text("KART", style: GoogleFonts.bebasNeue(fontSize: 50)),
+
+          const SizedBox(
+            height: 10,
+          ),
+
+          //welcome back
+          const Text("Welcome Back!", style: TextStyle(fontSize: 25)),
+
+          const SizedBox(
+            height: 15,
+          ),
+
+          //username box
           Padding(
-              padding: const EdgeInsets.only(top: 30),
-              child: SizedBox(
-                width: 200,
-                height: 70,
-                child: TextButton(
-                  onPressed: () {},
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.blue,
-                  ),
-                  child: const Text(
-                    "LOGIN",
-                    style: TextStyle(fontSize: 20),
-                  ),
+            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  border: Border.all(color: Colors.white),
+                  borderRadius: BorderRadius.circular(12)),
+              child: const Padding(
+                padding: EdgeInsets.only(left: 20),
+                child: TextField(
+                  decoration: InputDecoration(
+                      border: InputBorder.none, hintText: 'Username'),
                 ),
-              ))
+              ),
+            ),
+          ),
+
+          const SizedBox(
+            height: 10,
+          ),
+          //password box
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  border: Border.all(color: Colors.white),
+                  borderRadius: BorderRadius.circular(12)),
+              child: const Padding(
+                padding: EdgeInsets.only(left: 20),
+                child: TextField(
+                  obscureText: true,
+                  decoration: InputDecoration(
+                      border: InputBorder.none, hintText: 'Password'),
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(
+            height: 20,
+          ),
+
+          //login button
+
+          SizedBox(
+            height: 65,
+            width: 350,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.indigo[400],
+                      foregroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12))),
+                  child: Text(
+                    'Login',
+                    style: GoogleFonts.bebasNeue(
+                        color: Colors.white, fontSize: 25),
+                  )),
+            ),
+          ),
+
+          const SizedBox(
+            height: 15,
+          ),
+
+          //register option
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Text(
+                'New to KART?',
+                style:
+                    TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                ' Register here',
+                style:
+                    TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+              )
+            ],
+          ),
+
+          const SizedBox(
+            height: 40,
+          )
         ],
       ),
-    );
+    )));
   }
 }
