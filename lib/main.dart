@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kart2/Login_Page.dart';
 import 'Start_Page.dart';
 
 void main() {
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const StartPage(),
+      home: const LoginPage(),
     );
   }
 }
