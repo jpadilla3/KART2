@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kart2/main%20pages/home.dart';
 import 'package:kart2/onboarding/Start_Page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -13,7 +14,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        //backgroundColor: Colors.grey[300],
         body: SafeArea(
             child: Center(
       child: Column(
@@ -99,7 +99,12 @@ class _LoginPageState extends State<LoginPage> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const HomePage()));
+                  },
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.indigo[400],
                       foregroundColor: Colors.black,
