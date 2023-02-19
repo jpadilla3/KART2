@@ -12,8 +12,9 @@ class _StartPageState extends State<StartPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
-        body: SafeArea(
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -157,12 +158,8 @@ class _StartPageState extends State<StartPage> {
                       )),
                 ),
               ),
-
-              const SizedBox(
-                height: 65,
-              ),
             ],
-          ),
-        ));
+          )),
+    );
   }
 }
