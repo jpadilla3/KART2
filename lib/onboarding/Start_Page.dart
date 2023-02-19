@@ -14,7 +14,6 @@ class _StartPageState extends State<StartPage> {
     return Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
-            child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -160,10 +159,10 @@ class _StartPageState extends State<StartPage> {
               ),
 
               const SizedBox(
-                height: 15,
+                height: 65,
               ),
             ],
           ),
-        )));
+        ));
   }
 }
