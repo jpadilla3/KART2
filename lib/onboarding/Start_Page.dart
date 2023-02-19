@@ -20,21 +20,24 @@ class _StartPageState extends State<StartPage> {
             children: [
               Row(
                 children: <Widget>[
-                  TextButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: TextButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.indigo[400]),
-                    icon: BackButton(
-                      color: Colors.indigo[400],
-                    ),
-                    label: Text(
-                      "BACK",
-                      style: GoogleFonts.bebasNeue(
+                  Padding(
+                    padding: const EdgeInsets.only(top: 40),
+                    child: TextButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      style: TextButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.indigo[400]),
+                      icon: BackButton(
                         color: Colors.indigo[400],
-                        fontSize: 20,
+                      ),
+                      label: Text(
+                        "BACK",
+                        style: GoogleFonts.bebasNeue(
+                          color: Colors.indigo[400],
+                          fontSize: 20,
+                        ),
                       ),
                     ),
                   )
