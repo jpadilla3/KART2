@@ -46,14 +46,10 @@ class _StartPageState extends State<StartPage> {
 
               //image gif
 
-              const Padding(
-                padding: EdgeInsets.only(right: 40),
-                child: SizedBox(
-                  height: 280,
-                  child: Image(
-                      image: NetworkImage(
-                          'https://cdn.dribbble.com/users/2046015/screenshots/5973727/media/4ff4b63efa7ca092c3402f2881750a44.gif')),
-                ),
+              Image.asset(
+                'assets/images/KART.gif',
+                height: 280,
+                scale: 1.5,
               ),
 
               //kart
