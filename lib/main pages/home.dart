@@ -3,6 +3,10 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dot_navigation_bar/dot_navigation_bar.dart';
+import 'package:kart2/main%20pages/camera_page.dart';
+import 'package:kart2/main%20pages/profile_page.dart';
+import 'package:kart2/main%20pages/recommendations_Page.dart';
+import 'package:kart2/main%20pages/search_Page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,11 +17,19 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   //might have to change this for ever page
-  var _selectedTab = _SelectedTab.home;
+  List pages = [
+    //update when pages are created
+    recommendationsPage(),
+    cameraPage(),
+    searchPage(),
+    ProfilePage(),
+  ];
 
-  void _handleIndexChange(int i) {
+  int currentIndex1 = 0;
+
+  void onTap(int index) {
     setState(() {
-      _selectedTab = _SelectedTab.values[i];
+      currentIndex1 = index;
     });
   }
 
@@ -26,7 +38,6 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: CustomScrollView(slivers: [
         SliverAppBar.large(
-          backgroundColor: Colors.grey,
           leading: IconButton(
               onPressed: () {},
               icon: Icon(
@@ -49,55 +60,10 @@ class _HomePageState extends State<HomePage> {
             )
           ],
         ),
+
+        //rest of ui
+        SliverToBoxAdapter()
       ]),
-      bottomNavigationBar: SizedBox(
-        width: 50,
-        child: Padding(
-          padding: EdgeInsets.only(bottom: 50),
-          child: DotNavigationBar(
-            backgroundColor: Colors.grey,
-            //margin: EdgeInsets.only(left: 10, right: 10),
-            currentIndex: _SelectedTab.values.indexOf(_selectedTab),
-            dotIndicatorColor: Colors.indigo[400],
-            unselectedItemColor: Colors.grey,
-            onTap: _handleIndexChange,
-            items: [
-              //home
-              DotNavigationBarItem(
-                  icon: const Icon(Icons.home),
-                  selectedColor: Colors.indigo[400]),
-
-              //recommendation
-              DotNavigationBarItem(
-                  icon: const Icon(Icons.change_circle_outlined),
-                  selectedColor: Colors.indigo[400]),
-
-              //camera
-              DotNavigationBarItem(
-                  icon: const Icon(Icons.photo_camera_rounded),
-                  selectedColor: Colors.indigo[400]),
-
-              //search
-              DotNavigationBarItem(
-                  icon: const Icon(Icons.search),
-                  selectedColor: Colors.indigo[400]),
-
-              //profile
-              DotNavigationBarItem(
-                  icon: const Icon(Icons.account_circle_rounded),
-                  selectedColor: Colors.indigo[400]),
-            ],
-          ),
-        ),
-      ),
     );
   }
-}
-
-enum _SelectedTab {
-  home,
-  changed_circle_outlined,
-  photo_camera_rounded,
-  search,
-  account_circle_rounded
 }
