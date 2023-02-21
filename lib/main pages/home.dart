@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -9,7 +10,8 @@ import 'package:kart2/main%20pages/recommendations_Page.dart';
 import 'package:kart2/main%20pages/search_Page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  HomePage({super.key});
+  final user = FirebaseAuth.instance.currentUser!;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -24,6 +26,10 @@ class _HomePageState extends State<HomePage> {
     searchPage(),
     ProfilePage(),
   ];
+
+  void signUserOut() {
+    FirebaseAuth.instance.signOut();
+  }
 
   int currentIndex1 = 0;
 
@@ -62,7 +68,11 @@ class _HomePageState extends State<HomePage> {
         ),
 
         //rest of ui
-        SliverToBoxAdapter()
+        SliverToBoxAdapter(
+          child: Center(
+            child: IconButton(onPressed: signUserOut, icon: Icon(Icons.logout)),
+          ),
+        )
       ]),
     );
   }
