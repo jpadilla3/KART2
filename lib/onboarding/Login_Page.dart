@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:kart2/main%20pages/home.dart';
 import 'package:kart2/main%20pages/nav_bar.dart';
 import 'package:kart2/onboarding/Start_Page.dart';
+import 'package:kart2/onboarding/textfield.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,6 +13,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,21 +51,10 @@ class _LoginPageState extends State<LoginPage> {
                   ),
 
                   //username box
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          border: Border.all(color: Colors.white),
-                          borderRadius: BorderRadius.circular(12)),
-                      child: const Padding(
-                        padding: EdgeInsets.only(left: 20),
-                        child: TextField(
-                          decoration: InputDecoration(
-                              border: InputBorder.none, hintText: 'Username'),
-                        ),
-                      ),
-                    ),
+                  my_textfield(
+                    controller: usernameController,
+                    hintText: "Username",
+                    obscureText: false,
                   ),
 
                   const SizedBox(
@@ -69,22 +62,10 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   //password box
 
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          border: Border.all(color: Colors.white),
-                          borderRadius: BorderRadius.circular(12)),
-                      child: const Padding(
-                        padding: EdgeInsets.only(left: 20),
-                        child: TextField(
-                          obscureText: true,
-                          decoration: InputDecoration(
-                              border: InputBorder.none, hintText: 'Password'),
-                        ),
-                      ),
-                    ),
+                  my_textfield(
+                    controller: passwordController,
+                    hintText: 'Password',
+                    obscureText: true,
                   ),
 
                   const SizedBox(
