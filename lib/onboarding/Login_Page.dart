@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kart2/main%20pages/home.dart';
+import 'package:kart2/main%20pages/nav_bar.dart';
 import 'package:kart2/onboarding/Start_Page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -102,7 +103,7 @@ class _LoginPageState extends State<LoginPage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const HomePage()));
+                                    builder: (context) => const navBar()));
                           },
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.indigo[400],
