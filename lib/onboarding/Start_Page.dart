@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kart2/onboarding/textfield.dart';
 
 class StartPage extends StatefulWidget {
   const StartPage({super.key});
@@ -9,6 +10,9 @@ class StartPage extends StatefulWidget {
 }
 
 class _StartPageState extends State<StartPage> {
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,70 +72,30 @@ class _StartPageState extends State<StartPage> {
               ),
 
               //username
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      border: Border.all(color: Colors.white),
-                      borderRadius: BorderRadius.circular(12)),
-                  child: const Padding(
-                    padding: EdgeInsets.only(left: 20),
-                    child: TextField(
-                      decoration: InputDecoration(
-                          border: InputBorder.none, hintText: 'Username'),
-                    ),
-                  ),
-                ),
-              ),
+              my_textfield(
+                  controller: usernameController,
+                  hintText: 'Username',
+                  obscureText: false),
 
               const SizedBox(
                 height: 10,
               ),
 
               //password
-
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      border: Border.all(color: Colors.white),
-                      borderRadius: BorderRadius.circular(12)),
-                  child: const Padding(
-                    padding: EdgeInsets.only(left: 20),
-                    child: TextField(
-                      obscureText: true,
-                      decoration: InputDecoration(
-                          border: InputBorder.none, hintText: 'Password'),
-                    ),
-                  ),
-                ),
-              ),
+              my_textfield(
+                  controller: passwordController,
+                  hintText: 'Password',
+                  obscureText: true),
 
               const SizedBox(
                 height: 10,
               ),
 
               //confirm password
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      border: Border.all(color: Colors.white),
-                      borderRadius: BorderRadius.circular(12)),
-                  child: const Padding(
-                    padding: EdgeInsets.only(left: 20),
-                    child: TextField(
-                      obscureText: true,
-                      decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Confirm Password'),
-                    ),
-                  ),
-                ),
-              ),
+              my_textfield(
+                  controller: confirmController,
+                  hintText: 'Confirm Password',
+                  obscureText: true),
 
               const SizedBox(
                 height: 20,
