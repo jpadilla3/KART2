@@ -51,7 +51,10 @@ class _HomePageState extends State<HomePage> {
           ),
           actions: [
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const InfoPage()));
+              },
               icon: const Icon(
                 Icons.info_outline,
                 size: 35,
