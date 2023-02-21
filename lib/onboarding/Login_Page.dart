@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kart2/main%20pages/home.dart';
@@ -15,6 +17,23 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+
+  void signUserIn() async {
+    //loading circle
+    showDialog(
+        context: context,
+        builder: (context) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        });
+
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: usernameController.text, password: passwordController.text);
+
+    //pop loading circle
+    Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,10 +100,12 @@ class _LoginPageState extends State<LoginPage> {
                       padding: const EdgeInsets.symmetric(horizontal: 40),
                       child: ElevatedButton(
                           onPressed: () {
+                            signUserIn();
+                            /*
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const navBar()));
+                                    builder: (context) => const navBar())); */
                           },
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.indigo[400],
