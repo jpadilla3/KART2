@@ -8,6 +8,7 @@ import 'package:kart2/main%20pages/camera_page.dart';
 import 'package:kart2/main%20pages/profile_page.dart';
 import 'package:kart2/main%20pages/recommendations_Page.dart';
 import 'package:kart2/main%20pages/search_Page.dart';
+import 'package:kart2/main%20pages/info.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({super.key});
