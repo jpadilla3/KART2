@@ -12,7 +12,6 @@ import 'package:kart2/main%20pages/info.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({super.key});
-  final user = FirebaseAuth.instance.currentUser!;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -27,6 +26,8 @@ class _HomePageState extends State<HomePage> {
     searchPage(),
     ProfilePage(),
   ];
+
+  final user = FirebaseAuth.instance.currentUser!;
 
   void signUserOut() {
     FirebaseAuth.instance.signOut();
@@ -74,7 +75,15 @@ class _HomePageState extends State<HomePage> {
         //rest of ui
         SliverToBoxAdapter(
           child: Center(
-            child: IconButton(onPressed: signUserOut, icon: Icon(Icons.logout)),
+            child: Column(
+              children: [
+                IconButton(onPressed: signUserOut, icon: Icon(Icons.logout)),
+                SizedBox(
+                  height: 50,
+                ),
+                Text("logged in as: " + user.email!)
+              ],
+            ),
           ),
         )
       ]),
