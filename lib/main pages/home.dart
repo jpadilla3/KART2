@@ -9,6 +9,7 @@ import 'package:kart2/main%20pages/profile_page.dart';
 import 'package:kart2/main%20pages/recommendations_Page.dart';
 import 'package:kart2/main%20pages/search_Page.dart';
 import 'package:kart2/main%20pages/info.dart';
+import 'package:kart2/onboarding/authPage.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({super.key});
@@ -31,6 +32,8 @@ class _HomePageState extends State<HomePage> {
 
   void signUserOut() {
     FirebaseAuth.instance.signOut();
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => authPage()));
   }
 
   int currentIndex1 = 0;
