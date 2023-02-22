@@ -28,11 +28,31 @@ class _LoginPageState extends State<LoginPage> {
           );
         });
 
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: usernameController.text, password: passwordController.text);
-
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: usernameController.text, password: passwordController.text);
+      Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+      Navigator.pop(context);
+      if (e.code == 'user-not-found') {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return const AlertDialog(
+                title: Text('Incorrect Username'),
+              );
+            });
+      } else if (e.code == 'wrong-password') {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return const AlertDialog(
+                title: Text('Incorrect Password'),
+              );
+            });
+      }
+    }
     //pop loading circle
-    Navigator.pop(context);
   }
 
   @override

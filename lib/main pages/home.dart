@@ -9,10 +9,10 @@ import 'package:kart2/main%20pages/profile_page.dart';
 import 'package:kart2/main%20pages/recommendations_Page.dart';
 import 'package:kart2/main%20pages/search_Page.dart';
 import 'package:kart2/main%20pages/info.dart';
+import 'package:kart2/onboarding/authPage.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({super.key});
-  final user = FirebaseAuth.instance.currentUser!;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -28,8 +28,12 @@ class _HomePageState extends State<HomePage> {
     ProfilePage(),
   ];
 
+  final user = FirebaseAuth.instance.currentUser!;
+
   void signUserOut() {
     FirebaseAuth.instance.signOut();
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => authPage()));
   }
 
   int currentIndex1 = 0;
@@ -74,7 +78,15 @@ class _HomePageState extends State<HomePage> {
         //rest of ui
         SliverToBoxAdapter(
           child: Center(
-            child: IconButton(onPressed: signUserOut, icon: Icon(Icons.logout)),
+            child: Column(
+              children: [
+                IconButton(onPressed: signUserOut, icon: Icon(Icons.logout)),
+                SizedBox(
+                  height: 50,
+                ),
+                Text("logged in as: " + user.email!)
+              ],
+            ),
           ),
         )
       ]),

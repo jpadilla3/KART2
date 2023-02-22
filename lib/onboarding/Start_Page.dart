@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kart2/main%20pages/home.dart';
+import 'package:kart2/main%20pages/nav_bar.dart';
+import 'package:kart2/main%20pages/search_Page.dart';
 import 'package:kart2/onboarding/textfield.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class StartPage extends StatefulWidget {
   const StartPage({super.key});
@@ -13,6 +18,55 @@ class _StartPageState extends State<StartPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmController = TextEditingController();
+
+  void signUserUp() async {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        });
+
+    try {
+      if (passwordController.text == confirmController.text) {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email: usernameController.text, password: passwordController.text);
+
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => navBar()));
+      } else {
+        Navigator.pop(context);
+        showDialog(
+            context: context,
+            builder: (context) {
+              return const AlertDialog(
+                title: Text("Passwords don't match"),
+              );
+            });
+      }
+    } on FirebaseAuthException catch (e) {
+      Navigator.pop(context);
+      if (e.code == 'user-not-found') {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return const AlertDialog(
+                title: Text('Incorrect Username'),
+              );
+            });
+      } else if (e.code == 'wrong-password') {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return const AlertDialog(
+                title: Text('Incorrect Password'),
+              );
+            });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,7 +162,9 @@ class _StartPageState extends State<StartPage> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40),
                   child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        signUserUp();
+                      },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.indigo[400],
                           foregroundColor: Colors.black,
