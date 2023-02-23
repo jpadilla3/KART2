@@ -31,6 +31,7 @@ class _LoginPageState extends State<LoginPage> {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: usernameController.text, password: passwordController.text);
+
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
@@ -126,12 +127,29 @@ class _LoginPageState extends State<LoginPage> {
                       padding: const EdgeInsets.symmetric(horizontal: 40),
                       child: ElevatedButton(
                           onPressed: () {
-                            signUserIn();
-                            /*
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const navBar())); */
+                            if (passwordController.text.length < 6) {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return const AlertDialog(
+                                      title: Text(
+                                          "Password must be at least 6 characters"),
+                                    );
+                                  });
+                            } else {
+                              if (usernameController.text.contains('@') &&
+                                  usernameController.text.contains('.')) {
+                                signUserIn();
+                              } else {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return const AlertDialog(
+                                        title: Text("Must enter an email"),
+                                      );
+                                    });
+                              }
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.indigo[400],

@@ -165,7 +165,29 @@ class _StartPageState extends State<StartPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 40),
                   child: ElevatedButton(
                       onPressed: () {
-                        signUserUp();
+                        if (passwordController.text.length < 6) {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return const AlertDialog(
+                                  title: Text(
+                                      "Password must be at least 6 characters"),
+                                );
+                              });
+                        } else {
+                          if (usernameController.text.contains('@') &&
+                              usernameController.text.contains('.')) {
+                            signUserUp();
+                          } else {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return const AlertDialog(
+                                    title: Text("Must enter an email"),
+                                  );
+                                });
+                          }
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.indigo[400],
