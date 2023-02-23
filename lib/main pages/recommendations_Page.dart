@@ -13,6 +13,7 @@ class recommendationsPage extends StatelessWidget {
         body: CustomScrollView(
       slivers: [
         SliverAppBar.large(
+          leading: const Text(''),
           title: Text(
             'Recommendations',
             style: GoogleFonts.bebasNeue(color: Colors.black, fontSize: 45),
