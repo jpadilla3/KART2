@@ -9,6 +9,7 @@ import 'package:kart2/main%20pages/profile_page.dart';
 import 'package:kart2/main%20pages/recommendations_Page.dart';
 import 'package:kart2/main%20pages/search_Page.dart';
 import 'package:kart2/main%20pages/info.dart';
+import 'package:kart2/main%20pages/favorites.dart';
 import 'package:kart2/onboarding/authPage.dart';
 
 class HomePage extends StatefulWidget {
@@ -50,7 +51,10 @@ class _HomePageState extends State<HomePage> {
       body: CustomScrollView(slivers: [
         SliverAppBar.large(
           leading: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const FavPage()));
+              },
               icon: Icon(
                 Icons.favorite,
                 color: Colors.indigo[400],
