@@ -69,10 +69,16 @@ class _LoginPageState extends State<LoginPage> {
 
                 children: [
                   //add gif
-                  Image.asset(
-                    'assets/images/KART.gif',
-                    height: 300,
-                    scale: 1.5,
+                  Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(top: 40),
+                        child: Image.asset(
+                          'assets/images/KART.gif',
+                          height: 240,
+                        ),
+                      )
+                    ],
                   ),
 
                   //KART

@@ -98,17 +98,19 @@ class _StartPageState extends State<StartPage> {
                         ),
                       ),
                     ),
-                  )
+                  ),
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Image.asset(
+                    'assets/images/KART.gif',
+                    height: 240,
+                  ),
                 ],
               ),
 
               //image gif
-
-              Image.asset(
-                'assets/images/KART.gif',
-                height: 280,
-                scale: 1.5,
-              ),
 
               //kart
               Text("KART", style: GoogleFonts.bebasNeue(fontSize: 50)),
