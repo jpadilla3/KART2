@@ -41,6 +41,7 @@ dependencies:
   google_fonts:
   firebase_core: ^2.7.0
   firebase_auth: ^4.2.9
+  smooth_page_indicator: ^1.0.0
 
 dev_dependencies:
   flutter_test:
