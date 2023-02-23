@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:kart2/main%20pages/home.dart';
 import 'package:kart2/main%20pages/nav_bar.dart';
 import 'package:kart2/main%20pages/search_Page.dart';
+import 'package:kart2/onboarding/sign%20up%20pages/about%20pages/transitionPage.dart';
 import 'package:kart2/onboarding/textfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -34,7 +35,7 @@ class _StartPageState extends State<StartPage> {
             email: usernameController.text, password: passwordController.text);
 
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => navBar()));
+            context, MaterialPageRoute(builder: (context) => aboutPages()));
       } else {
         Navigator.pop(context);
         showDialog(
