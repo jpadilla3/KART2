@@ -1,6 +1,7 @@
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class introScreen1 extends StatelessWidget {
   const introScreen1({super.key});
@@ -9,6 +10,18 @@ class introScreen1 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.indigo[50],
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Welcome to KART!", style: GoogleFonts.oswald(fontSize: 40)),
+            Text(
+              "Swipe right to learn more about the app",
+              style: GoogleFonts.oswald(fontSize: 22),
+            )
+          ],
+        ),
+      ),
     );
   }
 }

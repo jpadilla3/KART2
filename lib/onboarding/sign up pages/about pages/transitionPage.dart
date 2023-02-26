@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:kart2/main%20pages/home.dart';
 import 'package:kart2/main%20pages/nav_bar.dart';
 import 'package:kart2/onboarding/sign%20up%20pages/about%20pages/intro_screen1.dart';
@@ -18,6 +19,7 @@ class _aboutPagesState extends State<aboutPages> {
   PageController _controller = PageController();
 
   bool onLastPage = false;
+  bool onFirstPage = false;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,7 @@ class _aboutPagesState extends State<aboutPages> {
           onPageChanged: (value) {
             setState(() {
               onLastPage = (value == 2);
+              onFirstPage = (value == 0);
             });
           },
           controller: _controller,
@@ -38,13 +41,29 @@ class _aboutPagesState extends State<aboutPages> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                //skip
-                GestureDetector(
-                  onTap: () {
-                    _controller.jumpToPage(2);
-                  },
-                  child: Text("Skip"),
-                ),
+                onFirstPage
+                    ?
+                    //skip
+                    GestureDetector(
+                        onTap: () {
+                          _controller.jumpToPage(2);
+                        },
+                        child: Text(
+                          "skip",
+                          style: GoogleFonts.bebasNeue(fontSize: 25),
+                        ),
+                      )
+                    : GestureDetector(
+                        onTap: () {
+                          _controller.previousPage(
+                              duration: Duration(milliseconds: 500),
+                              curve: Curves.easeIn);
+                        },
+                        child: Text(
+                          "back",
+                          style: GoogleFonts.bebasNeue(fontSize: 25),
+                        ),
+                      ),
                 SmoothPageIndicator(
                   controller: _controller,
                   count: 3,
@@ -53,7 +72,10 @@ class _aboutPagesState extends State<aboutPages> {
                 //continue button
                 onLastPage
                     ? GestureDetector(
-                        child: const Text('Continue'),
+                        child: Text(
+                          'Continue',
+                          style: GoogleFonts.bebasNeue(fontSize: 25),
+                        ),
                         onTap: () {
                           Navigator.push(
                               context,
@@ -61,7 +83,10 @@ class _aboutPagesState extends State<aboutPages> {
                                   builder: (context) => navBar()));
                         })
                     : GestureDetector(
-                        child: const Text("Next"),
+                        child: Text(
+                          "Next",
+                          style: GoogleFonts.bebasNeue(fontSize: 25),
+                        ),
                         onTap: () {
                           _controller.nextPage(
                               duration: Duration(milliseconds: 500),
