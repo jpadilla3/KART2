@@ -14,8 +14,7 @@ class introScreen2 extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.network(
-                'https://cdn.dribbble.com/users/222613/screenshots/5137558/media/d1bb90a00802d06f0771307da50d70c5.png'),
+            Image.asset('assets/images/intropage2.png'),
             Text(
               "Input any medical conditions or allergies",
               style: GoogleFonts.oswald(fontSize: 40),

@@ -14,8 +14,7 @@ class introScreen3 extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.network(
-                'https://cdn.dribbble.com/users/59770/screenshots/7836819/media/b968aeda8e431117adc47c50439eaccc.gif'),
+            Image.asset('assets/images/intropage3.gif'),
             const SizedBox(
               height: 15,
             ),
