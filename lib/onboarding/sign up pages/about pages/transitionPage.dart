@@ -5,6 +5,7 @@ import 'package:kart2/main%20pages/nav_bar.dart';
 import 'package:kart2/onboarding/sign%20up%20pages/about%20pages/intro_screen1.dart';
 import 'package:kart2/onboarding/sign%20up%20pages/about%20pages/intro_screen2.dart';
 import 'package:kart2/onboarding/sign%20up%20pages/about%20pages/intro_screen3.dart';
+import 'package:kart2/onboarding/sign%20up%20pages/about%20pages/intro_screen4.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class aboutPages extends StatefulWidget {
@@ -29,12 +30,17 @@ class _aboutPagesState extends State<aboutPages> {
         PageView(
           onPageChanged: (value) {
             setState(() {
-              onLastPage = (value == 2);
+              onLastPage = (value == 3);
               onFirstPage = (value == 0);
             });
           },
           controller: _controller,
-          children: const [introScreen1(), introScreen2(), introScreen3()],
+          children: const [
+            introScreen1(),
+            introScreen2(),
+            introScreen3(),
+            introScreen4()
+          ],
         ),
         Container(
             alignment: Alignment(0, 0.7),
@@ -66,7 +72,7 @@ class _aboutPagesState extends State<aboutPages> {
                       ),
                 SmoothPageIndicator(
                   controller: _controller,
-                  count: 3,
+                  count: 4,
                 ),
 
                 //continue button
