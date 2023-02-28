@@ -30,7 +30,7 @@ class introScreen2 extends StatelessWidget {
               style: GoogleFonts.oswald(fontSize: 22),
               textAlign: TextAlign.center,
             ),
-            SizedBox(
+            const SizedBox(
               height: 100,
             )
           ],

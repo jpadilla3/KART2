@@ -1,27 +1,33 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class introScreen1 extends StatelessWidget {
-  const introScreen1({super.key});
+class introScreen4 extends StatelessWidget {
+  const introScreen4({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.indigo[50],
+      color: Colors.white,
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/images/intropage1.gif', scale: 4),
-            Text("Welcome to KART!", style: GoogleFonts.oswald(fontSize: 40)),
+            Padding(
+              padding: EdgeInsets.only(right: 50),
+              child: Image.asset('assets/images/KART.gif'),
+            ),
             Text(
-              "Swipe right to learn more about the app",
+              "You're Ready!",
+              style: GoogleFonts.oswald(fontSize: 40),
+            ),
+            Text(
+              "Press Continue",
               style: GoogleFonts.oswald(fontSize: 22),
             ),
             const SizedBox(
-              height: 60,
+              height: 80,
             )
           ],
         ),
