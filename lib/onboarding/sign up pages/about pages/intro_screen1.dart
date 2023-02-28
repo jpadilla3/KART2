@@ -14,10 +14,14 @@ class introScreen1 extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Image.asset('assets/images/intropage1.gif', scale: 4),
             Text("Welcome to KART!", style: GoogleFonts.oswald(fontSize: 40)),
             Text(
               "Swipe right to learn more about the app",
               style: GoogleFonts.oswald(fontSize: 22),
+            ),
+            SizedBox(
+              height: 60,
             )
           ],
         ),
