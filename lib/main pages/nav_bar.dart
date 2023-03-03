@@ -19,7 +19,7 @@ class _navBarState extends State<navBar> {
   List pages = [
     //update when pages are created
     HomePage(),
-    recommendationsPage(),
+    RecommendationsPage(),
     cameraPage(),
     searchPage(),
     ProfilePage(),
