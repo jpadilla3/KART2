@@ -98,6 +98,7 @@ class _LoginPageState extends State<LoginPage> {
 
                   //username box
                   my_textfield(
+                    key: const ValueKey('username'),
                     controller: usernameController,
                     hintText: "Username",
                     obscureText: false,
@@ -109,6 +110,7 @@ class _LoginPageState extends State<LoginPage> {
                   //password box
 
                   my_textfield(
+                    key: const ValueKey('password'),
                     controller: passwordController,
                     hintText: 'Password',
                     obscureText: true,
@@ -126,6 +128,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 40),
                       child: ElevatedButton(
+                          key: const ValueKey('loginButton'),
                           onPressed: () {
                             if (passwordController.text.length < 6) {
                               showDialog(
@@ -178,6 +181,7 @@ class _LoginPageState extends State<LoginPage> {
                             color: Colors.black, fontWeight: FontWeight.bold),
                       ),
                       TextButton(
+                          key: const ValueKey('register'),
                           onPressed: () {
                             Navigator.push(
                                 context,

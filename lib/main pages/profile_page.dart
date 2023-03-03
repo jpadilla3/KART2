@@ -32,7 +32,12 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       body: Center(
           child: Container(
-        child: IconButton(onPressed: signUserOut, icon: Icon(Icons.logout)),
+        child: IconButton(
+            onPressed: signUserOut,
+            icon: const Icon(
+              Icons.logout,
+              key: ValueKey('logoutButton'),
+            )),
       )),
     );
   }

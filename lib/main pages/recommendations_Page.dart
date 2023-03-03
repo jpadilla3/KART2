@@ -85,6 +85,7 @@ class _RecPageState extends State<RecommendationsPage> {
             )
           ],
         ),
+ReccomendationsList
         PreferredSize(
           preferredSize: Size.fromHeight(600.0),
           child: ItemList(items: itemss),
