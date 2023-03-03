@@ -42,6 +42,16 @@ dependencies:
   firebase_core: ^2.7.0
   firebase_auth: ^4.2.9
   smooth_page_indicator: ^1.0.0
+  #A composable, Future-based library for making HTTP requests.
+  #This package contains a set of high-level functions and classes that make it easy to consume HTTP resources.
+  http: ^0.13.5
+  #A powerful HTTP client for Dart/Flutter, which supports global configuration, interceptors, FormData, 
+  #request cancellation, file uploading/downloading, timeout, and custom adapters etc.
+  dio: ^5.0.0
+  #Chopper is an http client generator for Dart and Flutter.
+  chopper: ^6.1.0
+  #A plugin for Flutter apps that adds barcode scanning support on both Android and iOS.
+  flutter_barcode_scanner: ^2.0.0
 
 dev_dependencies:
   flutter_test:
