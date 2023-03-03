@@ -31,6 +31,11 @@ class recommendationsPage extends StatelessWidget {
               color: Colors.indigo[400],
             )
           ],
+        ),
+        const SliverToBoxAdapter(
+          child: Center(
+            child: Text('RECOMMENDATIONS'),
+          ),
         )
       ],
     ));
