@@ -22,7 +22,7 @@ class _HomePageState extends State<HomePage> {
   //might have to change this for ever page
   List pages = [
     //update when pages are created
-    recommendationsPage(),
+    RecommendationsPage(),
     CameraPage(),
     searchPage(),
     ProfilePage(),

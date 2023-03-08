@@ -19,7 +19,7 @@ class _navBarState extends State<navBar> {
   List pages = [
     //update when pages are created
     HomePage(),
-    recommendationsPage(),
+    RecommendationsPage(),
     CameraPage(),
     searchPage(),
     ProfilePage(),
@@ -55,19 +55,33 @@ class _navBarState extends State<navBar> {
             label: "Recommendation",
             icon: Icon(
               Icons.change_circle_outlined,
+              key: ValueKey('recoButton'),
             ),
           ),
 
           //camera icon
           BottomNavigationBarItem(
-              label: "Camera", icon: Icon(Icons.photo_camera_rounded)),
+              label: "Camera",
+              icon: Icon(
+                Icons.photo_camera_rounded,
+                key: ValueKey('camButton'),
+              )),
 
           //search icon
-          BottomNavigationBarItem(label: "Search", icon: Icon(Icons.search)),
+          BottomNavigationBarItem(
+              label: "Search",
+              icon: Icon(
+                Icons.search,
+                key: ValueKey('searchButton'),
+              )),
 
           //profile icon
           BottomNavigationBarItem(
-              label: "Profile", icon: Icon(Icons.account_circle_rounded)),
+              label: "Profile",
+              icon: Icon(
+                Icons.account_circle_rounded,
+                key: ValueKey('profileButton'),
+              )),
         ],
       ),
     );
