@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class FirebaseCommands {
   //add barcode to firebase
-  Future addBarcode(String email, String barcode) async {
+  Future addBarcode(String barcode) async {
     return FirebaseFirestore.instance
-        .collection(email)
+        .collection(FirebaseAuth.instance.currentUser!.email.toString())
         .doc(barcode)
-        .set({'time:': FieldValue.serverTimestamp()});
+        .set({'time:': FieldValue.serverTimestamp(), "barcode": barcode});
   }
 
   //read barcode from firebase
@@ -16,7 +17,10 @@ class FirebaseCommands {
   //might not need
 
   //destroy barcode from firebase
-  Future destroyBarcode(String email, String barcode) async {
-    FirebaseFirestore.instance.collection(email).doc(barcode).delete();
+  Future<void> destroyBarcode(String barcode) async {
+    await FirebaseFirestore.instance
+        .collection(FirebaseAuth.instance.currentUser!.email.toString())
+        .doc(barcode)
+        .delete();
   }
 }
