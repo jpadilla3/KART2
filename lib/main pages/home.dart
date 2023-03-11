@@ -1,8 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:dot_navigation_bar/dot_navigation_bar.dart';
 import 'package:kart2/main%20pages/List.dart';
 import 'package:kart2/main%20pages/camera_page.dart';
 import 'package:kart2/main%20pages/profile_page.dart';
@@ -10,6 +10,7 @@ import 'package:kart2/main%20pages/recommendations_Page.dart';
 import 'package:kart2/main%20pages/search_Page.dart';
 import 'package:kart2/main%20pages/info.dart';
 import 'package:kart2/main%20pages/favorites.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({super.key});
@@ -34,38 +35,6 @@ class _HomePageState extends State<HomePage> {
       'title': 'Rice Krispies Cereal',
       'subtitle': 'Poor: Sugar '
     },
-    {
-      'image': 'https://i5.peapod.com/c/63/63OIA.png',
-      'title': 'HotPockets Pepperoni',
-      'subtitle': 'Poor: High on sodium'
-    },
-    {
-      'image':
-          'https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcSM03KIfF8AODqR0AL0MimAm86l0LAelByuQhyF90MpwVekSPDdK3xfSUwyHHoxJnGp6v7FVGfm5wGLAl35G_Zl-SigGuWBPg',
-      'title': 'Tyson Chicken Strips',
-      'subtitle': 'Moderate: Sodium'
-    },
-    {
-      'image': 'https://images.heb.com/is/image/HEBGrocery/000569244',
-      'title': 'Hungry Jacks Pancake Mix',
-      'subtitle': 'Poor: High Sugar'
-    },
-    {
-      'image': 'https://i5.peapod.com/c/3V/3VP33.png',
-      'title': 'Stouffers Lasagna',
-      'subtitle': 'Poor: Saturated Fat'
-    },
-    {
-      'image': 'https://images.heb.com/is/image/HEBGrocery/000105727',
-      'title': 'Banquat Chicken Pot Pie',
-      'subtitle': 'Poor: Saturated Fat'
-    },
-    {
-      'image':
-          'https://images.heb.com/is/image/HEBGrocery/005684048?fit=constrain,1&wid=800&hei=800&fmt=jpg&qlt=85,0&resMode=sharp2&op_usm=1.75,0.3,2,0',
-      'title': 'Checkers Rallys Famous Seasoned Fries',
-      'subtitle': 'Unknown'
-    },
   ];
 
   int currentIndex1 = 0;
@@ -74,6 +43,21 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       currentIndex1 = index;
     });
+  }
+
+  //print barcodes
+  List<String> barcodeIDS = [];
+  List<String> reverseBarcode = [];
+
+  Future getBarcode() async {
+    await FirebaseFirestore.instance
+        .collection(FirebaseAuth.instance.currentUser!.email.toString())
+        .orderBy('time:', descending: true)
+        .get()
+        .then((snapshot) => snapshot.docs.forEach((element) {
+              print(element.reference);
+              barcodeIDS.add(element.reference.id);
+            }));
   }
 
   @override
@@ -111,9 +95,27 @@ class _HomePageState extends State<HomePage> {
         ),
 
         //rest of ui
-        PreferredSize(
-          preferredSize: Size.fromHeight(600.0),
-          child: ItemList(items: items),
+        SliverToBoxAdapter(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                FutureBuilder(
+                  future: getBarcode(),
+                  builder: (context, snapshot) {
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: barcodeIDS.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(barcodeIDS[index]),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
         ),
       ]),
     );
