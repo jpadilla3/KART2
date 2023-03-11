@@ -11,6 +11,7 @@ import 'package:kart2/main%20pages/search_Page.dart';
 import 'package:kart2/main%20pages/info.dart';
 import 'package:kart2/main%20pages/favorites.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:kart2/models/firebase_commands.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({super.key});
@@ -28,14 +29,6 @@ class _HomePageState extends State<HomePage> {
     searchPage(),
     ProfilePage(),
   ];
-  final List<Map<String, String>> items = [
-    {
-      'image':
-          'https://kellogg-h.assetsadobe.com/is/image/content/dam/kelloggs/kna/us/digital-shelf/rice-krispies/00038000200038_C1L1.jpg',
-      'title': 'Rice Krispies Cereal',
-      'subtitle': 'Poor: Sugar '
-    },
-  ];
 
   int currentIndex1 = 0;
 
@@ -45,20 +38,8 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  //print barcodes
-  List<String> barcodeIDS = [];
-  List<String> reverseBarcode = [];
-
-  Future getBarcode() async {
-    await FirebaseFirestore.instance
-        .collection(FirebaseAuth.instance.currentUser!.email.toString())
-        .orderBy('time:', descending: true)
-        .get()
-        .then((snapshot) => snapshot.docs.forEach((element) {
-              print(element.reference);
-              barcodeIDS.add(element.reference.id);
-            }));
-  }
+  final CollectionReference _barcodes = FirebaseFirestore.instance
+      .collection(FirebaseAuth.instance.currentUser!.email.toString());
 
   @override
   Widget build(BuildContext context) {
@@ -99,18 +80,42 @@ class _HomePageState extends State<HomePage> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                FutureBuilder(
-                  future: getBarcode(),
-                  builder: (context, snapshot) {
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: barcodeIDS.length,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text(barcodeIDS[index]),
-                        );
-                      },
-                    );
+                StreamBuilder(
+                  stream: _barcodes.snapshots(),
+                  builder:
+                      (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
+                    if (streamSnapshot.hasData) {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: streamSnapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          final DocumentSnapshot documentSnapshot =
+                              streamSnapshot.data!.docs[index];
+
+                          return Card(
+                            margin: const EdgeInsets.all(10),
+                            child: ListTile(
+                              title: Text(documentSnapshot['barcode']),
+                              trailing: SizedBox(
+                                width: 50,
+                                child: Row(
+                                  children: [
+                                    IconButton(
+                                        onPressed: () {
+                                          FirebaseCommands().destroyBarcode(
+                                              documentSnapshot['barcode']);
+                                        },
+                                        icon: Icon(Icons.delete))
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    } else {
+                      return Text('loading');
+                    }
                   },
                 ),
               ],

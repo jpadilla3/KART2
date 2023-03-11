@@ -33,8 +33,7 @@ class _CameraPageState extends State<CameraPage> {
 
       //add barcode to firebase
       //passes current user email and barcode
-      FirebaseCommands().addBarcode(
-          FirebaseAuth.instance.currentUser!.email.toString(), barcodeScanRes);
+      FirebaseCommands().addBarcode(barcodeScanRes);
 
       print(barcodeScanRes);
     } on PlatformException {
