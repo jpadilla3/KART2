@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kart2/main%20pages/home.dart';
@@ -6,7 +7,6 @@ import 'package:kart2/main%20pages/search_Page.dart';
 import 'package:kart2/onboarding/sign%20up%20pages/about%20pages/transitionPage.dart';
 import 'package:kart2/onboarding/textfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 class StartPage extends StatefulWidget {
   const StartPage({super.key});
@@ -19,6 +19,10 @@ class _StartPageState extends State<StartPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmController = TextEditingController();
+
+  Future addCollection() async {
+    FirebaseFirestore.instance.collection(usernameController.text).add({});
+  }
 
   void signUserUp() async {
     showDialog(
@@ -33,6 +37,8 @@ class _StartPageState extends State<StartPage> {
       if (passwordController.text == confirmController.text) {
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
             email: usernameController.text, password: passwordController.text);
+
+        //add username to collection
 
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => aboutPages()));

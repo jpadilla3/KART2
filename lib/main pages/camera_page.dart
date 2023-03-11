@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:kart2/models/flutter_barcode_scanner.dart';
+import 'package:kart2/models/firebase_commands.dart';
+import 'package:kart2/onboarding/Start_Page.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({super.key});
@@ -27,6 +30,12 @@ class _CameraPageState extends State<CameraPage> {
     try {
       barcodeScanRes =
           await BarcodeScanner.scanBarcode('#ff6666', 'Cancel', true);
+
+      //add barcode to firebase
+      //passes current user email and barcode
+      FirebaseCommands().addBarcode(
+          FirebaseAuth.instance.currentUser!.email.toString(), barcodeScanRes);
+
       print(barcodeScanRes);
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
