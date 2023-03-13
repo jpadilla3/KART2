@@ -141,7 +141,10 @@ class MySearchDelegate extends SearchDelegate {
   @override
   List<Widget>? buildActions(BuildContext context) => [
         IconButton(
-          icon: Icon(Icons.clear),
+          icon: const Icon(
+            Icons.clear,
+            color: Colors.black,
+          ),
           onPressed: () {
             if (query.isEmpty) {
               close(context, null);
