@@ -45,6 +45,9 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: CustomScrollView(slivers: [
         SliverAppBar.large(
+          collapsedHeight: 75,
+          surfaceTintColor: Colors.white,
+          centerTitle: true,
           leading: IconButton(
               onPressed: () {
                 Navigator.push(context,
@@ -76,51 +79,49 @@ class _HomePageState extends State<HomePage> {
 
         //rest of ui
         SliverToBoxAdapter(
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Column(
-              children: [
-                StreamBuilder(
-                  stream:
-                      _barcodes.orderBy('time:', descending: true).snapshots(),
-                  builder:
-                      (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
-                    if (streamSnapshot.hasData) {
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: streamSnapshot.data!.docs.length,
-                        itemBuilder: (context, index) {
-                          final DocumentSnapshot documentSnapshot =
-                              streamSnapshot.data!.docs[index];
+          child: Column(
+            children: [
+              StreamBuilder(
+                stream:
+                    _barcodes.orderBy('time:', descending: true).snapshots(),
+                builder:
+                    (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
+                  if (streamSnapshot.hasData) {
+                    return ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: streamSnapshot.data!.docs.length,
+                      itemBuilder: (context, index) {
+                        final DocumentSnapshot documentSnapshot =
+                            streamSnapshot.data!.docs[index];
 
-                          return Card(
-                            margin: const EdgeInsets.all(10),
-                            child: ListTile(
-                              title: Text(documentSnapshot['barcode']),
-                              trailing: SizedBox(
-                                width: 50,
-                                child: Row(
-                                  children: [
-                                    IconButton(
-                                        onPressed: () {
-                                          FirebaseCommands().destroyBarcode(
-                                              documentSnapshot['barcode']);
-                                        },
-                                        icon: Icon(Icons.delete))
-                                  ],
-                                ),
+                        return Card(
+                          margin: const EdgeInsets.all(10),
+                          child: ListTile(
+                            title: Text(documentSnapshot['barcode']),
+                            trailing: SizedBox(
+                              width: 50,
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                      onPressed: () {
+                                        FirebaseCommands().destroyBarcode(
+                                            documentSnapshot['barcode']);
+                                      },
+                                      icon: Icon(Icons.delete))
+                                ],
                               ),
                             ),
-                          );
-                        },
-                      );
-                    } else {
-                      return Text('loading');
-                    }
-                  },
-                ),
-              ],
-            ),
+                          ),
+                        );
+                      },
+                    );
+                  } else {
+                    return Text('loading');
+                  }
+                },
+              ),
+            ],
           ),
         ),
       ]),
