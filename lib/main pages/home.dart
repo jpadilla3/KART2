@@ -4,7 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kart2/main%20pages/List.dart';
-import 'package:kart2/main%20pages/camera_page.dart';
+
 import 'package:kart2/main%20pages/profile_page.dart';
 import 'package:kart2/main%20pages/recommendations_Page.dart';
 import 'package:kart2/main%20pages/search_Page.dart';
@@ -25,7 +25,6 @@ class _HomePageState extends State<HomePage> {
   List pages = [
     //update when pages are created
     RecommendationsPage(),
-    CameraPage(),
     searchPage(),
     ProfilePage(),
   ];
@@ -78,10 +77,12 @@ class _HomePageState extends State<HomePage> {
         //rest of ui
         SliverToBoxAdapter(
           child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
             child: Column(
               children: [
                 StreamBuilder(
-                  stream: _barcodes.snapshots(),
+                  stream:
+                      _barcodes.orderBy('time:', descending: true).snapshots(),
                   builder:
                       (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
                     if (streamSnapshot.hasData) {
