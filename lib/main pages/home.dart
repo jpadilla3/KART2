@@ -105,6 +105,14 @@ class _HomePageState extends State<HomePage> {
                                 children: [
                                   IconButton(
                                       onPressed: () {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                          content: Text(
+                                              "You have successfully deleted ${documentSnapshot['barcode']}"),
+                                          behavior: SnackBarBehavior.floating,
+                                          margin:
+                                              const EdgeInsets.only(bottom: 50),
+                                        ));
                                         FirebaseCommands().destroyBarcode(
                                             documentSnapshot['barcode']);
                                       },
