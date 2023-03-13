@@ -6,8 +6,6 @@ import 'package:kart2/main%20pages/profile_page.dart';
 import 'package:kart2/main%20pages/recommendations_Page.dart';
 import 'package:kart2/main%20pages/search_Page.dart';
 
-import 'camera_page.dart';
-
 class navBar extends StatefulWidget {
   const navBar({super.key});
 
@@ -20,7 +18,6 @@ class _navBarState extends State<navBar> {
     //update when pages are created
     HomePage(),
     RecommendationsPage(),
-    CameraPage(),
     searchPage(),
     ProfilePage(),
   ];
@@ -38,6 +35,7 @@ class _navBarState extends State<navBar> {
     return Scaffold(
       body: pages[currentIndex1],
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         onTap: onTap,
         unselectedFontSize: 0,
         selectedFontSize: 0,
@@ -58,14 +56,6 @@ class _navBarState extends State<navBar> {
               key: ValueKey('recoButton'),
             ),
           ),
-
-          //camera icon
-          BottomNavigationBarItem(
-              label: "Camera",
-              icon: Icon(
-                Icons.photo_camera_rounded,
-                key: ValueKey('camButton'),
-              )),
 
           //search icon
           BottomNavigationBarItem(
