@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 
 class FirebaseCommands {
@@ -7,28 +7,55 @@ class FirebaseCommands {
   Future addBarcode(String barcode) async {
     if (int.parse(barcode) > 0) {
       return FirebaseFirestore.instance
-          .collection(FirebaseAuth.instance.currentUser!.email.toString())
-          .doc(barcode)
-          .set({'time:': FieldValue.serverTimestamp(), "barcode": barcode});
+          .collection('users') //go to users
+          .doc(FirebaseAuth.instance.currentUser!.email
+              .toString()) // go to current user
+          .collection('scanned') // go to scanned
+          .doc(barcode) // create barcode
+          .set({
+        'time': FieldValue.serverTimestamp(),
+        'barcode': barcode
+      }); // create barcode info
     }
   }
 
   Future searchBarcode(String barcode) async {
     return FirebaseFirestore.instance
-        .collection('search')
+        .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.email.toString())
-        .set({'barcode': barcode}); //will need to turn this to list or map
+        .collection('search')
+        .doc(barcode)
+        .set({}); //input searched barcodes
   }
 
-  //read barcode from firebase
+  Future favoriteBarcode(String barcode) async {
+    return FirebaseFirestore.instance
+        .collection('users') //go to general collection
+        .doc(FirebaseAuth.instance.currentUser!.email
+            .toString()) //go to current user
+        .collection('favorites') //go to favorites
+        .doc(barcode) //create barcode
+        .set({
+      'time': FieldValue.serverTimestamp(),
+      'barcode': barcode
+    }); //create info about barcode
+  }
 
-  //update barcode from firebase
-  //might not need
+  Future<void> removeFavorite(String barcode) async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.email.toString())
+        .collection('favorites')
+        .doc(barcode)
+        .delete();
+  }
 
   //destroy barcode from firebase
   Future<void> destroyBarcode(String barcode) async {
     await FirebaseFirestore.instance
-        .collection(FirebaseAuth.instance.currentUser!.email.toString())
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.email.toString())
+        .collection('scanned')
         .doc(barcode)
         .delete();
   }

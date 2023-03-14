@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+
 import 'package:google_fonts/google_fonts.dart';
-import 'package:kart2/main%20pages/List.dart';
 
 import 'package:kart2/main%20pages/profile_page.dart';
 import 'package:kart2/main%20pages/recommendations_Page.dart';
@@ -14,7 +12,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kart2/models/firebase_commands.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({super.key});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -24,8 +22,8 @@ class _HomePageState extends State<HomePage> {
   //might have to change this for ever page
   List pages = [
     //update when pages are created
-    RecommendationsPage(),
-    searchPage(),
+    const RecommendationsPage(),
+    const searchPage(),
     ProfilePage(),
   ];
 
@@ -38,7 +36,27 @@ class _HomePageState extends State<HomePage> {
   }
 
   final CollectionReference _barcodes = FirebaseFirestore.instance
-      .collection(FirebaseAuth.instance.currentUser!.email.toString());
+      .collection('users')
+      .doc(FirebaseAuth.instance.currentUser!.email.toString())
+      .collection('scanned');
+
+  void snackMessage(bool action, String barcode) {
+    //true for delete
+    //false for favorite
+    if (action == true) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("You have successfully deleted $barcode"),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.only(bottom: 50),
+      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("You have successfully favorited $barcode"),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.only(bottom: 50),
+      ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,13 +100,12 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             children: [
               StreamBuilder(
-                stream:
-                    _barcodes.orderBy('time:', descending: true).snapshots(),
+                stream: _barcodes.orderBy('time', descending: true).snapshots(),
                 builder:
                     (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
                   if (streamSnapshot.hasData) {
                     return ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       itemCount: streamSnapshot.data!.docs.length,
                       itemBuilder: (context, index) {
@@ -100,23 +117,25 @@ class _HomePageState extends State<HomePage> {
                           child: ListTile(
                             title: Text(documentSnapshot['barcode']),
                             trailing: SizedBox(
-                              width: 50,
+                              width: 100,
                               child: Row(
                                 children: [
                                   IconButton(
                                       onPressed: () {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
-                                          content: Text(
-                                              "You have successfully deleted ${documentSnapshot['barcode']}"),
-                                          behavior: SnackBarBehavior.floating,
-                                          margin:
-                                              const EdgeInsets.only(bottom: 50),
-                                        ));
+                                        snackMessage(
+                                            true, documentSnapshot['barcode']);
                                         FirebaseCommands().destroyBarcode(
                                             documentSnapshot['barcode']);
                                       },
-                                      icon: Icon(Icons.delete))
+                                      icon: const Icon(Icons.delete)),
+                                  IconButton(
+                                      onPressed: () {
+                                        snackMessage(
+                                            false, documentSnapshot['barcode']);
+                                        FirebaseCommands().favoriteBarcode(
+                                            documentSnapshot['barcode']);
+                                      },
+                                      icon: const Icon(Icons.favorite))
                                 ],
                               ),
                             ),
@@ -125,7 +144,7 @@ class _HomePageState extends State<HomePage> {
                       },
                     );
                   } else {
-                    return Text('loading');
+                    return const Text('loading...');
                   }
                 },
               ),
