@@ -61,6 +61,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 height: 80,
               ),
               InkResponse(
+                borderRadius: BorderRadius.circular(10),
                 highlightShape: BoxShape.rectangle,
                 highlightColor: Colors.indigo,
                 onTap: () {},
@@ -83,6 +84,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 height: 30,
               ),
               InkResponse(
+                borderRadius: BorderRadius.circular(10),
                 highlightShape: BoxShape.rectangle,
                 highlightColor: Colors.indigo,
                 onTap: () {},
@@ -105,8 +107,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 height: 30,
               ),
               InkResponse(
-                highlightShape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(10),
                 highlightColor: Colors.indigo,
+                highlightShape: BoxShape.rectangle,
                 onTap: signUserOut,
                 child: Container(
                   height: 60,
