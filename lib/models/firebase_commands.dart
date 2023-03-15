@@ -42,19 +42,6 @@ class FirebaseCommands {
         }); // create barcode info
       }
     }
-
-    if (int.parse(barcode) > 0) {
-      return FirebaseFirestore.instance
-          .collection('users') //go to users
-          .doc(FirebaseAuth.instance.currentUser!.email
-              .toString()) // go to current user
-          .collection('scanned') // go to scanned
-          .doc(barcode) // create barcode
-          .set({
-        'time': FieldValue.serverTimestamp(),
-        'barcode': barcode
-      }); // create barcode info
-    }
   }
 
   Future searchBarcode(String barcode) async {
