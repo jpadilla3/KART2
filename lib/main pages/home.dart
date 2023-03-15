@@ -127,6 +127,8 @@ class _HomePageState extends State<HomePage> {
                                               documentSnapshot['barcode']);
                                           FirebaseCommands().destroyBarcode(
                                               documentSnapshot['barcode']);
+                                          FirebaseCommands().removeFavorite(
+                                              documentSnapshot['barcode']);
                                         },
                                         icon: const Icon(Icons.delete)),
                                     IconButton(
