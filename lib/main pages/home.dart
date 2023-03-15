@@ -104,45 +104,59 @@ class _HomePageState extends State<HomePage> {
                 builder:
                     (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
                   if (streamSnapshot.hasData) {
-                    return ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: streamSnapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        final DocumentSnapshot documentSnapshot =
-                            streamSnapshot.data!.docs[index];
+                    if (streamSnapshot.data!.size > 0) {
+                      return ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: streamSnapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          final DocumentSnapshot documentSnapshot =
+                              streamSnapshot.data!.docs[index];
 
-                        return Card(
-                          margin: const EdgeInsets.all(10),
-                          child: ListTile(
-                            title: Text(documentSnapshot['barcode']),
-                            trailing: SizedBox(
-                              width: 100,
-                              child: Row(
-                                children: [
-                                  IconButton(
-                                      onPressed: () {
-                                        snackMessage(
-                                            true, documentSnapshot['barcode']);
-                                        FirebaseCommands().destroyBarcode(
-                                            documentSnapshot['barcode']);
-                                      },
-                                      icon: const Icon(Icons.delete)),
-                                  IconButton(
-                                      onPressed: () {
-                                        snackMessage(
-                                            false, documentSnapshot['barcode']);
-                                        FirebaseCommands().favoriteBarcode(
-                                            documentSnapshot['barcode']);
-                                      },
-                                      icon: const Icon(Icons.favorite))
-                                ],
+                          return Card(
+                            margin: const EdgeInsets.all(10),
+                            child: ListTile(
+                              title: Text(documentSnapshot['barcode']),
+                              trailing: SizedBox(
+                                width: 100,
+                                child: Row(
+                                  children: [
+                                    IconButton(
+                                        onPressed: () {
+                                          snackMessage(true,
+                                              documentSnapshot['barcode']);
+                                          FirebaseCommands().destroyBarcode(
+                                              documentSnapshot['barcode']);
+                                        },
+                                        icon: const Icon(Icons.delete)),
+                                    IconButton(
+                                        onPressed: () {
+                                          snackMessage(false,
+                                              documentSnapshot['barcode']);
+                                          FirebaseCommands().favoriteBarcode(
+                                              documentSnapshot['barcode']);
+                                        },
+                                        icon: const Icon(Icons.favorite))
+                                  ],
+                                ),
                               ),
                             ),
+                          );
+                        },
+                      );
+                    } else {
+                      return Column(
+                        children: [
+                          const SizedBox(
+                            height: 250,
                           ),
-                        );
-                      },
-                    );
+                          Text(
+                            'Scan an item to get started',
+                            style: GoogleFonts.bebasNeue(fontSize: 25),
+                          )
+                        ],
+                      );
+                    }
                   } else {
                     return const Text('loading...');
                   }
