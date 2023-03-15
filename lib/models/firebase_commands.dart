@@ -3,17 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class FirebaseCommands {
-  //count documents
-  Future countdoc() async {
-    QuerySnapshot _myDoc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.email.toString())
-        .collection('scanned')
-        .get();
-
-    List<DocumentSnapshot> _myDocCount = _myDoc.docs;
-  }
-
   //add barcode to firebase
   Future addBarcode(String barcode) async {
     //gets size of scanned collection
