@@ -40,7 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               const SizedBox(
-                height: 150,
+                height: 75,
               ),
               Container(
                 height: 100,

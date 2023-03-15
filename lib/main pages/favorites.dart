@@ -60,37 +60,51 @@ class _FavPageState extends State<FavPage> {
                   builder:
                       (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
                     if (streamSnapshot.hasData) {
-                      return ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: streamSnapshot.data!.docs.length,
-                        itemBuilder: (context, index) {
-                          final DocumentSnapshot documentSnapshot =
-                              streamSnapshot.data!.docs[index];
+                      if (streamSnapshot.data!.size > 0) {
+                        return ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: streamSnapshot.data!.docs.length,
+                          itemBuilder: (context, index) {
+                            final DocumentSnapshot documentSnapshot =
+                                streamSnapshot.data!.docs[index];
 
-                          return Card(
-                            margin: const EdgeInsets.all(10),
-                            child: ListTile(
-                              title: Text(documentSnapshot['barcode']),
-                              trailing: SizedBox(
-                                width: 100,
-                                child: Row(
-                                  children: [
-                                    IconButton(
-                                        onPressed: () {
-                                          snackMessage(
-                                              documentSnapshot['barcode']);
-                                          FirebaseCommands().removeFavorite(
-                                              documentSnapshot['barcode']);
-                                        },
-                                        icon: const Icon(Icons.delete)),
-                                  ],
+                            return Card(
+                              margin: const EdgeInsets.all(10),
+                              child: ListTile(
+                                title: Text(documentSnapshot['barcode']),
+                                trailing: SizedBox(
+                                  width: 100,
+                                  child: Row(
+                                    children: [
+                                      IconButton(
+                                          onPressed: () {
+                                            snackMessage(
+                                                documentSnapshot['barcode']);
+                                            FirebaseCommands().removeFavorite(
+                                                documentSnapshot['barcode']);
+                                          },
+                                          icon: const Icon(Icons.delete)),
+                                    ],
+                                  ),
                                 ),
                               ),
+                            );
+                          },
+                        );
+                      } else {
+                        return Column(
+                          children: [
+                            const SizedBox(
+                              height: 250,
                             ),
-                          );
-                        },
-                      );
+                            Text(
+                              'Favorites will appear here',
+                              style: GoogleFonts.bebasNeue(fontSize: 25),
+                            )
+                          ],
+                        );
+                      }
                     } else {
                       return const Text('loading...');
                     }

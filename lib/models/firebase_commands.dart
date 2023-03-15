@@ -5,17 +5,31 @@ import 'package:firebase_auth/firebase_auth.dart';
 class FirebaseCommands {
   //add barcode to firebase
   Future addBarcode(String barcode) async {
-    if (int.parse(barcode) > 0) {
-      return FirebaseFirestore.instance
-          .collection('users') //go to users
-          .doc(FirebaseAuth.instance.currentUser!.email
-              .toString()) // go to current user
-          .collection('scanned') // go to scanned
-          .doc(barcode) // create barcode
-          .set({
-        'time': FieldValue.serverTimestamp(),
-        'barcode': barcode
-      }); // create barcode info
+    //gets size of scanned collection
+    QuerySnapshot _myDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.email.toString())
+        .collection('scanned')
+        .get();
+    //store all the docs in a list
+    List<DocumentSnapshot> _myDocCount = _myDoc.docs;
+
+    //removes oldest barcode after 25 scans
+    if (_myDocCount.length > 25) {
+      destroyBarcode(barcode); //change to earliest item scanned
+    } else {
+      if (int.parse(barcode) > 0) {
+        return FirebaseFirestore.instance
+            .collection('users') //go to users
+            .doc(FirebaseAuth.instance.currentUser!.email
+                .toString()) // go to current user
+            .collection('scanned') // go to scanned
+            .doc(barcode) // create barcode
+            .set({
+          'time': FieldValue.serverTimestamp(),
+          'barcode': barcode
+        }); // create barcode info
+      }
     }
   }
 
