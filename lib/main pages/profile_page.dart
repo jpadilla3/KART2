@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kart2/onboarding/authPage.dart';
+import 'package:kart2/onboarding/sign up pages/Conditions/Allergies.dart';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({super.key});
@@ -87,7 +88,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 borderRadius: BorderRadius.circular(10),
                 highlightShape: BoxShape.rectangle,
                 highlightColor: Colors.indigo,
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Conditions()));
+                },
                 child: Container(
                   height: 60,
                   width: 275,
