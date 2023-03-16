@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kart2/main%20pages/info.dart';
-import 'package:kart2/main%20pages/List2.dart';
+import 'package:kart2/models/flutter_barcode_scanner.dart';
+import 'package:kart2/main pages/search_Page.dart';
+
+import '../models/firebase_commands.dart';
 
 class RecommendationsPage extends StatefulWidget {
   const RecommendationsPage({super.key});
@@ -13,53 +16,29 @@ class RecommendationsPage extends StatefulWidget {
 }
 
 class _RecPageState extends State<RecommendationsPage> {
-  final List<Map<String, String>> itemss = [
-    {
-      'image':
-          'https://kellogg-h.assetsadobe.com/is/image/content/dam/kelloggs/kna/us/digital-shelf/rice-krispies/00038000200038_C1L1.jpg',
-      'title': 'Rice Krispies Cereal -> Kellog Flakes',
-      'image2':
-          'https://cdn.shopify.com/s/files/1/1614/9751/products/3960dcb287e20ee5798a05f9fac6531d_530x.jpg?v=1571439710'
-    },
-    {
-      'image': 'https://i5.peapod.com/c/63/63OIA.png',
-      'title': 'HotPockets Pepperoni -> Lean Pockets',
-      'image2':
-          'https://ipcdn.freshop.com/resize?url=https://images.freshop.com/00043695083057/fccdce6fad754a9b09492ff84ed3a4d4_large.png&width=512&type=webp&quality=90'
-    },
-    {
-      'image':
-          'https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcSM03KIfF8AODqR0AL0MimAm86l0LAelByuQhyF90MpwVekSPDdK3xfSUwyHHoxJnGp6v7FVGfm5wGLAl35G_Zl-SigGuWBPg',
-      'title': 'Tyson Chicken Strips -> Tyson Blackend ChickenStrips',
-      'image2': 'https://images.heb.com/is/image/HEBGrocery/002730530-1'
-    },
-    {
-      'image': 'https://images.heb.com/is/image/HEBGrocery/000569244',
-      'title': 'Hungry Jacks Pancake Mix -> Hungry Jacks Protien edtion',
-      'image2':
-          'https://ipcdn.freshop.com/resize?url=https://images.freshop.com/00051500929247/c1e27e391ab84c782fc5ffa081e8a4cb_large.png&width=256&type=webp&quality=80'
-    },
-    {
-      'image': 'https://i5.peapod.com/c/3V/3VP33.png',
-      'title': 'Stouffers Lasagna -> Lean Cusine Lasagna',
-      'image2':
-          'https://www.goodnes.com/sites/g/files/jgfbjl321/files/styles/gdn_hero_pdp_product_image/public/gdn_product/field_product_images/leancuisine-jvdlpgbdvi1plrvd4kbb.png.webp?itok=TeLDDhpv'
-    },
-    {
-      'image': 'https://images.heb.com/is/image/HEBGrocery/000105727',
-      'title': 'Banquat Chicken Pot Pie -> Marie Callenders Califlower Crust',
-      'image2':
-          'https://www.mariecallendersmeals.com/sites/g/files/qyyrlu306/files/images/products/chicken-pot-pie-with-crust-85705.png'
-    },
-    {
-      'image':
-          'https://images.heb.com/is/image/HEBGrocery/005684048?fit=constrain,1&wid=800&hei=800&fmt=jpg&qlt=85,0&resMode=sharp2&op_usm=1.75,0.3,2,0',
-      'title':
-          'Checkers Rallys Famous Seasoned Fries -> Alexia Organic Sweet Potato Fries',
-      'image2':
-          'https://www.eatthis.com/wp-content/uploads/sites/4/2019/10/alexia-organic-sweet-potato-fries.jpg'
-    },
-  ];
+  final CollectionReference _barcodes = FirebaseFirestore.instance
+      .collection('users')
+      .doc(FirebaseAuth.instance.currentUser!.email.toString())
+      .collection('scanned');
+
+  void snackMessage(bool action, String barcode) {
+    //true for delete
+    //false for favorite
+    if (action == true) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("You have successfully deleted $barcode"),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.only(bottom: 50),
+      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("You have successfully favorited $barcode"),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.only(bottom: 50),
+      ));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,6 +63,77 @@ class _RecPageState extends State<RecommendationsPage> {
               color: Colors.indigo[400],
             )
           ],
+        ),
+        SliverToBoxAdapter(
+          child: Column(
+            children: [
+              StreamBuilder(
+                stream: _barcodes.orderBy('time', descending: true).snapshots(),
+                builder:
+                    (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
+                  if (streamSnapshot.hasData) {
+                    if (streamSnapshot.data!.size > 0) {
+                      return ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: streamSnapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          final DocumentSnapshot documentSnapshot =
+                              streamSnapshot.data!.docs[index];
+
+                          return Card(
+                            margin: const EdgeInsets.all(10),
+                            child: ListTile(
+                              title: Text(documentSnapshot['barcode']),
+                              trailing: SizedBox(
+                                width: 100,
+                                child: Row(
+                                  children: [
+                                    IconButton(
+                                        onPressed: () {
+                                          snackMessage(true,
+                                              documentSnapshot['barcode']);
+                                          FirebaseCommands().destroyBarcode(
+                                              documentSnapshot['barcode']);
+                                          FirebaseCommands().removeFavorite(
+                                              documentSnapshot['barcode']);
+                                        },
+                                        icon: const Icon(Icons.delete)),
+                                    IconButton(
+                                        onPressed: () {
+                                          snackMessage(false,
+                                              documentSnapshot['barcode']);
+                                          FirebaseCommands().favoriteBarcode(
+                                              documentSnapshot['barcode']);
+                                        },
+                                        icon: const Icon(Icons.favorite))
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    } else {
+                      return Column(
+                        children: [
+                          const SizedBox(
+                            height: 250,
+                          ),
+                          Text(
+                            'Recommended items will appear here',
+                            style: GoogleFonts.bebasNeue(fontSize: 25),
+                          )
+                        ],
+                      );
+                    }
+                  } else {
+                    return const Text('loading...');
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ],
     ));
