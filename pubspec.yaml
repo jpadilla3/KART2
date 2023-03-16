@@ -53,6 +53,7 @@ dependencies:
   chopper: ^6.1.0
   #A plugin for Flutter apps that adds barcode scanning support on both Android and iOS.
   flutter_barcode_scanner: ^2.0.0
+  ionicons: ^0.2.2
 
 dev_dependencies:
   flutter_test:

@@ -16,7 +16,7 @@ class FirebaseCommands {
 
     //removes oldest barcode after 25 scans
     if (_myDocCount.length > 25) {
-      destroyBarcode(barcode); //change to earliest item scanned
+      //destroyBarcode(barcode); //change to earliest item scanned
     } else {
       if (int.parse(barcode) > 0) {
         return FirebaseFirestore.instance
