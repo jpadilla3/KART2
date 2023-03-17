@@ -152,7 +152,7 @@ class _HomePageState extends State<HomePage> {
                                   "https://www.eslc.org/wp-content/uploads/2019/08/placeholder-grey-square-600x600.jpg"),
                               title: Text(documentSnapshot['barcode']),
                               subtitle: const Text("Grade: Good"),
-                              trailing: const SizedBox(
+                              trailing: SizedBox(
                                 child: Icon(Icons.arrow_forward_ios),
                               ),
                             ),
