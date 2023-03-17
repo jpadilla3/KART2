@@ -44,7 +44,7 @@ dependencies:
   cloud_firestore:
   smooth_page_indicator: ^1.0.0
   flutter_font_icons: ^2.2.5
-
+  flutter_slidable: ^2.0.0
   #A composable, Future-based library for making HTTP requests.
   #This package contains a set of high-level functions and classes that make it easy to consume HTTP resources.
   http: ^0.13.5
