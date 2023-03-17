@@ -1,15 +1,34 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:kart2/models/firebase_commands.dart';
 
 class productPage extends StatefulWidget {
-  const productPage({super.key});
+  String barcode;
+  productPage(this.barcode);
 
   @override
   State<productPage> createState() => _productPageState();
 }
 
 class _productPageState extends State<productPage> {
+  void snackMessage(bool action, String barcode) {
+    //true for delete
+    //false for favorite
+    if (action == true) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("You have successfully deleted $barcode"),
+      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Added $barcode to favorites"),
+      ));
+    }
+  }
+
   rowInfo(String title, String amount, Icon pic) {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
@@ -77,6 +96,11 @@ class _productPageState extends State<productPage> {
 
   @override
   Widget build(BuildContext context) {
+    final CollectionReference _scanned = FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.email.toString())
+        .collection('scanned');
+
     return Scaffold(
       body: SingleChildScrollView(
           child: Column(children: [
@@ -122,15 +146,29 @@ class _productPageState extends State<productPage> {
             //item name
             Container(
               color: Colors.red,
-              child: const SizedBox(
+              child: SizedBox(
                 height: 150,
-                width: 230,
+                width: 195,
                 child: Center(
-                  child: Text(
-                    'Item name',
-                    textAlign: TextAlign.center,
-                  ),
-                ),
+                    child: FutureBuilder<DocumentSnapshot>(
+                  future: _scanned.doc(widget.barcode).get(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<DocumentSnapshot> snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Something went wrong');
+                    }
+
+                    if (snapshot.hasData && !snapshot.data!.exists) {
+                      return Text("Document does not exist");
+                    }
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      Map<String, dynamic> data =
+                          snapshot.data!.data() as Map<String, dynamic>;
+                      return Text('${data['barcode']}');
+                    }
+                    return Text('');
+                  },
+                )),
               ),
             )
           ],
@@ -146,7 +184,7 @@ class _productPageState extends State<productPage> {
             //score
             Container(
               height: 60,
-              width: 380,
+              width: 345,
               color: Colors.limeAccent,
               child: const Center(
                   child: Text(
@@ -332,7 +370,10 @@ class _productPageState extends State<productPage> {
           borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
           highlightColor: Colors.indigo,
           highlightShape: BoxShape.rectangle,
-          onTap: () {},
+          onTap: () {
+            FirebaseCommands().favoriteBarcode(widget.barcode);
+            snackMessage(false, widget.barcode);
+          },
           child: Container(
             height: 60,
             width: 350,
@@ -365,7 +406,11 @@ class _productPageState extends State<productPage> {
               const BorderRadius.vertical(bottom: Radius.circular(10)),
           highlightColor: Colors.indigo,
           highlightShape: BoxShape.rectangle,
-          onTap: () {},
+          onTap: () {
+            FirebaseCommands().destroyBarcode(widget.barcode);
+            FirebaseCommands().removeFavorite(widget.barcode);
+            snackMessage(true, widget.barcode);
+          },
           child: Container(
             height: 60,
             width: 350,
@@ -392,7 +437,7 @@ class _productPageState extends State<productPage> {
           ),
         ),
         SizedBox(
-          height: 30,
+          height: 70,
         )
       ])),
     );

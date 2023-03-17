@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kart2/main%20pages/productPage.dart';
 import 'package:kart2/models/firebase_commands.dart';
 
 class FavPage extends StatefulWidget {
@@ -22,10 +24,18 @@ class _FavPageState extends State<FavPage> {
       .doc(FirebaseAuth.instance.currentUser!.email.toString())
       .collection('favorites');
 
-  void snackMessage(String barcode) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text("You have successfully removed $barcode"),
-    ));
+  void snackMessage(bool action, String barcode) {
+    //true for delete
+    //false for favorite
+    if (action == true) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("You have successfully deleted $barcode"),
+      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Added $barcode to favorites"),
+      ));
+    }
   }
 
   @override
@@ -69,24 +79,35 @@ class _FavPageState extends State<FavPage> {
                             final DocumentSnapshot documentSnapshot =
                                 streamSnapshot.data!.docs[index];
 
-                            return Card(
-                              margin: const EdgeInsets.all(10),
+                            return Slidable(
+                              endActionPane:
+                                  ActionPane(motion: DrawerMotion(), children: [
+                                SlidableAction(
+                                  onPressed: (context) {
+                                    snackMessage(
+                                        true, documentSnapshot['barcode']);
+
+                                    FirebaseCommands().removeFavorite(
+                                        documentSnapshot['barcode']);
+                                  },
+                                  backgroundColor: Colors.indigo,
+                                  icon: Icons.delete,
+                                ),
+                              ]),
                               child: ListTile(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => productPage(
+                                              documentSnapshot['barcode'])));
+                                },
+                                leading: Image.network(
+                                    "https://www.eslc.org/wp-content/uploads/2019/08/placeholder-grey-square-600x600.jpg"),
                                 title: Text(documentSnapshot['barcode']),
+                                subtitle: Text("Grade: Good"),
                                 trailing: SizedBox(
-                                  width: 100,
-                                  child: Row(
-                                    children: [
-                                      IconButton(
-                                          onPressed: () {
-                                            snackMessage(
-                                                documentSnapshot['barcode']);
-                                            FirebaseCommands().removeFavorite(
-                                                documentSnapshot['barcode']);
-                                          },
-                                          icon: const Icon(Icons.delete)),
-                                    ],
-                                  ),
+                                  child: Icon(Icons.arrow_forward_ios),
                                 ),
                               ),
                             );
