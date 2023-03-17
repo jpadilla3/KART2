@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 
@@ -112,35 +113,39 @@ class _HomePageState extends State<HomePage> {
                         itemBuilder: (context, index) {
                           final DocumentSnapshot documentSnapshot =
                               streamSnapshot.data!.docs[index];
-
-                          return Card(
-                            margin: const EdgeInsets.all(10),
+                          return Slidable(
+                            endActionPane:
+                                ActionPane(motion: DrawerMotion(), children: [
+                              SlidableAction(
+                                onPressed: (context) {
+                                  snackMessage(
+                                      true, documentSnapshot['barcode']);
+                                  FirebaseCommands().destroyBarcode(
+                                      documentSnapshot['barcode']);
+                                  FirebaseCommands().removeFavorite(
+                                      documentSnapshot['barcode']);
+                                },
+                                backgroundColor: Colors.indigo,
+                                icon: Icons.delete,
+                              ),
+                              SlidableAction(
+                                onPressed: (context) {
+                                  snackMessage(
+                                      false, documentSnapshot['barcode']);
+                                  FirebaseCommands().favoriteBarcode(
+                                      documentSnapshot['barcode']);
+                                },
+                                backgroundColor: Colors.red,
+                                icon: Icons.favorite,
+                              ),
+                            ]),
                             child: ListTile(
+                              leading: Image.network(
+                                  "https://www.eslc.org/wp-content/uploads/2019/08/placeholder-grey-square-600x600.jpg"),
                               title: Text(documentSnapshot['barcode']),
+                              subtitle: Text("Grade: Good"),
                               trailing: SizedBox(
-                                width: 100,
-                                child: Row(
-                                  children: [
-                                    IconButton(
-                                        onPressed: () {
-                                          snackMessage(true,
-                                              documentSnapshot['barcode']);
-                                          FirebaseCommands().destroyBarcode(
-                                              documentSnapshot['barcode']);
-                                          FirebaseCommands().removeFavorite(
-                                              documentSnapshot['barcode']);
-                                        },
-                                        icon: const Icon(Icons.delete)),
-                                    IconButton(
-                                        onPressed: () {
-                                          snackMessage(false,
-                                              documentSnapshot['barcode']);
-                                          FirebaseCommands().favoriteBarcode(
-                                              documentSnapshot['barcode']);
-                                        },
-                                        icon: const Icon(Icons.favorite))
-                                  ],
-                                ),
+                                child: Icon(Icons.arrow_forward_ios),
                               ),
                             ),
                           );
