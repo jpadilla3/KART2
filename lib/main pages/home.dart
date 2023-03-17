@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kart2/main%20pages/productPage.dart';
 
 import 'package:kart2/main%20pages/profile_page.dart';
 import 'package:kart2/main%20pages/recommendations_Page.dart';
@@ -52,7 +53,7 @@ class _HomePageState extends State<HomePage> {
       ));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("You have successfully favorited $barcode"),
+        content: Text("Added $barcode to favorites"),
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.only(bottom: 50),
       ));
@@ -119,6 +120,16 @@ class _HomePageState extends State<HomePage> {
                               SlidableAction(
                                 onPressed: (context) {
                                   snackMessage(
+                                      false, documentSnapshot['barcode']);
+                                  FirebaseCommands().favoriteBarcode(
+                                      documentSnapshot['barcode']);
+                                },
+                                backgroundColor: Colors.red,
+                                icon: Icons.favorite,
+                              ),
+                              SlidableAction(
+                                onPressed: (context) {
+                                  snackMessage(
                                       true, documentSnapshot['barcode']);
                                   FirebaseCommands().destroyBarcode(
                                       documentSnapshot['barcode']);
@@ -128,23 +139,20 @@ class _HomePageState extends State<HomePage> {
                                 backgroundColor: Colors.indigo,
                                 icon: Icons.delete,
                               ),
-                              SlidableAction(
-                                onPressed: (context) {
-                                  snackMessage(
-                                      false, documentSnapshot['barcode']);
-                                  FirebaseCommands().favoriteBarcode(
-                                      documentSnapshot['barcode']);
-                                },
-                                backgroundColor: Colors.red,
-                                icon: Icons.favorite,
-                              ),
                             ]),
                             child: ListTile(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => productPage(
+                                            documentSnapshot['barcode'])));
+                              },
                               leading: Image.network(
                                   "https://www.eslc.org/wp-content/uploads/2019/08/placeholder-grey-square-600x600.jpg"),
                               title: Text(documentSnapshot['barcode']),
-                              subtitle: Text("Grade: Good"),
-                              trailing: SizedBox(
+                              subtitle: const Text("Grade: Good"),
+                              trailing: const SizedBox(
                                 child: Icon(Icons.arrow_forward_ios),
                               ),
                             ),
