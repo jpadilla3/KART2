@@ -143,9 +143,9 @@ class _HomePageState extends State<HomePage> {
                               leading: Image.network(
                                   "https://www.eslc.org/wp-content/uploads/2019/08/placeholder-grey-square-600x600.jpg"),
                               title: Text(documentSnapshot['barcode']),
-                              subtitle: Text("Grade: Good"),
+                              subtitle: const Text("Grade: Good"),
                               trailing: SizedBox(
-                                child: Icon(Icons.arrow_forward_ios),
+                                child: const Icon(Icons.arrow_forward_ios),
                               ),
                             ),
                           );
