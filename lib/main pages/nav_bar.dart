@@ -4,9 +4,9 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:kart2/main%20pages/home.dart';
 import 'package:kart2/main%20pages/profile_page.dart';
 import 'package:kart2/main%20pages/recommendations_Page.dart';
-import 'package:kart2/main%20pages/search_Page.dart';
+import 'package:kart2/main%20pages/search_page.dart';
 
-import 'camera_page.dart';
+import 'search_page.dart';
 
 class navBar extends StatefulWidget {
   const navBar({super.key});
@@ -20,8 +20,7 @@ class _navBarState extends State<navBar> {
     //update when pages are created
     HomePage(),
     RecommendationsPage(),
-    CameraPage(),
-    searchPage(),
+    SearchPage(),
     ProfilePage(),
   ];
 
@@ -58,14 +57,6 @@ class _navBarState extends State<navBar> {
               key: ValueKey('recoButton'),
             ),
           ),
-
-          //camera icon
-          BottomNavigationBarItem(
-              label: "Camera",
-              icon: Icon(
-                Icons.photo_camera_rounded,
-                key: ValueKey('camButton'),
-              )),
 
           //search icon
           BottomNavigationBarItem(

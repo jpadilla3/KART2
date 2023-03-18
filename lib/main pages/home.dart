@@ -4,10 +4,10 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kart2/main%20pages/List.dart';
-import 'package:kart2/main%20pages/camera_page.dart';
+import 'package:kart2/main%20pages/search_page.dart';
 import 'package:kart2/main%20pages/profile_page.dart';
 import 'package:kart2/main%20pages/recommendations_Page.dart';
-import 'package:kart2/main%20pages/search_Page.dart';
+import 'package:kart2/main%20pages/search_page.dart';
 import 'package:kart2/main%20pages/info.dart';
 import 'package:kart2/main%20pages/favorites.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -25,8 +25,7 @@ class _HomePageState extends State<HomePage> {
   List pages = [
     //update when pages are created
     RecommendationsPage(),
-    CameraPage(),
-    searchPage(),
+    SearchPage(),
     ProfilePage(),
   ];
 
