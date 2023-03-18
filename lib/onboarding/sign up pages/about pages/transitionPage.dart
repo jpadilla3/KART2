@@ -7,6 +7,7 @@ import 'package:kart2/onboarding/sign%20up%20pages/about%20pages/intro_screen2.d
 import 'package:kart2/onboarding/sign%20up%20pages/about%20pages/intro_screen3.dart';
 import 'package:kart2/onboarding/sign%20up%20pages/about%20pages/intro_screen4.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:kart2/onboarding/sign up pages/Conditions/Allergies.dart';
 
 class aboutPages extends StatefulWidget {
   const aboutPages({super.key});
@@ -86,7 +87,7 @@ class _aboutPagesState extends State<aboutPages> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => navBar()));
+                                  builder: (context) => Conditions()));
                         })
                     : GestureDetector(
                         child: Text(

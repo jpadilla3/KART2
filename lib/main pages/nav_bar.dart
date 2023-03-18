@@ -5,7 +5,6 @@ import 'package:kart2/main%20pages/home.dart';
 import 'package:kart2/main%20pages/profile_page.dart';
 import 'package:kart2/main%20pages/recommendations_Page.dart';
 import 'package:kart2/main%20pages/search_page.dart';
-
 import 'search_page.dart';
 
 class navBar extends StatefulWidget {
@@ -37,6 +36,7 @@ class _navBarState extends State<navBar> {
     return Scaffold(
       body: pages[currentIndex1],
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         onTap: onTap,
         unselectedFontSize: 0,
         selectedFontSize: 0,

@@ -1,14 +1,15 @@
 import 'dart:async';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:kart2/models/flutter_barcode_scanner.dart';
-import 'package:kart2/models/firebase_commands.dart';
 import 'package:kart2/models/barcode_data_model.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:kart2/models/firebase_commands.dart';
+import 'package:kart2/models/flutter_barcode_scanner.dart';
+import 'favorites.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -60,6 +61,34 @@ class _SearchPageState extends State<SearchPage> {
       return barcodeData;
     } else {
       throw Exception('Failed to fetch data');
+    }
+  }
+
+  @override
+  State<searchPage> createState() => _searchPageState();
+}
+
+class _searchPageState extends State<searchPage> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  // Platform messages are asynchronous, so we initialize in an async method.
+  Future<void> scanBarcodeNormal() async {
+    String barcodeScanRes;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      barcodeScanRes =
+          await BarcodeScanner.scanBarcode('#ff6666', 'Cancel', true);
+
+      //add barcode to firebase
+      //passes current user email and barcode
+      FirebaseCommands().addBarcode(barcodeScanRes);
+
+      print(barcodeScanRes);
+    } on PlatformException {
+      barcodeScanRes = 'Failed to get platform version.';
     }
   }
 
