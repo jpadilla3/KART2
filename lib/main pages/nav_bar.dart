@@ -4,7 +4,8 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:kart2/main%20pages/home.dart';
 import 'package:kart2/main%20pages/profile_page.dart';
 import 'package:kart2/main%20pages/recommendations_Page.dart';
-import 'package:kart2/main%20pages/search_Page.dart';
+import 'package:kart2/main%20pages/search_page.dart';
+import 'search_page.dart';
 
 class navBar extends StatefulWidget {
   const navBar({super.key});
@@ -18,7 +19,7 @@ class _navBarState extends State<navBar> {
     //update when pages are created
     HomePage(),
     RecommendationsPage(),
-    searchPage(),
+    SearchPage(),
     ProfilePage(),
   ];
 
