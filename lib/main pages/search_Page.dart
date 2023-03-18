@@ -65,34 +65,6 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   @override
-  State<searchPage> createState() => _searchPageState();
-}
-
-class _searchPageState extends State<searchPage> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> scanBarcodeNormal() async {
-    String barcodeScanRes;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      barcodeScanRes =
-          await BarcodeScanner.scanBarcode('#ff6666', 'Cancel', true);
-
-      //add barcode to firebase
-      //passes current user email and barcode
-      FirebaseCommands().addBarcode(barcodeScanRes);
-
-      print(barcodeScanRes);
-    } on PlatformException {
-      barcodeScanRes = 'Failed to get platform version.';
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
