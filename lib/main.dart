@@ -3,7 +3,7 @@ import 'package:kart2/main%20pages/productPage.dart';
 import 'package:kart2/onboarding/Login_Page.dart';
 import 'package:kart2/onboarding/authPage.dart';
 import 'onboarding/Start_Page.dart';
-
+import 'package:kart2/onboarding/SplashScreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(useMaterial3: true),
-      home: const authPage(),
+      home: SplashScreen(),
     );
   }
 }
