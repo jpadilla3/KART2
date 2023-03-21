@@ -116,6 +116,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 highlightShape: BoxShape.rectangle,
                 onTap: signUserOut,
                 child: Container(
+                  key: const Key('logoutButton'),
                   height: 60,
                   width: 275,
                   decoration: BoxDecoration(
