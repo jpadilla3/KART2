@@ -135,6 +135,7 @@ class _HomePageState extends State<HomePage> {
           title: Text(
             'HISTORY',
             style: GoogleFonts.bebasNeue(color: Colors.black, fontSize: 45),
+            key: const Key('history'),
           ),
           actions: [
             IconButton(

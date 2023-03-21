@@ -132,6 +132,7 @@ class _ConditionsState extends State<Conditions> {
           ],
         ),
         floatingActionButton: FloatingActionButton(
+          key: const Key('conditions'),
           onPressed: () => Navigator.push(
               context, MaterialPageRoute(builder: (context) => navBar())),
           child: const Icon(Icons.arrow_forward),

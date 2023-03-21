@@ -82,6 +82,7 @@ class _aboutPagesState extends State<aboutPages> {
                         child: Text(
                           'Continue',
                           style: GoogleFonts.bebasNeue(fontSize: 25),
+                          key: const Key('continue'),
                         ),
                         onTap: () {
                           Navigator.push(
@@ -93,6 +94,7 @@ class _aboutPagesState extends State<aboutPages> {
                         child: Text(
                           "Next",
                           style: GoogleFonts.bebasNeue(fontSize: 25),
+                          key: const Key('next'),
                         ),
                         onTap: () {
                           _controller.nextPage(
