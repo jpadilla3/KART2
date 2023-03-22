@@ -67,7 +67,7 @@ class FirebaseCommands {
         .set({}); //input searched barcodes
   }
 
-  Future favoriteBarcode(String barcode) async {
+  Future favoriteBarcode(String barcode, String name, int score) async {
     return FirebaseFirestore.instance
         .collection('users') //go to general collection
         .doc(FirebaseAuth.instance.currentUser!.email
@@ -76,7 +76,9 @@ class FirebaseCommands {
         .doc(barcode) //create barcode
         .set({
       'time': FieldValue.serverTimestamp(),
-      'barcode': barcode
+      'barcode': barcode,
+      'name': name,
+      'score': score
     }); //create info about barcode
   }
 

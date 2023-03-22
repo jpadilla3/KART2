@@ -103,8 +103,8 @@ class _RecPageState extends State<RecommendationsPage> {
                                         onPressed: () {
                                           snackMessage(false,
                                               documentSnapshot['barcode']);
-                                          FirebaseCommands().favoriteBarcode(
-                                              documentSnapshot['barcode']);
+                                          //FirebaseCommands().favoriteBarcode(
+                                          //documentSnapshot['barcode']);
                                         },
                                         icon: const Icon(Icons.favorite))
                                   ],

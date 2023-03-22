@@ -192,11 +192,13 @@ class _HomePageState extends State<HomePage> {
                             endActionPane:
                                 ActionPane(motion: DrawerMotion(), children: [
                               SlidableAction(
-                                onPressed: (context) {
+                                onPressed: (context) async {
                                   snackMessage(
                                       false, documentSnapshot['barcode']);
                                   FirebaseCommands().favoriteBarcode(
-                                      documentSnapshot['barcode']);
+                                      documentSnapshot['barcode'],
+                                      documentSnapshot['name'],
+                                      documentSnapshot['score']);
                                 },
                                 backgroundColor: Colors.red,
                                 icon: Icons.favorite,
