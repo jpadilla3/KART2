@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,6 +18,7 @@ import 'package:kart2/main%20pages/favorites.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kart2/models/firebase_commands.dart';
 import 'package:kart2/models/flutter_barcode_scanner.dart';
+import 'package:kart2/onboarding/sign%20up%20pages/about%20pages/intro_screen2.dart';
 
 import '../models/barcode_data_model.dart';
 
@@ -97,6 +100,7 @@ class _HomePageState extends State<HomePage> {
     final response = await http.get(Uri.parse(url));
     final barcodeData = barcodeDataFromJson(response.body);
     if (response.statusCode == 200) {
+      FirebaseCommands().updateBarcode(_scanBarcode, barcodeData);
       return barcodeData;
     } else {
       throw Exception('Failed to fetch data');
@@ -110,6 +114,12 @@ class _HomePageState extends State<HomePage> {
         onPressed: () async {
           await scanBarcodeNormal();
           await fetchBarcodeData();
+          Timer(Duration(seconds: 1), () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => productPage(_scanBarcode)));
+          });
         },
         backgroundColor: Colors.indigo[400],
         child: const Icon(
@@ -171,6 +181,13 @@ class _HomePageState extends State<HomePage> {
                         itemBuilder: (context, index) {
                           final DocumentSnapshot documentSnapshot =
                               streamSnapshot.data!.docs[index];
+                          int sc = documentSnapshot['score'];
+                          late bool sc1;
+                          if (sc > 0 && sc <= 69) {
+                            sc1 = true;
+                          } else if (sc > 69) {
+                            sc1 = false;
+                          }
                           return Slidable(
                             endActionPane:
                                 ActionPane(motion: DrawerMotion(), children: [
@@ -207,8 +224,50 @@ class _HomePageState extends State<HomePage> {
                               },
                               leading: Image.network(
                                   "https://www.eslc.org/wp-content/uploads/2019/08/placeholder-grey-square-600x600.jpg"),
-                              title: Text(documentSnapshot['barcode']),
-                              subtitle: const Text("Grade: Good"),
+                              title: Text(documentSnapshot['name']),
+                              subtitle: sc1
+                                  ? Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              color: Colors.red),
+                                          height: 8,
+                                          width: 8,
+                                        ),
+                                        const SizedBox(
+                                          width: 6,
+                                        ),
+                                        Text(
+                                          'Score: ${documentSnapshot['score']}',
+                                          textAlign: TextAlign.start,
+                                        ),
+                                      ],
+                                    )
+                                  : Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              color: Colors.green),
+                                          height: 5,
+                                          width: 5,
+                                        ),
+                                        const SizedBox(
+                                          width: 6,
+                                        ),
+                                        Text(
+                                          'Score: ${documentSnapshot['score']}',
+                                          textAlign: TextAlign.start,
+                                        ),
+                                      ],
+                                    ),
                               trailing: SizedBox(
                                 child: const Icon(Icons.arrow_forward_ios),
                               ),

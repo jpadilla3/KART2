@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:kart2/main%20pages/productPage.dart';
 import 'package:kart2/models/barcode_data_model.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kart2/models/firebase_commands.dart';
@@ -138,6 +139,13 @@ class _SearchPageState extends State<SearchPage> {
                         onPressed: () async {
                           await scanBarcodeNormal();
                           await fetchBarcodeData();
+                          Timer(Duration(seconds: 1), () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        productPage(_scanBarcode)));
+                          });
                         },
                         icon: const Icon(
                           Icons.photo_camera_rounded,

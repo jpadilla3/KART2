@@ -147,7 +147,6 @@ class _productPageState extends State<productPage> {
             ),
             //item name
             Container(
-              color: Colors.red,
               child: SizedBox(
                 height: 150,
                 width: 195,
@@ -159,7 +158,10 @@ class _productPageState extends State<productPage> {
                     if (snapshot.connectionState == ConnectionState.done) {
                       Map<String, dynamic> data =
                           snapshot.data!.data() as Map<String, dynamic>;
-                      return Text('${data['name']}');
+                      return Text(
+                        '${data['name']}',
+                        textAlign: TextAlign.center,
+                      );
                     } else if (snapshot.hasError) {
                       return const Text('Something went wrong');
                     } else if (snapshot.hasData && !snapshot.data!.exists) {
@@ -173,9 +175,7 @@ class _productPageState extends State<productPage> {
             )
           ],
         ),
-        const SizedBox(
-          height: 20,
-        ),
+
         Row(
           children: [
             const SizedBox(
@@ -185,7 +185,6 @@ class _productPageState extends State<productPage> {
             Container(
               height: 60,
               width: 345,
-              color: Colors.limeAccent,
               child: SizedBox(
                   child: Center(
                       child: FutureBuilder<DocumentSnapshot>(
@@ -195,7 +194,47 @@ class _productPageState extends State<productPage> {
                   if (snapshot.connectionState == ConnectionState.done) {
                     Map<String, dynamic> data =
                         snapshot.data!.data() as Map<String, dynamic>;
-                    return Text('Score: ${data['score']}');
+                    int sc = data['score'];
+                    late bool sc1;
+                    if (sc > 0 && sc <= 69) {
+                      sc1 = true;
+                    } else if (sc > 69) {
+                      sc1 = false;
+                    }
+
+                    return sc1
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: Colors.red),
+                                height: 8,
+                                width: 8,
+                              ),
+                              const SizedBox(
+                                width: 6,
+                              ),
+                              Text('Score: ${data['score']}'),
+                            ],
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: Colors.green),
+                                height: 5,
+                                width: 5,
+                              ),
+                              const SizedBox(
+                                width: 6,
+                              ),
+                              Text('Score: ${data['score']}'),
+                            ],
+                          );
                   } else if (snapshot.hasError) {
                     return const Text('Something went wrong');
                   } else if (snapshot.hasData && !snapshot.data!.exists) {
@@ -208,9 +247,7 @@ class _productPageState extends State<productPage> {
             )
           ],
         ),
-        const SizedBox(
-          height: 20,
-        ),
+
         Container(
           color: Colors.white,
           child: SizedBox(
@@ -241,12 +278,12 @@ class _productPageState extends State<productPage> {
                           ),
                           trailing: SizedBox(
                             height: 60,
-                            width: 41,
+                            width: 75,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  '${data['total fat'].toStringAsFixed(2)} g',
+                                  '${data['total fat']} g',
                                 ),
                                 const Icon(Icons.keyboard_arrow_down)
                               ],
@@ -260,8 +297,7 @@ class _productPageState extends State<productPage> {
                                 Ionicons.water_outline,
                                 color: Colors.black,
                               ),
-                              trailing: Text(
-                                  '${data['saturated fat'].toStringAsFixed(2)} g'),
+                              trailing: Text('${data['saturated fat']} g'),
                             ),
                             // ListTile(
                             //   title: Text('Trans Fat'),
@@ -284,7 +320,7 @@ class _productPageState extends State<productPage> {
                         // ),
                         rowInfo(
                           "Sodium",
-                          '${data['sodium'].toStringAsFixed(2)} g',
+                          '${data['sodium']} g',
                           Icon(
                             Ionicons.fish_outline,
                             size: 30,
@@ -299,12 +335,11 @@ class _productPageState extends State<productPage> {
                           ),
                           trailing: SizedBox(
                             height: 60,
-                            width: 41,
+                            width: 75,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Text(
-                                    '${data['total carbohydrate'].toStringAsFixed(2)} g'),
+                                Text('${data['total carbohydrate']} g'),
                                 const Icon(Icons.keyboard_arrow_down)
                               ],
                             ),
@@ -317,8 +352,7 @@ class _productPageState extends State<productPage> {
                                 Ionicons.accessibility,
                                 color: Colors.black,
                               ),
-                              trailing:
-                                  Text('${data['fiber'].toStringAsFixed(2)} g'),
+                              trailing: Text('${data['fiber']} g'),
                             ),
                             ListTile(
                               title: const Text('Total Sugars'),
@@ -326,14 +360,13 @@ class _productPageState extends State<productPage> {
                                 Ionicons.cube_outline,
                                 color: Colors.black,
                               ),
-                              trailing: Text(
-                                  '${data['total sugars'].toStringAsFixed(2)} g'),
+                              trailing: Text('${data['total sugars']} g'),
                             ),
                           ],
                         ),
                         rowInfo(
                           "Protein",
-                          '${data['protein'].toStringAsFixed(2)} g',
+                          '${data['protein']} g',
                           Icon(
                             Ionicons.fish_outline,
                             size: 30,
