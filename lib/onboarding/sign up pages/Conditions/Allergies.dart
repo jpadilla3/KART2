@@ -23,13 +23,19 @@ List<String> conditions = <String>[
 List<String> allergies = <String>[
   'None',
   'Milk',
-  'Eggs',
+  'Gluten',
+  'Lupin',
+  'Celery',
+  'Sulphur-dioxide-and-sulphites',
   'Fish',
-  'Crustacean shellfish ',
-  'Tree nuts',
+  'Crustaceans',
+  'Sesame-Seeds',
+  'Molluscs',
   'Peanuts',
-  'Wheat',
   'Soybeans',
+  'Nuts',
+  'Mustard',
+  'Eggs'
 ];
 
 class Conditions extends StatefulWidget {
@@ -52,11 +58,12 @@ class _ConditionsState extends State<Conditions> {
     const int tabsCount = 2;
 
     return DefaultTabController(
-      initialIndex: 1,
+      initialIndex: 0,
       length: tabsCount,
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
+          surfaceTintColor: Colors.white,
           title: const Text(
             'Select all that Applies to you:',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -131,11 +138,13 @@ class _ConditionsState extends State<Conditions> {
             ),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
+        bottomNavigationBar: ElevatedButton(
           key: const Key('conditions'),
           onPressed: () => Navigator.push(
               context, MaterialPageRoute(builder: (context) => navBar())),
-          child: const Icon(Icons.arrow_forward),
+          child: const Text('Save and Continue'),
+          style: ButtonStyle(
+              minimumSize: MaterialStateProperty.all<Size>(const Size(0, 55))),
         ),
       ),
     );

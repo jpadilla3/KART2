@@ -162,7 +162,9 @@ class _HomePageState extends State<HomePage> {
                     (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
                   if (streamSnapshot.hasData) {
                     if (streamSnapshot.data!.size > 0) {
-                      return ListView.builder(
+                      return ListView.separated(
+                        separatorBuilder: (BuildContext context, int index) =>
+                            Divider(height: 3),
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: streamSnapshot.data!.docs.length,

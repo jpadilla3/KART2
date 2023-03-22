@@ -71,7 +71,9 @@ class _FavPageState extends State<FavPage> {
                       (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
                     if (streamSnapshot.hasData) {
                       if (streamSnapshot.data!.size > 0) {
-                        return ListView.builder(
+                        return ListView.separated(
+                          separatorBuilder: (BuildContext context, int index) =>
+                              Divider(height: 3),
                           physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           itemCount: streamSnapshot.data!.docs.length,
@@ -117,7 +119,14 @@ class _FavPageState extends State<FavPage> {
                         return Column(
                           children: [
                             const SizedBox(
-                              height: 250,
+                              height: 160,
+                            ),
+                            const Icon(
+                              Icons.favorite_border_outlined,
+                              size: 130,
+                            ),
+                            const SizedBox(
+                              height: 15,
                             ),
                             Text(
                               'Favorites will appear here',

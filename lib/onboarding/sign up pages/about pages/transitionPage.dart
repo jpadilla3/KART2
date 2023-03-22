@@ -21,7 +21,7 @@ class _aboutPagesState extends State<aboutPages> {
   PageController _controller = PageController();
 
   bool onLastPage = false;
-  bool onFirstPage = false;
+  bool onFirstPage = true;
 
   @override
   Widget build(BuildContext context) {
@@ -52,13 +52,13 @@ class _aboutPagesState extends State<aboutPages> {
                     ?
                     //skip
                     GestureDetector(
-                        onTap: () {
-                          _controller.jumpToPage(2);
-                        },
                         child: Text(
                           "skip",
                           style: GoogleFonts.bebasNeue(fontSize: 25),
                         ),
+                        onTap: () {
+                          _controller.jumpToPage(3);
+                        },
                       )
                     : GestureDetector(
                         onTap: () {
