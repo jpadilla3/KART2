@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:kart2/models/firebase_commands.dart';
+import 'package:kart2/main%20pages/search_page.dart';
 
 class productPage extends StatefulWidget {
   String barcode;
@@ -102,6 +103,7 @@ class _productPageState extends State<productPage> {
         .collection('scanned');
 
     return Scaffold(
+      //new Builder(builder: (BuildContext context) {}),
       body: SingleChildScrollView(
           child: Column(children: [
         const SizedBox(
@@ -154,19 +156,17 @@ class _productPageState extends State<productPage> {
                   future: _scanned.doc(widget.barcode).get(),
                   builder: (BuildContext context,
                       AsyncSnapshot<DocumentSnapshot> snapshot) {
-                    if (snapshot.hasError) {
-                      return Text('Something went wrong');
-                    }
-
-                    if (snapshot.hasData && !snapshot.data!.exists) {
-                      return Text("Document does not exist");
-                    }
                     if (snapshot.connectionState == ConnectionState.done) {
                       Map<String, dynamic> data =
                           snapshot.data!.data() as Map<String, dynamic>;
-                      return Text('${data['barcode']}');
+                      return Text('${data['name']}');
+                    } else if (snapshot.hasError) {
+                      return const Text('Something went wrong');
+                    } else if (snapshot.hasData && !snapshot.data!.exists) {
+                      return const Text("Document does not exist");
+                    } else {
+                      return const CircularProgressIndicator();
                     }
-                    return Text('');
                   },
                 )),
               ),
@@ -186,11 +186,25 @@ class _productPageState extends State<productPage> {
               height: 60,
               width: 345,
               color: Colors.limeAccent,
-              child: const Center(
-                  child: Text(
-                "Score: ",
-                textAlign: TextAlign.center,
-              )),
+              child: SizedBox(
+                  child: Center(
+                      child: FutureBuilder<DocumentSnapshot>(
+                future: _scanned.doc(widget.barcode).get(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<DocumentSnapshot> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    Map<String, dynamic> data =
+                        snapshot.data!.data() as Map<String, dynamic>;
+                    return Text('Score: ${data['score']}');
+                  } else if (snapshot.hasError) {
+                    return const Text('Something went wrong');
+                  } else if (snapshot.hasData && !snapshot.data!.exists) {
+                    return const Text("Document does not exist");
+                  } else {
+                    return const CircularProgressIndicator();
+                  }
+                },
+              ))),
             )
           ],
         ),
@@ -201,121 +215,137 @@ class _productPageState extends State<productPage> {
           color: Colors.white,
           child: SizedBox(
               width: 380,
-              child: Column(
-                children: [
-                  rowInfo(
-                    "Calories",
-                    "230cal",
-                    Icon(
-                      Ionicons.flame_outline,
-                      size: 30,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  ExpansionTile(
-                    title: const Text("Total Fat"),
-                    leading: const Icon(
-                      Icons.cookie_outlined,
-                      size: 30,
-                    ),
-                    trailing: SizedBox(
-                      height: 60,
-                      width: 41,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: const [
-                          Text(
-                            "8g",
+              child: FutureBuilder<DocumentSnapshot>(
+                future: _scanned.doc(widget.barcode).get(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<DocumentSnapshot> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    Map<String, dynamic> data =
+                        snapshot.data!.data() as Map<String, dynamic>;
+                    return Column(
+                      children: [
+                        rowInfo(
+                          "Calories",
+                          '${data['calories']}',
+                          Icon(
+                            Ionicons.flame_outline,
+                            size: 30,
+                            color: Colors.grey[600],
                           ),
-                          Icon(Icons.keyboard_arrow_down)
-                        ],
-                      ),
-                    ),
-                    childrenPadding: const EdgeInsets.only(left: 60),
-                    children: const [
-                      ListTile(
-                        title: Text('Saturated Fat'),
-                        leading: Icon(
-                          Ionicons.water_outline,
-                          color: Colors.black,
                         ),
-                        trailing: Text("1g"),
-                      ),
-                      ListTile(
-                        title: Text('Trans Fat'),
-                        leading: Icon(
-                          Ionicons.cube_outline,
-                          color: Colors.black,
+                        ExpansionTile(
+                          title: const Text("Total Fat"),
+                          leading: const Icon(
+                            Icons.cookie_outlined,
+                            size: 30,
+                          ),
+                          trailing: SizedBox(
+                            height: 60,
+                            width: 41,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  '${data['total fat']}g',
+                                ),
+                                const Icon(Icons.keyboard_arrow_down)
+                              ],
+                            ),
+                          ),
+                          childrenPadding: const EdgeInsets.only(left: 60),
+                          children: [
+                            ListTile(
+                              title: const Text('Saturated Fat'),
+                              leading: const Icon(
+                                Ionicons.water_outline,
+                                color: Colors.black,
+                              ),
+                              trailing: Text('${data['saturated fat']}g'),
+                            ),
+                            // ListTile(
+                            //   title: Text('Trans Fat'),
+                            //   leading: Icon(
+                            //     Ionicons.cube_outline,
+                            //     color: Colors.black,
+                            //   ),
+                            //   trailing: Text("0g"),
+                            // ),
+                          ],
                         ),
-                        trailing: Text("0g"),
-                      ),
-                    ],
-                  ),
-                  rowInfo(
-                    "Cholesterol",
-                    "160mg",
-                    Icon(
-                      Ionicons.cube_outline,
-                      size: 30,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  rowInfo(
-                    "Sodium",
-                    "3g",
-                    Icon(
-                      Ionicons.fish_outline,
-                      size: 30,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  ExpansionTile(
-                    title: const Text("Total Carbohydrate"),
-                    leading: const Icon(
-                      Ionicons.water_outline,
-                      size: 30,
-                    ),
-                    trailing: SizedBox(
-                      height: 60,
-                      width: 41,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: const [
-                          Text("3g"),
-                          Icon(Icons.keyboard_arrow_down)
-                        ],
-                      ),
-                    ),
-                    childrenPadding: const EdgeInsets.only(left: 60),
-                    children: const [
-                      ListTile(
-                        title: Text('Dietary Fiber'),
-                        leading: Icon(
-                          Ionicons.accessibility,
-                          color: Colors.black,
+                        // rowInfo(
+                        //   "Cholesterol",
+                        //   "160mg",
+                        //   Icon(
+                        //     Ionicons.cube_outline,
+                        //     size: 30,
+                        //     color: Colors.grey[600],
+                        //   ),
+                        // ),
+                        rowInfo(
+                          "Sodium",
+                          '${data['sodium'].toStringAsFixed(2)}',
+                          Icon(
+                            Ionicons.fish_outline,
+                            size: 30,
+                            color: Colors.grey[600],
+                          ),
                         ),
-                        trailing: Text("4g"),
-                      ),
-                      ListTile(
-                        title: Text('Total Sugars'),
-                        leading: Icon(
-                          Ionicons.cube_outline,
-                          color: Colors.black,
+                        ExpansionTile(
+                          title: const Text("Total Carbohydrate"),
+                          leading: const Icon(
+                            Ionicons.water_outline,
+                            size: 30,
+                          ),
+                          trailing: SizedBox(
+                            height: 60,
+                            width: 41,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text('${data['total carbohydrate']}g'),
+                                const Icon(Icons.keyboard_arrow_down)
+                              ],
+                            ),
+                          ),
+                          childrenPadding: const EdgeInsets.only(left: 60),
+                          children: [
+                            ListTile(
+                              title: const Text('Dietary Fiber'),
+                              leading: const Icon(
+                                Ionicons.accessibility,
+                                color: Colors.black,
+                              ),
+                              trailing: Text('${data['fiber']}g'),
+                            ),
+                            ListTile(
+                              title: const Text('Total Sugars'),
+                              leading: const Icon(
+                                Ionicons.cube_outline,
+                                color: Colors.black,
+                              ),
+                              trailing: Text('${data['total sugars']}g'),
+                            ),
+                          ],
                         ),
-                        trailing: Text("12g"),
-                      ),
-                    ],
-                  ),
-                  rowInfo(
-                    "Protein",
-                    "3g",
-                    Icon(
-                      Ionicons.fish_outline,
-                      size: 30,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
+                        rowInfo(
+                          "Protein",
+                          '${data['protein']}g',
+                          Icon(
+                            Ionicons.fish_outline,
+                            size: 30,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    );
+                  } else if (snapshot.hasError) {
+                    return const Text('Something went wrong');
+                  } else if (snapshot.hasData && !snapshot.data!.exists) {
+                    return const Text("Document does not exist");
+                  } else {
+                    return const CircularProgressIndicator();
+                  }
+                },
               )),
         ),
         const SizedBox(
@@ -436,7 +466,7 @@ class _productPageState extends State<productPage> {
             ),
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 70,
         )
       ])),
