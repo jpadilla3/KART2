@@ -410,9 +410,9 @@ class NutriscoreData {
   int? energy;
   int? energyPoints;
   int? energyValue;
-  int? fiber;
+  double? fiber;
   int? fiberPoints;
-  int? fiberValue;
+  double? fiberValue;
   int? fruitsVegetablesNutsColzaWalnutOliveOils;
   int? fruitsVegetablesNutsColzaWalnutOliveOilsPoints;
   int? fruitsVegetablesNutsColzaWalnutOliveOilsValue;
@@ -433,7 +433,7 @@ class NutriscoreData {
   double? saturatedFatRatioValue;
   double? saturatedFatValue;
   int? score;
-  int? sodium;
+  double? sodium;
   int? sodiumPoints;
   int? sodiumValue;
   double? sugars;
