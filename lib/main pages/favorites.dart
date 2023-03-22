@@ -81,6 +81,14 @@ class _FavPageState extends State<FavPage> {
                             final DocumentSnapshot documentSnapshot =
                                 streamSnapshot.data!.docs[index];
 
+                            int sc = documentSnapshot['score'];
+                            late bool sc1;
+                            if (sc > 0 && sc <= 69) {
+                              sc1 = true;
+                            } else if (sc > 69) {
+                              sc1 = false;
+                            }
+
                             return Slidable(
                               endActionPane:
                                   ActionPane(motion: DrawerMotion(), children: [
@@ -106,8 +114,46 @@ class _FavPageState extends State<FavPage> {
                                 },
                                 leading: Image.network(
                                     "https://www.eslc.org/wp-content/uploads/2019/08/placeholder-grey-square-600x600.jpg"),
-                                title: Text(documentSnapshot['barcode']),
-                                subtitle: Text("Grade: Good"),
+                                title: Text(documentSnapshot['name']),
+                                subtitle: sc1
+                                    ? Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                color: Colors.red),
+                                            height: 8,
+                                            width: 8,
+                                          ),
+                                          const SizedBox(
+                                            width: 6,
+                                          ),
+                                          Text(
+                                              'Score: ${documentSnapshot['score']}'),
+                                        ],
+                                      )
+                                    : Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                color: Colors.green),
+                                            height: 5,
+                                            width: 5,
+                                          ),
+                                          const SizedBox(
+                                            width: 6,
+                                          ),
+                                          Text(
+                                              'Score: ${documentSnapshot['score']}'),
+                                        ],
+                                      ),
                                 trailing: SizedBox(
                                   child: Icon(Icons.arrow_forward_ios),
                                 ),
