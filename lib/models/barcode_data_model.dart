@@ -62,7 +62,7 @@ class Product {
   NutrientLevels? nutrientLevels;
   Nutriments? nutriments;
   NutriscoreData? nutriscoreData;
-  int? nutriscoreScore;
+  double? nutriscoreScore;
   String? nutritionGrades;
   String? productName;
   String? traces;
@@ -84,7 +84,7 @@ class Product {
         nutriscoreData: json["nutriscore_data"] == null
             ? null
             : NutriscoreData.fromJson(json["nutriscore_data"]),
-        nutriscoreScore: json["nutriscore_score"],
+        nutriscoreScore: json["nutriscore_score"]?.toDouble(),
         nutritionGrades: json["nutrition_grades"],
         productName: json["product_name"],
         traces: json["traces"],
@@ -231,26 +231,26 @@ class Nutriments {
   double? carbohydrates100G;
   String? carbohydratesUnit;
   double? carbohydratesValue;
-  int? energy;
-  int? energyKcal;
-  int? energyKcal100G;
+  double? energy;
+  double? energyKcal;
+  double? energyKcal100G;
   String? energyKcalUnit;
-  int? energyKcalValue;
+  double? energyKcalValue;
   double? energyKcalValueComputed;
-  int? energy100G;
+  double? energy100G;
   String? energyUnit;
-  int? energyValue;
+  double? energyValue;
   double? fat;
   double? fat100G;
   String? fatUnit;
   double? fatValue;
-  int? fruitsVegetablesNutsEstimateFromIngredients100G;
-  int? fruitsVegetablesNutsEstimateFromIngredientsServing;
-  int? novaGroup;
-  int? novaGroup100G;
-  int? novaGroupServing;
-  int? nutritionScoreFr;
-  int? nutritionScoreFr100G;
+  double? fruitsVegetablesNutsEstimateFromIngredients100G;
+  double? fruitsVegetablesNutsEstimateFromIngredientsServing;
+  double? novaGroup;
+  double? novaGroup100G;
+  double? novaGroupServing;
+  double? nutritionScoreFr;
+  double? nutritionScoreFr100G;
   double? proteins;
   double? proteins100G;
   String? proteinsUnit;
@@ -277,28 +277,30 @@ class Nutriments {
         carbohydrates100G: json["carbohydrates_100g"]?.toDouble(),
         carbohydratesUnit: json["carbohydrates_unit"],
         carbohydratesValue: json["carbohydrates_value"]?.toDouble(),
-        energy: json["energy"],
-        energyKcal: json["energy-kcal"],
-        energyKcal100G: json["energy-kcal_100g"],
+        energy: json["energy"]?.toDouble(),
+        energyKcal: json["energy-kcal"]?.toDouble(),
+        energyKcal100G: json["energy-kcal_100g"]?.toDouble(),
         energyKcalUnit: json["energy-kcal_unit"],
-        energyKcalValue: json["energy-kcal_value"],
+        energyKcalValue: json["energy-kcal_value"]?.toDouble(),
         energyKcalValueComputed: json["energy-kcal_value_computed"]?.toDouble(),
-        energy100G: json["energy_100g"],
+        energy100G: json["energy_100g"]?.toDouble(),
         energyUnit: json["energy_unit"],
-        energyValue: json["energy_value"],
+        energyValue: json["energy_value"]?.toDouble(),
         fat: json["fat"]?.toDouble(),
         fat100G: json["fat_100g"]?.toDouble(),
         fatUnit: json["fat_unit"],
         fatValue: json["fat_value"]?.toDouble(),
         fruitsVegetablesNutsEstimateFromIngredients100G:
-            json["fruits-vegetables-nuts-estimate-from-ingredients_100g"],
+            json["fruits-vegetables-nuts-estimate-from-ingredients_100g"]
+                ?.toDouble(),
         fruitsVegetablesNutsEstimateFromIngredientsServing:
-            json["fruits-vegetables-nuts-estimate-from-ingredients_serving"],
-        novaGroup: json["nova-group"],
-        novaGroup100G: json["nova-group_100g"],
-        novaGroupServing: json["nova-group_serving"],
-        nutritionScoreFr: json["nutrition-score-fr"],
-        nutritionScoreFr100G: json["nutrition-score-fr_100g"],
+            json["fruits-vegetables-nuts-estimate-from-ingredients_serving"]
+                ?.toDouble(),
+        novaGroup: json["nova-group"]?.toDouble(),
+        novaGroup100G: json["nova-group_100g"]?.toDouble(),
+        novaGroupServing: json["nova-group_serving"]?.toDouble(),
+        nutritionScoreFr: json["nutrition-score-fr"]?.toDouble(),
+        nutritionScoreFr100G: json["nutrition-score-fr_100g"]?.toDouble(),
         proteins: json["proteins"]?.toDouble(),
         proteins100G: json["proteins_100g"]?.toDouble(),
         proteinsUnit: json["proteins_unit"],
@@ -407,74 +409,76 @@ class NutriscoreData {
     this.sugarsValue,
   });
 
-  int? energy;
-  int? energyPoints;
-  int? energyValue;
+  double? energy;
+  double? energyPoints;
+  double? energyValue;
   double? fiber;
-  int? fiberPoints;
+  double? fiberPoints;
   double? fiberValue;
-  int? fruitsVegetablesNutsColzaWalnutOliveOils;
-  int? fruitsVegetablesNutsColzaWalnutOliveOilsPoints;
-  int? fruitsVegetablesNutsColzaWalnutOliveOilsValue;
+  double? fruitsVegetablesNutsColzaWalnutOliveOils;
+  double? fruitsVegetablesNutsColzaWalnutOliveOilsPoints;
+  double? fruitsVegetablesNutsColzaWalnutOliveOilsValue;
   String? grade;
-  int? isBeverage;
-  int? isCheese;
-  int? isFat;
-  int? isWater;
-  int? negativePoints;
-  int? positivePoints;
+  double? isBeverage;
+  double? isCheese;
+  double? isFat;
+  double? isWater;
+  double? negativePoints;
+  double? positivePoints;
   double? proteins;
-  int? proteinsPoints;
+  double? proteinsPoints;
   double? proteinsValue;
   double? saturatedFat;
-  int? saturatedFatPoints;
+  double? saturatedFatPoints;
   double? saturatedFatRatio;
-  int? saturatedFatRatioPoints;
+  double? saturatedFatRatioPoints;
   double? saturatedFatRatioValue;
   double? saturatedFatValue;
-  int? score;
+  double? score;
   double? sodium;
-  int? sodiumPoints;
-  int? sodiumValue;
+  double? sodiumPoints;
+  double? sodiumValue;
   double? sugars;
-  int? sugarsPoints;
+  double? sugarsPoints;
   double? sugarsValue;
 
   factory NutriscoreData.fromJson(Map<String, dynamic> json) => NutriscoreData(
-        energy: json["energy"],
-        energyPoints: json["energy_points"],
-        energyValue: json["energy_value"],
-        fiber: json["fiber"],
-        fiberPoints: json["fiber_points"],
-        fiberValue: json["fiber_value"],
+        energy: json["energy"]?.toDouble(),
+        energyPoints: json["energy_points"]?.toDouble(),
+        energyValue: json["energy_value"]?.toDouble(),
+        fiber: json["fiber"]?.toDouble(),
+        fiberPoints: json["fiber_points"]?.toDouble(),
+        fiberValue: json["fiber_value"]?.toDouble(),
         fruitsVegetablesNutsColzaWalnutOliveOils:
-            json["fruits_vegetables_nuts_colza_walnut_olive_oils"],
+            json["fruits_vegetables_nuts_colza_walnut_olive_oils"]?.toDouble(),
         fruitsVegetablesNutsColzaWalnutOliveOilsPoints:
-            json["fruits_vegetables_nuts_colza_walnut_olive_oils_points"],
+            json["fruits_vegetables_nuts_colza_walnut_olive_oils_points"]
+                ?.toDouble(),
         fruitsVegetablesNutsColzaWalnutOliveOilsValue:
-            json["fruits_vegetables_nuts_colza_walnut_olive_oils_value"],
+            json["fruits_vegetables_nuts_colza_walnut_olive_oils_value"]
+                ?.toDouble(),
         grade: json["grade"],
-        isBeverage: json["is_beverage"],
-        isCheese: json["is_cheese"],
-        isFat: json["is_fat"],
-        isWater: json["is_water"],
-        negativePoints: json["negative_points"],
-        positivePoints: json["positive_points"],
+        isBeverage: json["is_beverage"]?.toDouble(),
+        isCheese: json["is_cheese"]?.toDouble(),
+        isFat: json["is_fat"]?.toDouble(),
+        isWater: json["is_water"]?.toDouble(),
+        negativePoints: json["negative_points"]?.toDouble(),
+        positivePoints: json["positive_points"]?.toDouble(),
         proteins: json["proteins"]?.toDouble(),
-        proteinsPoints: json["proteins_points"],
+        proteinsPoints: json["proteins_points"]?.toDouble(),
         proteinsValue: json["proteins_value"]?.toDouble(),
         saturatedFat: json["saturated_fat"]?.toDouble(),
-        saturatedFatPoints: json["saturated_fat_points"],
+        saturatedFatPoints: json["saturated_fat_points"]?.toDouble(),
         saturatedFatRatio: json["saturated_fat_ratio"]?.toDouble(),
-        saturatedFatRatioPoints: json["saturated_fat_ratio_points"],
+        saturatedFatRatioPoints: json["saturated_fat_ratio_points"]?.toDouble(),
         saturatedFatRatioValue: json["saturated_fat_ratio_value"]?.toDouble(),
-        saturatedFatValue: json["saturated_fat_value"]?.toDouble(),
-        score: json["score"],
-        sodium: json["sodium"],
-        sodiumPoints: json["sodium_points"],
-        sodiumValue: json["sodium_value"],
+        saturatedFatValue: json["saturated_fat_value"]?.toDouble()?.toDouble(),
+        score: json["score"]?.toDouble(),
+        sodium: json["sodium"]?.toDouble(),
+        sodiumPoints: json["sodium_points"]?.toDouble(),
+        sodiumValue: json["sodium_value"]?.toDouble(),
         sugars: json["sugars"]?.toDouble(),
-        sugarsPoints: json["sugars_points"],
+        sugarsPoints: json["sugars_points"]?.toDouble(),
         sugarsValue: json["sugars_value"]?.toDouble(),
       );
 
