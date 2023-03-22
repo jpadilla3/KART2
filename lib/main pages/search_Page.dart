@@ -139,13 +139,12 @@ class _SearchPageState extends State<SearchPage> {
                         onPressed: () async {
                           await scanBarcodeNormal();
                           await fetchBarcodeData();
-                          Timer(Duration(seconds: 1), () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        productPage(_scanBarcode)));
-                          });
+
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      productPage(_scanBarcode)));
                         },
                         icon: const Icon(
                           Icons.photo_camera_rounded,

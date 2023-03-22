@@ -114,12 +114,11 @@ class _HomePageState extends State<HomePage> {
         onPressed: () async {
           await scanBarcodeNormal();
           await fetchBarcodeData();
-          Timer(Duration(seconds: 1), () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => productPage(_scanBarcode)));
-          });
+
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => productPage(_scanBarcode)));
         },
         backgroundColor: Colors.indigo[400],
         child: const Icon(
@@ -181,13 +180,6 @@ class _HomePageState extends State<HomePage> {
                         itemBuilder: (context, index) {
                           final DocumentSnapshot documentSnapshot =
                               streamSnapshot.data!.docs[index];
-                          int sc = documentSnapshot['score'];
-                          late bool sc1;
-                          if (sc > 0 && sc <= 69) {
-                            sc1 = true;
-                          } else if (sc > 69) {
-                            sc1 = false;
-                          }
                           return Slidable(
                             endActionPane:
                                 ActionPane(motion: DrawerMotion(), children: [
@@ -227,49 +219,15 @@ class _HomePageState extends State<HomePage> {
                               leading: Image.network(
                                   "https://www.eslc.org/wp-content/uploads/2019/08/placeholder-grey-square-600x600.jpg"),
                               title: Text(documentSnapshot['name']),
-                              subtitle: sc1
-                                  ? Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                              color: Colors.red),
-                                          height: 8,
-                                          width: 8,
-                                        ),
-                                        const SizedBox(
-                                          width: 6,
-                                        ),
-                                        Text(
-                                          'Score: ${documentSnapshot['score']}',
-                                          textAlign: TextAlign.start,
-                                        ),
-                                      ],
-                                    )
-                                  : Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                              color: Colors.green),
-                                          height: 5,
-                                          width: 5,
-                                        ),
-                                        const SizedBox(
-                                          width: 6,
-                                        ),
-                                        Text(
-                                          'Score: ${documentSnapshot['score']}',
-                                          textAlign: TextAlign.start,
-                                        ),
-                                      ],
-                                    ),
+                              subtitle: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Score: ${documentSnapshot['score']}',
+                                    textAlign: TextAlign.start,
+                                  ),
+                                ],
+                              ),
                               trailing: SizedBox(
                                 child: const Icon(Icons.arrow_forward_ios),
                               ),
@@ -291,7 +249,7 @@ class _HomePageState extends State<HomePage> {
                       );
                     }
                   } else {
-                    return const Text('loading...');
+                    return const CircularProgressIndicator();
                   }
                 },
               ),
