@@ -283,7 +283,7 @@ class _productPageState extends State<productPage> {
                         // ),
                         rowInfo(
                           "Sodium",
-                          '${data['sodium'].toStringAsFixed(2)}',
+                          '${data['sodium']}',
                           Icon(
                             Ionicons.fish_outline,
                             size: 30,

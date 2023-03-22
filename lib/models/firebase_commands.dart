@@ -43,16 +43,16 @@ class FirebaseCommands {
         .collection('scanned') // go to scanned
         .doc(barcode)
         .update({
-      'name': barcodeData.product!.productName,
-      'score': barcodeData.product!.nutriscoreScore,
-      'calories': barcodeData.product!.nutriments!.energy,
-      'total fat': barcodeData.product!.nutriments!.fat,
-      'saturated fat': barcodeData.product!.nutriments!.saturatedFat,
-      'sodium': barcodeData.product!.nutriments!.sodium,
-      'total carbohydrate': barcodeData.product!.nutriments!.carbohydrates,
-      'total sugars': barcodeData.product!.nutriments!.sugars,
-      'protein': barcodeData.product!.nutriments!.proteins,
-      'fiber': barcodeData.product!.nutriscoreData!.fiber,
+      'name': barcodeData.product?.productName,
+      'score': barcodeData.product?.nutriscoreScore,
+      'calories': barcodeData.product?.nutriments?.energy,
+      'total fat': barcodeData.product?.nutriments?.fat,
+      'saturated fat': barcodeData.product?.nutriments?.saturatedFat,
+      'sodium': barcodeData.product?.nutriments?.sodium,
+      'total carbohydrate': barcodeData.product?.nutriments?.carbohydrates,
+      'total sugars': barcodeData.product?.nutriments?.sugars,
+      'protein': barcodeData.product?.nutriments?.proteins,
+      'fiber': barcodeData.product?.nutriscoreData?.fiber,
     });
   }
 
