@@ -44,17 +44,16 @@ class FirebaseCommands {
         .doc(barcode)
         .update({
       'name': barcodeData.product?.productName,
-      'score': barcodeData.product?.nutriscoreScore!.toInt() ?? 0,
+      'score': barcodeData.product?.nutriscoreScore! ?? 0,
       'calories': barcodeData.product?.nutriments?.energy ?? 0,
-      'total fat': barcodeData.product?.nutriments?.fat!.toInt() ?? 0,
-      'saturated fat':
-          barcodeData.product?.nutriments?.saturatedFat!.toInt() ?? 0,
-      'sodium': barcodeData.product?.nutriments?.sodium!.toInt() ?? 0,
+      'total fat': barcodeData.product?.nutriments?.fat! ?? 0,
+      'saturated fat': barcodeData.product?.nutriments?.saturatedFat! ?? 0,
+      'sodium': barcodeData.product?.nutriments?.sodium! ?? 0,
       'total carbohydrate':
-          barcodeData.product?.nutriments?.carbohydrates!.toInt() ?? 0,
-      'total sugars': barcodeData.product?.nutriments?.sugars!.toInt() ?? 0,
-      'protein': barcodeData.product?.nutriments?.proteins!.toInt() ?? 0,
-      'fiber': barcodeData.product?.nutriscoreData?.fiber!.toInt() ?? 0,
+          barcodeData.product?.nutriments?.carbohydrates! ?? 0,
+      'total sugars': barcodeData.product?.nutriments?.sugars! ?? 0,
+      'protein': barcodeData.product?.nutriments?.proteins! ?? 0,
+      'fiber': barcodeData.product?.nutriscoreData?.fiber! ?? 0,
     });
   }
 
@@ -67,7 +66,7 @@ class FirebaseCommands {
         .set({}); //input searched barcodes
   }
 
-  Future favoriteBarcode(String barcode, String name, int score) async {
+  Future favoriteBarcode(String barcode, String name, double score) async {
     return FirebaseFirestore.instance
         .collection('users') //go to general collection
         .doc(FirebaseAuth.instance.currentUser!.email
