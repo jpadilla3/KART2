@@ -246,7 +246,7 @@ class _productPageState extends State<productPage> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  '${data['total fat'].toStringAsFixed(2)} g',
+                                  '${data['total fat']} g',
                                 ),
                                 const Icon(Icons.keyboard_arrow_down)
                               ],
@@ -260,8 +260,7 @@ class _productPageState extends State<productPage> {
                                 Ionicons.water_outline,
                                 color: Colors.black,
                               ),
-                              trailing: Text(
-                                  '${data['saturated fat'].toStringAsFixed(2)} g'),
+                              trailing: Text('${data['saturated fat']} g'),
                             ),
                             // ListTile(
                             //   title: Text('Trans Fat'),
@@ -284,7 +283,7 @@ class _productPageState extends State<productPage> {
                         // ),
                         rowInfo(
                           "Sodium",
-                          '${data['sodium'].toStringAsFixed(2)} g',
+                          '${data['sodium']} g',
                           Icon(
                             Ionicons.fish_outline,
                             size: 30,
@@ -303,8 +302,7 @@ class _productPageState extends State<productPage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Text(
-                                    '${data['total carbohydrate'].toStringAsFixed(2)} g'),
+                                Text('${data['total carbohydrate']} g'),
                                 const Icon(Icons.keyboard_arrow_down)
                               ],
                             ),
@@ -317,8 +315,7 @@ class _productPageState extends State<productPage> {
                                 Ionicons.accessibility,
                                 color: Colors.black,
                               ),
-                              trailing:
-                                  Text('${data['fiber'].toStringAsFixed(2)} g'),
+                              trailing: Text('${data['fiber']} g'),
                             ),
                             ListTile(
                               title: const Text('Total Sugars'),
@@ -326,14 +323,13 @@ class _productPageState extends State<productPage> {
                                 Ionicons.cube_outline,
                                 color: Colors.black,
                               ),
-                              trailing: Text(
-                                  '${data['total sugars'].toStringAsFixed(2)} g'),
+                              trailing: Text('${data['total sugars']} g'),
                             ),
                           ],
                         ),
                         rowInfo(
                           "Protein",
-                          '${data['protein'].toStringAsFixed(2)} g',
+                          '${data['protein']} g',
                           Icon(
                             Ionicons.fish_outline,
                             size: 30,
