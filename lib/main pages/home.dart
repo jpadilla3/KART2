@@ -7,18 +7,15 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:google_fonts/google_fonts.dart';
-import 'package:kart2/main%20pages/List.dart';
 import 'package:kart2/main%20pages/search_page.dart';
 import 'package:kart2/main%20pages/productPage.dart';
 import 'package:kart2/main%20pages/profile_page.dart';
 import 'package:kart2/main%20pages/recommendations_Page.dart';
-import 'package:kart2/main%20pages/search_page.dart';
 import 'package:kart2/main%20pages/info.dart';
 import 'package:kart2/main%20pages/favorites.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kart2/models/firebase_commands.dart';
 import 'package:kart2/models/flutter_barcode_scanner.dart';
-import 'package:kart2/onboarding/sign%20up%20pages/about%20pages/intro_screen2.dart';
 
 import '../models/barcode_data_model.dart';
 
@@ -80,6 +77,7 @@ class _HomePageState extends State<HomePage> {
       //add barcode to firebase
       //passes current user email and barcode
       FirebaseCommands().addBarcode(barcodeScanRes);
+      FirebaseCommands().updateBarcode(barcodeScanRes);
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
     }
@@ -93,21 +91,6 @@ class _HomePageState extends State<HomePage> {
       _scanBarcode = barcodeScanRes;
     });
   }
-
-  /*
-  Future<BarcodeData> fetchBarcodeData() async {
-    final String url =
-        'https://us.openfoodfacts.org/api/v2/product/$_scanBarcode?fields=allergens,brands,categories,ingredients,nutrient_levels,nutriments,nutriscore_data,product_name,nutriscore_score,nutrition_grades,product_name,traces.json';
-    final response = await http.get(Uri.parse(url));
-    final barcodeData = barcodeDataFromJson(response.body);
-    if (response.statusCode == 200) {
-      FirebaseCommands().updateBarcode(_scanBarcode, barcodeData);
-      return barcodeData;
-    } else {
-      throw Exception('Failed to fetch data');
-    }
-  }
-  */
 
   @override
   Widget build(BuildContext context) {
@@ -169,41 +152,47 @@ class _HomePageState extends State<HomePage> {
                     if (streamSnapshot.data!.size > 0) {
                       return ListView.separated(
                         separatorBuilder: (BuildContext context, int index) =>
-                            Divider(height: 3),
+                            const Divider(
+                          height: 3,
+                          indent: 12,
+                          endIndent: 12,
+                        ),
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: streamSnapshot.data!.docs.length,
                         itemBuilder: (context, index) {
                           final DocumentSnapshot documentSnapshot =
                               streamSnapshot.data!.docs[index];
+
                           return Slidable(
-                            endActionPane:
-                                ActionPane(motion: DrawerMotion(), children: [
-                              SlidableAction(
-                                onPressed: (context) async {
-                                  snackMessage(
-                                      false, documentSnapshot['barcode']);
-                                  FirebaseCommands().favoriteBarcode(
-                                      documentSnapshot['barcode'],
-                                      documentSnapshot['name'],
-                                      documentSnapshot['score']);
-                                },
-                                backgroundColor: Colors.red,
-                                icon: Icons.favorite,
-                              ),
-                              SlidableAction(
-                                onPressed: (context) {
-                                  snackMessage(
-                                      true, documentSnapshot['barcode']);
-                                  FirebaseCommands().destroyBarcode(
-                                      documentSnapshot['barcode']);
-                                  FirebaseCommands().removeFavorite(
-                                      documentSnapshot['barcode']);
-                                },
-                                backgroundColor: Colors.indigo,
-                                icon: Icons.delete,
-                              ),
-                            ]),
+                            endActionPane: ActionPane(
+                                motion: const DrawerMotion(),
+                                children: [
+                                  SlidableAction(
+                                    onPressed: (context) async {
+                                      snackMessage(
+                                          false, documentSnapshot['barcode']);
+                                      FirebaseCommands().favoriteBarcode(
+                                          documentSnapshot['barcode'],
+                                          documentSnapshot['name'],
+                                          documentSnapshot['score']);
+                                    },
+                                    backgroundColor: Colors.red,
+                                    icon: Icons.favorite,
+                                  ),
+                                  SlidableAction(
+                                    onPressed: (context) {
+                                      snackMessage(
+                                          true, documentSnapshot['barcode']);
+                                      FirebaseCommands().destroyBarcode(
+                                          documentSnapshot['barcode']);
+                                      FirebaseCommands().removeFavorite(
+                                          documentSnapshot['barcode']);
+                                    },
+                                    backgroundColor: Colors.indigo,
+                                    icon: Icons.delete,
+                                  ),
+                                ]),
                             child: ListTile(
                               onTap: () {
                                 Navigator.push(
@@ -224,8 +213,8 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 ],
                               ),
-                              trailing: SizedBox(
-                                child: const Icon(Icons.arrow_forward_ios),
+                              trailing: const SizedBox(
+                                child: Icon(Icons.arrow_forward_ios),
                               ),
                             ),
                           );
