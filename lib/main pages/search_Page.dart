@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:kart2/main%20pages/home.dart';
+import 'package:kart2/main%20pages/nav_bar.dart';
 import 'package:kart2/main%20pages/productPage.dart';
 import 'package:kart2/models/barcode_data_model.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -28,7 +30,6 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
-    futureBarcodeData = fetchBarcodeData();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -56,22 +57,6 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   //fetchBarcodeData function gets the data with certian fields from barcode and parses it.
-  Future<BarcodeData> fetchBarcodeData() async {
-    final String url =
-        'https://us.openfoodfacts.org/api/v2/product/$_scanBarcode?fields=allergens,brands,categories,ingredients,nutrient_levels,nutriments,nutriscore_data,product_name,nutriscore_score,nutrition_grades,product_name,traces.json';
-    //Gets API data in JSON
-    final response = await http.get(Uri.parse(url));
-    print(response.body);
-    //Parses JSON data
-    final barcodeData = barcodeDataFromJson(response.body);
-    print(barcodeData.product?.productName);
-    if (response.statusCode == 200) {
-      FirebaseCommands().updateBarcode(_scanBarcode, barcodeData);
-      return barcodeData;
-    } else {
-      throw Exception('Failed to fetch data');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -138,6 +123,10 @@ class _SearchPageState extends State<SearchPage> {
                     child: IconButton(
                         onPressed: () async {
                           await scanBarcodeNormal();
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const navBar()));
                         },
                         icon: const Icon(
                           Icons.photo_camera_rounded,

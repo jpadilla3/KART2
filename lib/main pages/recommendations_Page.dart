@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kart2/main%20pages/info.dart';
+import 'package:kart2/main%20pages/productPage.dart';
 import 'package:kart2/models/flutter_barcode_scanner.dart';
 import 'package:kart2/main pages/search_Page.dart';
 
@@ -73,7 +75,13 @@ class _RecPageState extends State<RecommendationsPage> {
                     (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
                   if (streamSnapshot.hasData) {
                     if (streamSnapshot.data!.size > 0) {
-                      return ListView.builder(
+                      return ListView.separated(
+                        separatorBuilder: (BuildContext context, int index) =>
+                            const Divider(
+                          height: 3,
+                          indent: 12,
+                          endIndent: 12,
+                        ),
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: streamSnapshot.data!.docs.length,
@@ -81,37 +89,100 @@ class _RecPageState extends State<RecommendationsPage> {
                           final DocumentSnapshot documentSnapshot =
                               streamSnapshot.data!.docs[index];
 
-                          return Card(
-                            margin: const EdgeInsets.all(10),
-                            child: ListTile(
-                              title: Text(documentSnapshot['barcode']),
-                              trailing: SizedBox(
-                                width: 100,
-                                child: Row(
+                          return Slidable(
+                              endActionPane: ActionPane(
+                                  motion: const DrawerMotion(),
                                   children: [
-                                    IconButton(
-                                        onPressed: () {
-                                          snackMessage(true,
-                                              documentSnapshot['barcode']);
-                                          FirebaseCommands().destroyBarcode(
-                                              documentSnapshot['barcode']);
-                                          FirebaseCommands().removeFavorite(
-                                              documentSnapshot['barcode']);
+                                    SlidableAction(
+                                      onPressed: (context) async {
+                                        snackMessage(
+                                            false, documentSnapshot['barcode']);
+                                        FirebaseCommands().favoriteBarcode(
+                                            documentSnapshot['barcode'],
+                                            documentSnapshot['name'],
+                                            documentSnapshot['score']);
+                                      },
+                                      backgroundColor: Colors.red,
+                                      icon: Icons.favorite,
+                                    ),
+                                    SlidableAction(
+                                      onPressed: (context) {
+                                        snackMessage(
+                                            true, documentSnapshot['barcode']);
+                                        FirebaseCommands().destroyBarcode(
+                                            documentSnapshot['barcode']);
+                                        FirebaseCommands().removeFavorite(
+                                            documentSnapshot['barcode']);
+                                      },
+                                      backgroundColor: Colors.indigo,
+                                      icon: Icons.delete,
+                                    ),
+                                  ]),
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 20),
+                                child: Container(
+                                  height: 200,
+                                  width: 370,
+                                  child: Row(
+                                    children: [
+                                      //scanned item
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      productPage(
+                                                          documentSnapshot[
+                                                              'barcode'])));
                                         },
-                                        icon: const Icon(Icons.delete)),
-                                    IconButton(
-                                        onPressed: () {
-                                          snackMessage(false,
-                                              documentSnapshot['barcode']);
-                                          //FirebaseCommands().favoriteBarcode(
-                                          //documentSnapshot['barcode']);
-                                        },
-                                        icon: const Icon(Icons.favorite))
-                                  ],
+                                        child: Column(
+                                          children: [
+                                            Container(
+                                              height: 150,
+                                              width: 150,
+                                              alignment: Alignment.center,
+                                              color: Colors.indigo[400],
+                                              child: Text('Picture'),
+                                            ),
+                                            Container(
+                                              height: 50,
+                                              width: 150,
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                '${documentSnapshot['name']}',
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 70,
+                                        child:
+                                            Icon(Icons.change_circle_outlined),
+                                      ),
+                                      //recommended item
+                                      Column(
+                                        children: [
+                                          Container(
+                                              height: 150,
+                                              width: 150,
+                                              color: Colors.indigo[400],
+                                              alignment: Alignment.center,
+                                              child: Text('Picture')),
+                                          Container(
+                                            height: 50,
+                                            width: 150,
+                                            alignment: Alignment.center,
+                                            child: const Text('0001'),
+                                          )
+                                        ],
+                                      )
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ),
-                          );
+                              ));
                         },
                       );
                     } else {

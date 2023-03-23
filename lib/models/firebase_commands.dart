@@ -43,25 +43,17 @@ class FirebaseCommands {
     }
   }
 
-  Future updateBarcode(String barcode, BarcodeData barcodeData) async {
+  Future updateBarcode(String barcode) async {
     return FirebaseFirestore.instance
         .collection('users') //go to users
         .doc(FirebaseAuth.instance.currentUser!.email
             .toString()) // go to current user
         .collection('scanned') // go to scanned
         .doc(barcode)
-        .update({
-      'name': barcodeData.product?.productName,
-      'score': barcodeData.product?.nutriscoreScore! ?? 0,
-      'calories': barcodeData.product?.nutriments?.energy ?? 0,
-      'total fat': barcodeData.product?.nutriments?.fat! ?? 0,
-      'saturated fat': barcodeData.product?.nutriments?.saturatedFat! ?? 0,
-      'sodium': barcodeData.product?.nutriments?.sodium! ?? 0,
-      'total carbohydrate':
-          barcodeData.product?.nutriments?.carbohydrates! ?? 0,
-      'total sugars': barcodeData.product?.nutriments?.sugars! ?? 0,
-      'protein': barcodeData.product?.nutriments?.proteins! ?? 0,
-      'fiber': barcodeData.product?.nutriscoreData?.fiber! ?? 0,
+        .collection('recommended')
+        .doc('0001')
+        .set({
+      'barcode': '000001',
     });
   }
 
