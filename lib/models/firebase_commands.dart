@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:kart2/models/barcode_data_model.dart';
 import 'package:http/http.dart' as http;
+
+import '../main pages/productPage.dart';
 
 class FirebaseCommands {
   //add barcode to firebase
