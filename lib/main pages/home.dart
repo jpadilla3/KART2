@@ -94,6 +94,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  /*
   Future<BarcodeData> fetchBarcodeData() async {
     final String url =
         'https://us.openfoodfacts.org/api/v2/product/$_scanBarcode?fields=allergens,brands,categories,ingredients,nutrient_levels,nutriments,nutriscore_data,product_name,nutriscore_score,nutrition_grades,product_name,traces.json';
@@ -106,19 +107,21 @@ class _HomePageState extends State<HomePage> {
       throw Exception('Failed to fetch data');
     }
   }
+  */
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          await scanBarcodeNormal();
-          await fetchBarcodeData();
+          await scanBarcodeNormal(); //adds barcode to firebase
 
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => productPage(_scanBarcode)));
+          Timer(Duration(seconds: 2), () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => productPage(_scanBarcode)));
+          });
         },
         backgroundColor: Colors.indigo[400],
         child: const Icon(

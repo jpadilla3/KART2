@@ -2,23 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kart2/models/barcode_data_model.dart';
+import 'package:http/http.dart' as http;
 
 class FirebaseCommands {
   //add barcode to firebase
   Future addBarcode(String barcode) async {
-    //gets size of scanned collection
-    QuerySnapshot myDoc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.email.toString())
-        .collection('scanned')
-        .get();
-    //store all the docs in a list
-    List<DocumentSnapshot> myDocCount = myDoc.docs;
-
-    //removes oldest barcode after 25 scans
-    if (myDocCount.length > 25) {
-      //destroyBarcode(barcode); //change to earliest item scanned
-    } else {
+    final String url =
+        'https://us.openfoodfacts.org/api/v2/product/$barcode?fields=allergens,brands,categories,ingredients,nutrient_levels,nutriments,nutriscore_data,product_name,nutriscore_score,nutrition_grades,product_name,traces.json';
+    final response = await http.get(Uri.parse(url));
+    final barcodeData = barcodeDataFromJson(response.body);
+    if (response.statusCode == 200) {
       if (int.parse(barcode) > 0) {
         return FirebaseFirestore.instance
             .collection('users') //go to users
@@ -29,9 +22,21 @@ class FirebaseCommands {
             .set({
           'time': FieldValue.serverTimestamp(),
           'barcode': barcode,
-          //'name': barcodeData.product!.productName
+          'name': barcodeData.product!.productName,
+          'score': barcodeData.product?.nutriscoreScore! ?? 0,
+          'calories': barcodeData.product?.nutriments?.energy ?? 0,
+          'total fat': barcodeData.product?.nutriments?.fat! ?? 0,
+          'saturated fat': barcodeData.product?.nutriments?.saturatedFat! ?? 0,
+          'sodium': barcodeData.product?.nutriments?.sodium! ?? 0,
+          'total carbohydrate':
+              barcodeData.product?.nutriments?.carbohydrates! ?? 0,
+          'total sugars': barcodeData.product?.nutriments?.sugars! ?? 0,
+          'protein': barcodeData.product?.nutriments?.proteins! ?? 0,
+          'fiber': barcodeData.product?.nutriscoreData?.fiber! ?? 0,
         }); // create barcode info
       }
+    } else {
+      throw Exception('Failed to fetch data');
     }
   }
 
