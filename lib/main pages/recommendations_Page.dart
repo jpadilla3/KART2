@@ -158,7 +158,7 @@ class _RecPageState extends State<RecommendationsPage> {
                                         ),
                                       ),
                                       const SizedBox(
-                                        width: 70,
+                                        width: 30,
                                         child:
                                             Icon(Icons.change_circle_outlined),
                                       ),
