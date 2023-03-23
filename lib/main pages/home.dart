@@ -115,13 +115,6 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           await scanBarcodeNormal(); //adds barcode to firebase
-
-          Timer(Duration(seconds: 2), () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => productPage(_scanBarcode)));
-          });
         },
         backgroundColor: Colors.indigo[400],
         child: const Icon(
