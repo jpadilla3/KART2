@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kart2/main%20pages/List.dart';
 import 'package:kart2/main%20pages/info.dart';
 import 'package:kart2/main%20pages/productPage.dart';
 import 'package:kart2/models/flutter_barcode_scanner.dart';
@@ -89,100 +90,118 @@ class _RecPageState extends State<RecommendationsPage> {
                           final DocumentSnapshot documentSnapshot =
                               streamSnapshot.data!.docs[index];
 
-                          return Slidable(
-                              endActionPane: ActionPane(
-                                  motion: const DrawerMotion(),
-                                  children: [
-                                    SlidableAction(
-                                      onPressed: (context) async {
-                                        snackMessage(
-                                            false, documentSnapshot['barcode']);
-                                        FirebaseCommands().favoriteBarcode(
-                                            documentSnapshot['barcode'],
-                                            documentSnapshot['name'],
-                                            documentSnapshot['score']);
-                                      },
-                                      backgroundColor: Colors.red,
-                                      icon: Icons.favorite,
-                                    ),
-                                    SlidableAction(
-                                      onPressed: (context) {
-                                        snackMessage(
-                                            true, documentSnapshot['barcode']);
-                                        FirebaseCommands().destroyBarcode(
-                                            documentSnapshot['barcode']);
-                                        FirebaseCommands().removeFavorite(
-                                            documentSnapshot['barcode']);
-                                      },
-                                      backgroundColor: Colors.indigo,
-                                      icon: Icons.delete,
-                                    ),
-                                  ]),
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 20),
-                                child: Container(
-                                  height: 200,
-                                  width: 370,
-                                  child: Row(
-                                    children: [
-                                      //scanned item
-                                      GestureDetector(
-                                        onTap: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      productPage(
-                                                          documentSnapshot[
-                                                              'barcode'])));
-                                        },
-                                        child: Column(
-                                          children: [
-                                            Container(
-                                              height: 150,
-                                              width: 150,
-                                              alignment: Alignment.center,
-                                              color: Colors.indigo[400],
-                                              child: Text('Picture'),
-                                            ),
-                                            Container(
-                                              height: 50,
-                                              width: 150,
-                                              alignment: Alignment.center,
-                                              child: Text(
-                                                '${documentSnapshot['name']}',
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            )
-                                          ],
+                          List<String> docIDs = [];
+
+                          Future getDocId() async {
+                            await FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(FirebaseAuth.instance.currentUser!.email
+                                    .toString())
+                                .collection('scanned')
+                                .doc(documentSnapshot['barcode'])
+                                .collection('recommended')
+                                .get()
+                                .then((snapshot) =>
+                                    snapshot.docs.forEach((document) {
+                                      docIDs.add(document.reference.id);
+                                    }));
+                          }
+
+                          getName(String barcode2) {
+                            return FutureBuilder<DocumentSnapshot>(
+                              future: _barcodes
+                                  .doc(documentSnapshot['barcode'])
+                                  .collection('recommended')
+                                  .doc(barcode2)
+                                  .get(),
+                              builder: ((context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  Map<String, dynamic> data = snapshot.data!
+                                      .data() as Map<String, dynamic>;
+                                  return Text('${data['name']}');
+                                }
+                                return Text('loading');
+                              }),
+                            );
+                          }
+
+                          return Padding(
+                            padding: const EdgeInsets.only(left: 0),
+                            child: Container(
+                              height: 200,
+                              width: 330,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  //scanned item
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => productPage(
+                                                  documentSnapshot[
+                                                      'barcode'])));
+                                    },
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          height: 120,
+                                          width: 120,
+                                          alignment: Alignment.center,
+                                          color: Colors.indigo[400],
+                                          child: Text('Picture'),
                                         ),
-                                      ),
-                                      const SizedBox(
-                                        width: 30,
-                                        child:
-                                            Icon(Icons.change_circle_outlined),
-                                      ),
-                                      //recommended item
-                                      Column(
-                                        children: [
-                                          Container(
-                                              height: 150,
-                                              width: 150,
-                                              color: Colors.indigo[400],
-                                              alignment: Alignment.center,
-                                              child: Text('Picture')),
-                                          Container(
-                                            height: 50,
-                                            width: 150,
-                                            alignment: Alignment.center,
-                                            child: const Text('0001'),
-                                          )
-                                        ],
-                                      )
-                                    ],
+                                        Container(
+                                          height: 50,
+                                          width: 120,
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            '${documentSnapshot['name']}',
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ));
+                                  const Padding(
+                                    padding: EdgeInsets.only(bottom: 50),
+                                    child: SizedBox(
+                                      width: 70,
+                                      child: Icon(Icons.change_circle_outlined),
+                                    ),
+                                  ),
+                                  //recommended item
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => recoList(
+                                                  documentSnapshot[
+                                                      'barcode'])));
+                                    },
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                            height: 120,
+                                            width: 120,
+                                            color: Colors.indigo[400],
+                                            alignment: Alignment.center,
+                                            child: Text('Picture')),
+                                        Container(
+                                            height: 50,
+                                            width: 120,
+                                            alignment: Alignment.center,
+                                            child: Text('item'))
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
                         },
                       );
                     } else {
