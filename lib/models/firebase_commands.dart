@@ -52,9 +52,7 @@ class FirebaseCommands {
         .doc(barcode)
         .collection('recommended')
         .doc('0001')
-        .set({
-      'barcode': '000001',
-    });
+        .set({'barcode': '000001', 'name': 'orange'});
   }
 
   Future searchBarcode(String barcode) async {

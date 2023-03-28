@@ -92,7 +92,7 @@ class _RecPageState extends State<RecommendationsPage> {
 
                           List<String> docIDs = [];
 
-                          Future getDocId() async {
+                          Stream getDocId() async* {
                             await FirebaseFirestore.instance
                                 .collection('users')
                                 .doc(FirebaseAuth.instance.currentUser!.email
@@ -194,7 +194,17 @@ class _RecPageState extends State<RecommendationsPage> {
                                             height: 50,
                                             width: 120,
                                             alignment: Alignment.center,
-                                            child: Text('item'))
+                                            child: StreamBuilder(
+                                                stream: getDocId(),
+                                                builder: (context, snapshot) {
+                                                  if (snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.done) {
+                                                    return getName(docIDs[0]);
+                                                  } else {
+                                                    return Text('loading');
+                                                  }
+                                                }))
                                       ],
                                     ),
                                   )
