@@ -113,7 +113,8 @@ class _FavPageState extends State<FavPage> {
                                     const SizedBox(
                                       width: 6,
                                     ),
-                                    Text('Score: ${documentSnapshot['score']}'),
+                                    Text(
+                                        'Grade: ${documentSnapshot['grade'].toString().toUpperCase()}'),
                                   ],
                                 ),
                                 trailing: SizedBox(

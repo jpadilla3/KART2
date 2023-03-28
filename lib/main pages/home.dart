@@ -175,7 +175,7 @@ class _HomePageState extends State<HomePage> {
                                       FirebaseCommands().favoriteBarcode(
                                           documentSnapshot['barcode'],
                                           documentSnapshot['name'],
-                                          documentSnapshot['score']);
+                                          documentSnapshot['grade']);
                                     },
                                     backgroundColor: Colors.red,
                                     icon: Icons.favorite,
@@ -208,7 +208,7 @@ class _HomePageState extends State<HomePage> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Score: ${documentSnapshot['score']}',
+                                    'Grade: ${documentSnapshot['grade'].toString().toUpperCase()}',
                                     textAlign: TextAlign.start,
                                   ),
                                 ],
