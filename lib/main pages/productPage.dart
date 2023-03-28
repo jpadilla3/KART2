@@ -201,7 +201,8 @@ class _productPageState extends State<productPage> {
                         const SizedBox(
                           width: 6,
                         ),
-                        Text('Score: ${data['score']}'),
+                        Text(
+                            'Grade: ${data['grade'].toString().toUpperCase()}'),
                       ],
                     );
                   } else if (snapshot.hasError) {
