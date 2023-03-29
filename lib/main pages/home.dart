@@ -217,32 +217,50 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                     ],
                                   ),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
+                                  SizedBox(
+                                    height: 100,
+                                    width: 200,
+                                    child: Center(
+                                      child: Column(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.start,
+                                            MainAxisAlignment.center,
                                         children: [
-                                          Text(
-                                            documentSnapshot['name'],
-                                            textAlign: TextAlign.start,
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  documentSnapshot['name'],
+                                                  textAlign: TextAlign.start,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 2,
+                                                  softWrap: false,
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 3),
+                                                child: Text(
+                                                  'Grade: ${documentSnapshot['grade'].toString().toUpperCase()}',
+                                                  textAlign: TextAlign.start,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Grade: ${documentSnapshot['grade'].toString().toUpperCase()}',
-                                            textAlign: TextAlign.start,
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                    ),
                                   ),
                                   Expanded(
                                     child: Column(
