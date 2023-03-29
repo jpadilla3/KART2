@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ionicons/ionicons.dart';
+import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:kart2/models/firebase_commands.dart';
 import 'package:kart2/main%20pages/search_page.dart';
 
@@ -293,7 +293,7 @@ class _productPageState extends State<productPage> {
                           "Sodium",
                           '${data['sodium'].toStringAsFixed(2)} g',
                           Icon(
-                            Ionicons.fish_outline,
+                            MaterialCommunityIcons.shaker_outline,
                             size: 30,
                             color: Colors.grey[600],
                           ),
@@ -321,7 +321,7 @@ class _productPageState extends State<productPage> {
                             ListTile(
                               title: const Text('Dietary Fiber'),
                               leading: const Icon(
-                                Ionicons.accessibility,
+                                MaterialIcons.accessibility_new,
                                 color: Colors.black,
                               ),
                               trailing:
@@ -342,7 +342,7 @@ class _productPageState extends State<productPage> {
                           "Protein",
                           '${data['protein'].toStringAsFixed(2)} g',
                           Icon(
-                            Ionicons.fish_outline,
+                            MaterialCommunityIcons.food_steak,
                             size: 30,
                             color: Colors.grey[600],
                           ),
