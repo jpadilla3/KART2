@@ -96,29 +96,93 @@ class _FavPageState extends State<FavPage> {
                                   icon: Icons.delete,
                                 ),
                               ]),
-                              child: ListTile(
+                              child: GestureDetector(
                                 onTap: () {
+                                  // add your logic here
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => productPage(
                                               documentSnapshot['barcode'])));
                                 },
-                                leading: Image.network(
-                                    "https://www.eslc.org/wp-content/uploads/2019/08/placeholder-grey-square-600x600.jpg"),
-                                title: Text(documentSnapshot['name']),
-                                subtitle: Row(
+                                child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    const SizedBox(
-                                      width: 6,
+                                    Column(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Image.network(
+                                            "https://www.eslc.org/wp-content/uploads/2019/08/placeholder-grey-square-600x600.jpg",
+                                            height: 80,
+                                            width: 80,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    Text(
-                                        'Grade: ${documentSnapshot['grade'].toString().toUpperCase()}'),
+                                    SizedBox(
+                                      height: 100,
+                                      width: 200,
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    documentSnapshot['name'],
+                                                    textAlign: TextAlign.start,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 2,
+                                                    softWrap: false,
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 3),
+                                                  child: Text(
+                                                    'Grade: ${documentSnapshot['grade'].toString().toUpperCase()}',
+                                                    textAlign: TextAlign.start,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: const [
+                                          SizedBox(
+                                            child: Icon(
+                                              Icons.arrow_forward_ios,
+                                              color: Colors.indigo,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ],
-                                ),
-                                trailing: SizedBox(
-                                  child: Icon(Icons.arrow_forward_ios),
                                 ),
                               ),
                             );
