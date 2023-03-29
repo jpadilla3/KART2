@@ -64,8 +64,9 @@ class _RecPageState extends State<RecommendationsPage> {
                 size: 35,
               ),
               color: Colors.indigo[400],
-            )
+            ),
           ],
+          surfaceTintColor: Colors.white,
         ),
         SliverToBoxAdapter(
           child: Column(
