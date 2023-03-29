@@ -98,7 +98,9 @@ class _FavPageState extends State<FavPage> {
                                   icon: Icons.delete,
                                 ),
                               ]),
-                              child: GestureDetector(
+                              child: InkWell(
+                                highlightColor: Colors.grey[300],
+                                //behavior: HitTestBehavior.translucent,
                                 onTap: () {
                                   // add your logic here
                                   Navigator.push(
