@@ -16,6 +16,7 @@ import 'package:kart2/main%20pages/favorites.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kart2/models/firebase_commands.dart';
 import 'package:kart2/models/flutter_barcode_scanner.dart';
+import 'package:kart2/models/scoreColor.dart';
 
 import '../models/barcode_data_model.dart';
 
@@ -208,13 +209,12 @@ class _HomePageState extends State<HomePage> {
                                   Column(
                                     children: [
                                       Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: Image.network(
-                                          "https://www.eslc.org/wp-content/uploads/2019/08/placeholder-grey-square-600x600.jpg",
-                                          height: 80,
-                                          width: 80,
-                                        ),
-                                      ),
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Container(
+                                            height: 80,
+                                            width: 80,
+                                            color: Colors.blueGrey,
+                                          )),
                                     ],
                                   ),
                                   SizedBox(
@@ -244,13 +244,18 @@ class _HomePageState extends State<HomePage> {
                                               ),
                                             ],
                                           ),
+                                          const SizedBox(
+                                            height: 3,
+                                          ),
                                           Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
                                             children: [
+                                              scoreColors().scoreColor(
+                                                  documentSnapshot['grade']),
                                               Padding(
                                                 padding: const EdgeInsets.only(
-                                                    top: 3),
+                                                    left: 5),
                                                 child: Text(
                                                   'Grade: ${documentSnapshot['grade'].toString().toUpperCase()}',
                                                   textAlign: TextAlign.start,
