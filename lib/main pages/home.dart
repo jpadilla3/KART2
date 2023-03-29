@@ -108,6 +108,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: CustomScrollView(slivers: [
         SliverAppBar.large(
+          expandedHeight: 147,
           collapsedHeight: 75,
           surfaceTintColor: Colors.white,
           centerTitle: true,
@@ -194,7 +195,9 @@ class _HomePageState extends State<HomePage> {
                                     icon: Icons.delete,
                                   ),
                                 ]),
-                            child: GestureDetector(
+                            child: InkWell(
+                              highlightColor: Colors.grey[300],
+                              //behavior: HitTestBehavior.translucent,
                               onTap: () {
                                 // add your logic here
                                 Navigator.push(
@@ -204,7 +207,9 @@ class _HomePageState extends State<HomePage> {
                                             documentSnapshot['barcode'])));
                               },
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Column(
                                     children: [
@@ -274,9 +279,12 @@ class _HomePageState extends State<HomePage> {
                                           CrossAxisAlignment.end,
                                       children: const [
                                         SizedBox(
-                                          child: Icon(
-                                            Icons.arrow_forward_ios,
-                                            color: Colors.indigo,
+                                          child: Padding(
+                                            padding: EdgeInsets.only(right: 10),
+                                            child: Icon(
+                                              Icons.arrow_forward_ios,
+                                              color: Colors.indigo,
+                                            ),
                                           ),
                                         ),
                                       ],

@@ -48,6 +48,7 @@ class _RecPageState extends State<RecommendationsPage> {
         body: CustomScrollView(
       slivers: [
         SliverAppBar.large(
+          expandedHeight: 147,
           leading: const Text(''),
           title: Text(
             'Recommendations',

@@ -33,12 +33,21 @@ class scoreColors {
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20), color: Colors.orange),
       );
-    } else {
+    }
+
+    if (grade == 'e') {
       return Container(
         height: 10,
         width: 10,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20), color: Colors.red),
+      );
+    } else {
+      return Container(
+        height: 10,
+        width: 10,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20), color: Colors.grey[600]),
       );
     }
   }
