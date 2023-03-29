@@ -46,6 +46,8 @@ class _FavPageState extends State<FavPage> {
       body: CustomScrollView(
         slivers: [
           SliverAppBar.large(
+            expandedHeight: 147,
+            surfaceTintColor: Colors.white,
             leading: IconButton(
               onPressed: () {
                 Navigator.pop(context);

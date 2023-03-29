@@ -108,6 +108,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: CustomScrollView(slivers: [
         SliverAppBar.large(
+          expandedHeight: 147,
           collapsedHeight: 75,
           surfaceTintColor: Colors.white,
           centerTitle: true,
