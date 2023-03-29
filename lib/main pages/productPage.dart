@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:kart2/models/firebase_commands.dart';
 import 'package:kart2/main%20pages/search_page.dart';
+import 'package:kart2/models/scoreColor.dart';
 
 class productPage extends StatefulWidget {
   String barcode;
@@ -161,6 +162,8 @@ class _productPageState extends State<productPage> {
                       return Text(
                         '${data['name']}',
                         textAlign: TextAlign.center,
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w500),
                       );
                     } else if (snapshot.hasError) {
                       return const Text('Something went wrong');
@@ -201,8 +204,14 @@ class _productPageState extends State<productPage> {
                         const SizedBox(
                           width: 6,
                         ),
+                        scoreColors().scoreColor(data['grade']),
+                        const SizedBox(
+                          width: 8,
+                        ),
                         Text(
-                            'Grade: ${data['grade'].toString().toUpperCase()}'),
+                          'Grade: ${data['grade'].toString().toUpperCase()}',
+                          style: const TextStyle(fontSize: 18),
+                        ),
                       ],
                     );
                   } else if (snapshot.hasError) {

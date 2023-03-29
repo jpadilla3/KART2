@@ -6,6 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:kart2/main%20pages/productPage.dart';
 import 'package:kart2/models/firebase_commands.dart';
 
+import '../models/scoreColor.dart';
+
 class FavPage extends StatefulWidget {
   const FavPage({super.key});
 
@@ -111,13 +113,12 @@ class _FavPageState extends State<FavPage> {
                                     Column(
                                       children: [
                                         Padding(
-                                          padding: const EdgeInsets.all(10.0),
-                                          child: Image.network(
-                                            "https://www.eslc.org/wp-content/uploads/2019/08/placeholder-grey-square-600x600.jpg",
-                                            height: 80,
-                                            width: 80,
-                                          ),
-                                        ),
+                                            padding: const EdgeInsets.all(10.0),
+                                            child: Container(
+                                              height: 80,
+                                              width: 80,
+                                              color: Colors.blueGrey,
+                                            )),
                                       ],
                                     ),
                                     SizedBox(
@@ -140,21 +141,26 @@ class _FavPageState extends State<FavPage> {
                                                         TextOverflow.ellipsis,
                                                     maxLines: 2,
                                                     softWrap: false,
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold),
                                                   ),
                                                 ),
                                               ],
                                             ),
+                                            const SizedBox(
+                                              height: 3,
+                                            ),
                                             Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.start,
                                               children: [
+                                                scoreColors().scoreColor(
+                                                    documentSnapshot['grade']),
                                                 Padding(
                                                   padding:
                                                       const EdgeInsets.only(
-                                                          top: 3),
+                                                          left: 5),
                                                   child: Text(
                                                     'Grade: ${documentSnapshot['grade'].toString().toUpperCase()}',
                                                     textAlign: TextAlign.start,
