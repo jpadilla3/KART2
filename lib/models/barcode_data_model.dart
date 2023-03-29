@@ -120,9 +120,9 @@ class Ingredient {
   });
 
   String? id;
-  double? percentEstimate;
-  double? percentMax;
-  double? percentMin;
+  String? percentEstimate;
+  String? percentMax;
+  String? percentMin;
   String? text;
   String? vegan;
   String? vegetarian;
@@ -130,9 +130,9 @@ class Ingredient {
 
   factory Ingredient.fromJson(Map<String, dynamic> json) => Ingredient(
         id: json["id"],
-        percentEstimate: json["percent_estimate"]?.toDouble(),
-        percentMax: json["percent_max"]?.toDouble(),
-        percentMin: json["percent_min"]?.toDouble(),
+        percentEstimate: json["percent_estimate"]?.toString(),
+        percentMax: json["percent_max"]?.toString(),
+        percentMin: json["percent_min"]?.toString(),
         text: json["text"],
         vegan: json["vegan"],
         vegetarian: json["vegetarian"],
