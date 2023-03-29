@@ -193,28 +193,73 @@ class _HomePageState extends State<HomePage> {
                                     icon: Icons.delete,
                                   ),
                                 ]),
-                            child: ListTile(
+                            child: GestureDetector(
                               onTap: () {
+                                // add your logic here
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => productPage(
                                             documentSnapshot['barcode'])));
                               },
-                              leading: Image.network(
-                                  "https://www.eslc.org/wp-content/uploads/2019/08/placeholder-grey-square-600x600.jpg"),
-                              title: Text(documentSnapshot['name']),
-                              subtitle: Row(
+                              child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    'Grade: ${documentSnapshot['grade'].toString().toUpperCase()}',
-                                    textAlign: TextAlign.start,
+                                  Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: Image.network(
+                                          "https://www.eslc.org/wp-content/uploads/2019/08/placeholder-grey-square-600x600.jpg",
+                                          height: 80,
+                                          width: 80,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            documentSnapshot['name'],
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Grade: ${documentSnapshot['grade'].toString().toUpperCase()}',
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  Expanded(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: const [
+                                        SizedBox(
+                                          child: Icon(
+                                            Icons.arrow_forward_ios,
+                                            color: Colors.indigo,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
-                              ),
-                              trailing: const SizedBox(
-                                child: Icon(Icons.arrow_forward_ios),
                               ),
                             ),
                           );
