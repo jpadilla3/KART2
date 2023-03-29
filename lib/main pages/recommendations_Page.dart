@@ -129,7 +129,7 @@ class _RecPageState extends State<RecommendationsPage> {
                           return Padding(
                             padding: const EdgeInsets.only(left: 0),
                             child: Container(
-                              height: 200,
+                              height: 190,
                               width: 330,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -160,6 +160,9 @@ class _RecPageState extends State<RecommendationsPage> {
                                           child: Text(
                                             '${documentSnapshot['name']}',
                                             textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                            ),
                                           ),
                                         )
                                       ],

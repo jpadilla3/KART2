@@ -54,7 +54,6 @@ class _ConditionsState extends State<Conditions> {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final Color checked = colorScheme.primary.withOpacity(0.10);
     final Color checked2 = colorScheme.primary.withOpacity(0.10);
-
     const int tabsCount = 2;
 
     return DefaultTabController(
@@ -96,15 +95,9 @@ class _ConditionsState extends State<Conditions> {
                   value: conditionCheckList[index],
                   onChanged: (bool? value) {
                     setState(() {
-                      if (conditions[index] == 'None') {
-                        // If "None" is selected, set all other checkboxes to false
-                        conditionCheckList.fillRange(0, index, false);
-                        conditionCheckList.fillRange(
-                            index + 1, conditions.length, false);
-                      } else {
-                        // Otherwise, toggle the checkbox value
-                        conditionCheckList[index] = value!;
-                      }
+                      conditionCheckList[0]
+                          ? conditionCheckList[index] = false
+                          : conditionCheckList[index] = value!;
                     });
                   },
                   title: Text('${conditions[index]}'),
@@ -120,15 +113,9 @@ class _ConditionsState extends State<Conditions> {
                   value: allergyCheckList[index],
                   onChanged: (bool? value) {
                     setState(() {
-                      if (allergies[index] == 'None') {
-                        // If "None" is selected, set all other checkboxes to false
-                        allergyCheckList.fillRange(0, index, false);
-                        allergyCheckList.fillRange(
-                            index + 1, allergies.length, false);
-                      } else {
-                        // Otherwise, toggle the checkbox value
-                        allergyCheckList[index] = value!;
-                      }
+                      allergyCheckList[0]
+                          ? allergyCheckList[index] = false
+                          : allergyCheckList[index] = value!;
                     });
                   },
                   title: Text('${allergies[index]}'),
@@ -142,9 +129,9 @@ class _ConditionsState extends State<Conditions> {
           key: const Key('conditions'),
           onPressed: () => Navigator.push(
               context, MaterialPageRoute(builder: (context) => navBar())),
-          child: const Text('Save and Continue'),
           style: ButtonStyle(
               minimumSize: MaterialStateProperty.all<Size>(const Size(0, 55))),
+          child: const Text('Save and Continue'),
         ),
       ),
     );

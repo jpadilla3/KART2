@@ -4,8 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:http/http.dart' as http;
-
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kart2/main%20pages/search_page.dart';
 import 'package:kart2/main%20pages/productPage.dart';
@@ -154,8 +152,9 @@ class _HomePageState extends State<HomePage> {
                         separatorBuilder: (BuildContext context, int index) =>
                             const Divider(
                           height: 3,
-                          indent: 12,
-                          endIndent: 12,
+                          thickness: 2,
+                          indent: 1,
+                          endIndent: 1,
                         ),
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
@@ -166,55 +165,102 @@ class _HomePageState extends State<HomePage> {
 
                           return Slidable(
                             endActionPane: ActionPane(
-                                motion: const DrawerMotion(),
-                                children: [
-                                  SlidableAction(
-                                    onPressed: (context) async {
-                                      snackMessage(
-                                          false, documentSnapshot['barcode']);
-                                      FirebaseCommands().favoriteBarcode(
-                                          documentSnapshot['barcode'],
-                                          documentSnapshot['name'],
-                                          documentSnapshot['score']);
-                                    },
-                                    backgroundColor: Colors.red,
-                                    icon: Icons.favorite,
-                                  ),
-                                  SlidableAction(
-                                    onPressed: (context) {
-                                      snackMessage(
-                                          true, documentSnapshot['barcode']);
-                                      FirebaseCommands().destroyBarcode(
-                                          documentSnapshot['barcode']);
-                                      FirebaseCommands().removeFavorite(
-                                          documentSnapshot['barcode']);
-                                    },
-                                    backgroundColor: Colors.indigo,
-                                    icon: Icons.delete,
-                                  ),
-                                ]),
-                            child: ListTile(
+                              motion: const DrawerMotion(),
+                              children: [
+                                SlidableAction(
+                                  onPressed: (context) async {
+                                    snackMessage(
+                                        false, documentSnapshot['barcode']);
+                                    FirebaseCommands().favoriteBarcode(
+                                      documentSnapshot['barcode'],
+                                      documentSnapshot['name'],
+                                      documentSnapshot['score'],
+                                    );
+                                  },
+                                  backgroundColor: Colors.red,
+                                  icon: Icons.favorite,
+                                ),
+                                SlidableAction(
+                                  onPressed: (context) {
+                                    snackMessage(
+                                        true, documentSnapshot['barcode']);
+                                    FirebaseCommands().destroyBarcode(
+                                        documentSnapshot['barcode']);
+                                    FirebaseCommands().removeFavorite(
+                                        documentSnapshot['barcode']);
+                                  },
+                                  backgroundColor: Colors.indigo,
+                                  icon: Icons.delete,
+                                ),
+                              ],
+                            ),
+                            child: GestureDetector(
                               onTap: () {
+                                // add your logic here
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => productPage(
                                             documentSnapshot['barcode'])));
                               },
-                              leading: Image.network(
-                                  "https://www.eslc.org/wp-content/uploads/2019/08/placeholder-grey-square-600x600.jpg"),
-                              title: Text(documentSnapshot['name']),
-                              subtitle: Row(
+                              child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    'Score: ${documentSnapshot['score']}',
-                                    textAlign: TextAlign.start,
+                                  Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: Image.network(
+                                          "https://www.eslc.org/wp-content/uploads/2019/08/placeholder-grey-square-600x600.jpg",
+                                          height: 80,
+                                          width: 80,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            documentSnapshot['name'],
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Score: ${documentSnapshot['score']}',
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  Expanded(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: const [
+                                        SizedBox(
+                                          child: Icon(
+                                            Icons.arrow_forward_ios,
+                                            color: Colors.indigo,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
-                              ),
-                              trailing: const SizedBox(
-                                child: Icon(Icons.arrow_forward_ios),
                               ),
                             ),
                           );

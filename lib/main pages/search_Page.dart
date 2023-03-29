@@ -140,11 +140,9 @@ class _SearchPageState extends State<SearchPage> {
               height: 200,
             ),
             Container(
-              height: 200,
-              width: 200,
-              child: Image.network(
-                  "https://static.vecteezy.com/system/resources/previews/004/331/580/original/healthy-food-search-linear-icon-thin-line-illustration-magnifying-glass-with-apple-diet-contour-symbol-isolated-outline-drawing-vector.jpg"),
-            ),
+                height: 200,
+                width: 200,
+                child: Image.asset('assets/images/Search.png')),
             Text(
               "Enter a Search",
               style: GoogleFonts.bebasNeue(color: Colors.black, fontSize: 30),
