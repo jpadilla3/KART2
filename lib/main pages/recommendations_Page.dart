@@ -160,6 +160,9 @@ class _RecPageState extends State<RecommendationsPage> {
                                           child: Text(
                                             '${documentSnapshot['name']}',
                                             textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                            ),
                                           ),
                                         )
                                       ],
