@@ -8,7 +8,6 @@ List<String> titles = <String>[
   'Allergies',
 ];
 List<String> conditions = <String>[
-  'None',
   'Type 1 or 2 Diabites',
   ' Coeliac disease',
   'Thyroid disease',
@@ -21,7 +20,6 @@ List<String> conditions = <String>[
   'Pancreatitis'
 ];
 List<String> allergies = <String>[
-  'None',
   'Milk',
   'Gluten',
   'Lupin',
@@ -31,9 +29,8 @@ List<String> allergies = <String>[
   'Crustaceans',
   'Sesame-Seeds',
   'Molluscs',
-  'Peanuts',
+  'Peanuts / Nuts',
   'Soybeans',
-  'Nuts',
   'Mustard',
   'Eggs'
 ];
@@ -64,9 +61,21 @@ class _ConditionsState extends State<Conditions> {
         appBar: AppBar(
           centerTitle: true,
           surfaceTintColor: Colors.white,
-          title: const Text(
-            'Select all that Applies to you:',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          title: const Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                    text: 'Select all that Applies to you:\n',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    )),
+                TextSpan(
+                    text: 'If None, Click Save and Continue',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400))
+              ],
+            ),
+            textAlign: TextAlign.center,
           ),
           notificationPredicate: (ScrollNotification notification) {
             return notification.depth == 1;
@@ -96,9 +105,7 @@ class _ConditionsState extends State<Conditions> {
                   value: conditionCheckList[index],
                   onChanged: (bool? value) {
                     setState(() {
-                      conditionCheckList[0]
-                          ? conditionCheckList[index] = false
-                          : conditionCheckList[index] = value!;
+                      conditionCheckList[index] = value!;
                     });
                   },
                   title: Text('${conditions[index]}'),
@@ -114,9 +121,7 @@ class _ConditionsState extends State<Conditions> {
                   value: allergyCheckList[index],
                   onChanged: (bool? value) {
                     setState(() {
-                      conditionCheckList[0]
-                          ? allergyCheckList[index] = false
-                          : allergyCheckList[index] = value!;
+                      allergyCheckList[index] = value!;
                     });
                   },
                   title: Text('${allergies[index]}'),
@@ -130,9 +135,9 @@ class _ConditionsState extends State<Conditions> {
           key: const Key('conditions'),
           onPressed: () => Navigator.push(
               context, MaterialPageRoute(builder: (context) => navBar())),
-          child: const Text('Save and Continue'),
           style: ButtonStyle(
               minimumSize: MaterialStateProperty.all<Size>(const Size(0, 55))),
+          child: const Text('Save and Continue'),
         ),
       ),
     );
