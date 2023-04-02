@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:kart2/main%20pages/nav_bar.dart';
 import 'package:kart2/main%20pages/home.dart';
+import 'package:kart2/models/firebase_commands.dart';
 
 List<String> titles = <String>[
   'Conditions',
@@ -24,16 +25,30 @@ List<String> allergies = <String>[
   'Gluten',
   'Lupin',
   'Celery',
-  'Sulphur-dioxide-and-sulphites',
   'Fish',
   'Crustaceans',
   'Sesame-Seeds',
   'Molluscs',
-  'Peanuts / Nuts',
+  'Peanuts (Nuts)',
   'Soybeans',
   'Mustard',
   'Eggs'
 ];
+
+Map userData = {
+  'Milk': false,
+  'Gluten': false,
+  'Lupin': false,
+  'Celery': false,
+  'Fish': false,
+  'Crustaceans': false,
+  'Sesame-Seeds': false,
+  'Molluscs': false,
+  'Peanuts (Nuts)': false,
+  'Soybeans': false,
+  'Mustard': false,
+  'Eggs': false
+};
 
 class Conditions extends StatefulWidget {
   const Conditions({Key? key}) : super(key: key);
@@ -108,7 +123,7 @@ class _ConditionsState extends State<Conditions> {
                       conditionCheckList[index] = value!;
                     });
                   },
-                  title: Text('${conditions[index]}'),
+                  title: Text(conditions[index]),
                   tileColor: conditionCheckList[index] ? checked : Colors.white,
                 );
               },
@@ -122,9 +137,10 @@ class _ConditionsState extends State<Conditions> {
                   onChanged: (bool? value) {
                     setState(() {
                       allergyCheckList[index] = value!;
+                      userData[allergies[index]] = value;
                     });
                   },
-                  title: Text('${allergies[index]}'),
+                  title: Text(allergies[index]),
                   tileColor: allergyCheckList[index] ? checked2 : Colors.white,
                 );
               },
@@ -133,8 +149,15 @@ class _ConditionsState extends State<Conditions> {
         ),
         bottomNavigationBar: ElevatedButton(
           key: const Key('conditions'),
-          onPressed: () => Navigator.push(
-              context, MaterialPageRoute(builder: (context) => navBar())),
+          onPressed: () {
+            FirebaseCommands().updateUser(userData);
+            for (var entry in userData.entries) {
+              print('${entry.key} : ${entry.value}');
+            }
+
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => navBar()));
+          },
           style: ButtonStyle(
               minimumSize: MaterialStateProperty.all<Size>(const Size(0, 55))),
           child: const Text('Save and Continue'),
