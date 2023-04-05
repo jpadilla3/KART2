@@ -199,5 +199,5 @@ class MySearchDelegate extends SearchDelegate {
   }
 
   @override
-  Widget buildResults(BuildContext context) => Center();
+  Widget buildResults(BuildContext context) => const Center();
 }

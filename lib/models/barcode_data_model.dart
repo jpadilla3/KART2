@@ -1,8 +1,8 @@
 // To parse this JSON data, do
 // final barcodeData = barcodeDataFromJson(jsonString);
 
-// Model for a bardcode with these fields: 'allergens,brands,categories,ingredients,nutrient_levels,nutriments,nutriscore_data,product_name,nutriscore_score,nutrition_grades,product_name,traces'
-// https://us.openfoodfacts.org/api/v2/product/3017624010701?fields=allergens,brands,categories,ingredients,nutrient_levels,nutriments,nutriscore_data,product_name,nutriscore_score,nutrition_grades,product_name,traces.json
+// Model for a bardcode with these fields: '_keywords,allergens,allergens_tags,brands,categories,categories_tags,compared_to_category,food_groups,food_groups_tags,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces'
+// https://us.openfoodfacts.org/api/v2/product/3017624010701?fields=_keywords,allergens,allergens_tags,brands,categories,categories_tags,compared_to_category,food_groups,food_groups_tags,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json
 
 import 'dart:convert';
 
@@ -42,35 +42,70 @@ class BarcodeData {
 
 class Product {
   Product({
+    this.keywords,
     this.allergens,
+    this.allergensTags,
     this.brands,
     this.categories,
+    this.categoriesTags,
+    this.comparedToCategory,
+    this.foodGroups,
+    this.foodGroupsTags,
+    this.imageFrontThumbUrl,
     this.ingredients,
     this.nutrientLevels,
+    this.nutrientLevelsTags,
     this.nutriments,
     this.nutriscoreData,
+    this.nutriscoreGrade,
     this.nutriscoreScore,
     this.nutritionGrades,
     this.productName,
+    this.selectedImages,
     this.traces,
   });
 
+  List<String>? keywords;
   String? allergens;
+  List<String>? allergensTags;
   String? brands;
   String? categories;
+  List<String>? categoriesTags;
+  String? comparedToCategory;
+  String? foodGroups;
+  List<String>? foodGroupsTags;
+  String? imageFrontThumbUrl;
   List<Ingredient>? ingredients;
   NutrientLevels? nutrientLevels;
+  List<String>? nutrientLevelsTags;
   Nutriments? nutriments;
   NutriscoreData? nutriscoreData;
+  String? nutriscoreGrade;
   double? nutriscoreScore;
   String? nutritionGrades;
   String? productName;
+  SelectedImages? selectedImages;
   String? traces;
 
   factory Product.fromJson(Map<String, dynamic> json) => Product(
+        keywords: json["_keywords"] == null
+            ? []
+            : List<String>.from(json["_keywords"]!.map((x) => x)),
         allergens: json["allergens"],
+        allergensTags: json["allergens_tags"] == null
+            ? []
+            : List<String>.from(json["allergens_tags"]!.map((x) => x)),
         brands: json["brands"],
         categories: json["categories"],
+        categoriesTags: json["categories_tags"] == null
+            ? []
+            : List<String>.from(json["categories_tags"]!.map((x) => x)),
+        comparedToCategory: json["compared_to_category"],
+        foodGroups: json["food_groups"],
+        foodGroupsTags: json["food_groups_tags"] == null
+            ? []
+            : List<String>.from(json["food_groups_tags"]!.map((x) => x)),
+        imageFrontThumbUrl: json["image_front_thumb_url"],
         ingredients: json["ingredients"] == null
             ? []
             : List<Ingredient>.from(
@@ -78,31 +113,57 @@ class Product {
         nutrientLevels: json["nutrient_levels"] == null
             ? null
             : NutrientLevels.fromJson(json["nutrient_levels"]),
+        nutrientLevelsTags: json["nutrient_levels_tags"] == null
+            ? []
+            : List<String>.from(json["nutrient_levels_tags"]!.map((x) => x)),
         nutriments: json["nutriments"] == null
             ? null
             : Nutriments.fromJson(json["nutriments"]),
         nutriscoreData: json["nutriscore_data"] == null
             ? null
             : NutriscoreData.fromJson(json["nutriscore_data"]),
+        nutriscoreGrade: json["nutriscore_grade"],
         nutriscoreScore: json["nutriscore_score"]?.toDouble(),
         nutritionGrades: json["nutrition_grades"],
-        productName: json["product_name"],
+        productName: json["product_name"]?.toString(),
+        selectedImages: json["selected_images"] == null
+            ? null
+            : SelectedImages.fromJson(json["selected_images"]),
         traces: json["traces"],
       );
 
   Map<String, dynamic> toJson() => {
+        "_keywords":
+            keywords == null ? [] : List<dynamic>.from(keywords!.map((x) => x)),
         "allergens": allergens,
+        "allergens_tags": allergensTags == null
+            ? []
+            : List<dynamic>.from(allergensTags!.map((x) => x)),
         "brands": brands,
         "categories": categories,
+        "categories_tags": categoriesTags == null
+            ? []
+            : List<dynamic>.from(categoriesTags!.map((x) => x)),
+        "compared_to_category": comparedToCategory,
+        "food_groups": foodGroups,
+        "food_groups_tags": foodGroupsTags == null
+            ? []
+            : List<dynamic>.from(foodGroupsTags!.map((x) => x)),
+        "image_front_thumb_url": imageFrontThumbUrl,
         "ingredients": ingredients == null
             ? []
             : List<dynamic>.from(ingredients!.map((x) => x.toJson())),
         "nutrient_levels": nutrientLevels?.toJson(),
+        "nutrient_levels_tags": nutrientLevelsTags == null
+            ? []
+            : List<dynamic>.from(nutrientLevelsTags!.map((x) => x)),
         "nutriments": nutriments?.toJson(),
         "nutriscore_data": nutriscoreData?.toJson(),
+        "nutriscore_grade": nutriscoreGrade,
         "nutriscore_score": nutriscoreScore,
         "nutrition_grades": nutritionGrades,
         "product_name": productName,
+        "selected_images": selectedImages?.toJson(),
         "traces": traces,
       };
 }
@@ -518,5 +579,79 @@ class NutriscoreData {
         "sugars": sugars,
         "sugars_points": sugarsPoints,
         "sugars_value": sugarsValue,
+      };
+}
+
+class SelectedImages {
+  SelectedImages({
+    this.front,
+  });
+  Front? front;
+  factory SelectedImages.fromJson(Map<String, dynamic> json) => SelectedImages(
+        front: json["front"] == null ? null : Front.fromJson(json["front"]),
+      );
+  Map<String, dynamic> toJson() => {
+        "front": front?.toJson(),
+      };
+}
+
+class Front {
+  Front({
+    this.display,
+    this.small,
+    this.thumb,
+  });
+  Display? display;
+  Small? small;
+  Thumb? thumb;
+  factory Front.fromJson(Map<String, dynamic> json) => Front(
+        display:
+            json["display"] == null ? null : Display.fromJson(json["display"]),
+        small: json["small"] == null ? null : Small.fromJson(json["small"]),
+        thumb: json["thumb"] == null ? null : Thumb.fromJson(json["thumb"]),
+      );
+  Map<String, dynamic> toJson() => {
+        "display": display?.toJson(),
+        "small": small?.toJson(),
+        "thumb": thumb?.toJson(),
+      };
+}
+
+class Display {
+  Display({
+    this.en,
+  });
+  String? en;
+  factory Display.fromJson(Map<String, dynamic> json) => Display(
+        en: json["en"],
+      );
+  Map<String, dynamic> toJson() => {
+        "en": en,
+      };
+}
+
+class Small {
+  Small({
+    this.en,
+  });
+  String? en;
+  factory Small.fromJson(Map<String, dynamic> json) => Small(
+        en: json["en"],
+      );
+  Map<String, dynamic> toJson() => {
+        "en": en,
+      };
+}
+
+class Thumb {
+  Thumb({
+    this.en,
+  });
+  String? en;
+  factory Thumb.fromJson(Map<String, dynamic> json) => Thumb(
+        en: json["en"],
+      );
+  Map<String, dynamic> toJson() => {
+        "en": en,
       };
 }

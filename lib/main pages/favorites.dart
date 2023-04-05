@@ -77,7 +77,7 @@ class _FavPageState extends State<FavPage> {
                       if (streamSnapshot.data!.size > 0) {
                         return ListView.separated(
                           separatorBuilder: (BuildContext context, int index) =>
-                              Divider(height: 3),
+                              const Divider(height: 3),
                           physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           itemCount: streamSnapshot.data!.docs.length,

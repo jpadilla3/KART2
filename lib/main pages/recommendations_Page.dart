@@ -131,7 +131,7 @@ class _RecPageState extends State<RecommendationsPage> {
                                     ),
                                   );
                                 }
-                                return Text('loading');
+                                return const Text('loading');
                               }),
                             );
                           }
@@ -225,7 +225,8 @@ class _RecPageState extends State<RecommendationsPage> {
                                                       ConnectionState.done) {
                                                     return getName(docIDs[0]);
                                                   } else {
-                                                    return Text('loading');
+                                                    return const Text(
+                                                        'loading');
                                                   }
                                                 }))
                                       ],

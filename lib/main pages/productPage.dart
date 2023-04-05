@@ -136,15 +136,27 @@ class _productPageState extends State<productPage> {
             //picture
             Container(
               color: Colors.indigo[400],
-              child: const SizedBox.square(
-                dimension: 150.0,
-                child: Center(
-                  child: Text(
-                    "picture",
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
+              child: SizedBox.square(
+                  dimension: 150.0,
+                  child: FutureBuilder<DocumentSnapshot>(
+                    future: _scanned.doc(widget.barcode).get(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<DocumentSnapshot> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        Map<String, dynamic> data =
+                            snapshot.data!.data() as Map<String, dynamic>;
+                        return Image.network(
+                          '${data['picture']}',
+                        );
+                      } else if (snapshot.hasError) {
+                        return const Text('Something went wrong');
+                      } else if (snapshot.hasData && !snapshot.data!.exists) {
+                        return const Text("Document does not exist");
+                      } else {
+                        return const CircularProgressIndicator();
+                      }
+                    },
+                  )),
             ),
             //item name
             Container(
