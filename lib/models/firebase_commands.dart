@@ -11,9 +11,10 @@ class FirebaseCommands {
   //add barcode to firebase
   Future addBarcode(String barcode) async {
     final String url =
-        'https://us.openfoodfacts.org/api/v2/product/$barcode?fields=allergens,brands,categories,ingredients,nutrient_levels,nutriments,nutriscore_data,product_name,nutriscore_score,nutrition_grades,product_name,traces.json';
+        'https://us.openfoodfacts.org/api/v2/product/$barcode?fields=_keywords,allergens,allergens_tags,brands,categories,categories_tags,compared_to_category,food_groups,food_groups_tags,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json';
     final response = await http.get(Uri.parse(url));
     final barcodeData = barcodeDataFromJson(response.body);
+
     if (response.statusCode == 200) {
       if (int.parse(barcode) > 0) {
         return FirebaseFirestore.instance
@@ -25,18 +26,19 @@ class FirebaseCommands {
             .set({
           'time': FieldValue.serverTimestamp(),
           'barcode': barcode,
-          'name': barcodeData.product!.productName,
+          'name': barcodeData.product?.productName! ?? 'Product',
           'score': barcodeData.product?.nutriscoreScore ?? 0,
           'grade': barcodeData.product?.nutritionGrades ?? 'No Grade',
           'calories': barcodeData.product?.nutriments?.energy ?? 0,
-          'total fat': barcodeData.product?.nutriments?.fat! ?? 0,
-          'saturated fat': barcodeData.product?.nutriments?.saturatedFat! ?? 0,
-          'sodium': barcodeData.product?.nutriments?.sodium! ?? 0,
+          'total fat': barcodeData.product?.nutriments?.fat ?? 0,
+          'saturated fat': barcodeData.product?.nutriments?.saturatedFat ?? 0,
+          'sodium': barcodeData.product?.nutriments?.sodium ?? 0,
           'total carbohydrate':
-              barcodeData.product?.nutriments?.carbohydrates! ?? 0,
-          'total sugars': barcodeData.product?.nutriments?.sugars! ?? 0,
-          'protein': barcodeData.product?.nutriments?.proteins! ?? 0,
-          'fiber': barcodeData.product?.nutriscoreData?.fiber! ?? 0,
+              barcodeData.product?.nutriments?.carbohydrates ?? 0,
+          'total sugars': barcodeData.product?.nutriments?.sugars ?? 0,
+          'protein': barcodeData.product?.nutriments?.proteins ?? 0,
+          'fiber': barcodeData.product?.nutriscoreData?.fiber ?? 0,
+          'picture': barcodeData.product?.selectedImages?.front?.small?.en
         }); // create barcode info
       }
     } else {

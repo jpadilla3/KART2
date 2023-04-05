@@ -121,7 +121,7 @@ class _RecPageState extends State<RecommendationsPage> {
                                       .data() as Map<String, dynamic>;
                                   return Text('${data['name']}');
                                 }
-                                return Text('loading');
+                                return const Text('loading');
                               }),
                             );
                           }
@@ -151,7 +151,7 @@ class _RecPageState extends State<RecommendationsPage> {
                                           width: 120,
                                           alignment: Alignment.center,
                                           color: Colors.indigo[400],
-                                          child: Text('Picture'),
+                                          child: const Text('Picture'),
                                         ),
                                         Container(
                                           height: 50,
@@ -189,7 +189,7 @@ class _RecPageState extends State<RecommendationsPage> {
                                             width: 120,
                                             color: Colors.indigo[400],
                                             alignment: Alignment.center,
-                                            child: Text('Picture')),
+                                            child: const Text('Picture')),
                                         Container(
                                             height: 50,
                                             width: 120,
@@ -202,7 +202,8 @@ class _RecPageState extends State<RecommendationsPage> {
                                                       ConnectionState.done) {
                                                     return getName(docIDs[0]);
                                                   } else {
-                                                    return Text('loading');
+                                                    return const Text(
+                                                        'loading');
                                                   }
                                                 }))
                                       ],
