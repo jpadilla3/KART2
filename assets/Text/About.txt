@@ -1,0 +1,4 @@
+When creating this application, we envisioned a
+way to display nutritional facts along with
+alternative products recommended that's considered healthy.
+
