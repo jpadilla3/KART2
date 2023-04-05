@@ -128,8 +128,8 @@ class _InfoPageState extends State<InfoPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         ListTile(
-                          leading: Image.network(
-                            "https://www.baynsolutions.com/wp-content/uploads/bb-plugin/cache/nutri-score-2-1060x707-panorama.png",
+                          leading: Image.asset(
+                            "assets/images/NutriScore.png",
                             height: 70,
                             width: 70,
                           ),
