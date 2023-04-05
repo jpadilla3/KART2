@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:kart2/main%20pages/nav_bar.dart';
 import 'package:kart2/main%20pages/home.dart';
+import 'package:kart2/models/firebase_commands.dart';
 
 List<String> titles = <String>[
   'Conditions',
   'Allergies',
 ];
 List<String> conditions = <String>[
-  'None',
   'Type 1 or 2 Diabites',
   ' Coeliac disease',
   'Thyroid disease',
@@ -21,22 +21,34 @@ List<String> conditions = <String>[
   'Pancreatitis'
 ];
 List<String> allergies = <String>[
-  'None',
   'Milk',
   'Gluten',
   'Lupin',
   'Celery',
-  'Sulphur-dioxide-and-sulphites',
   'Fish',
   'Crustaceans',
   'Sesame-Seeds',
   'Molluscs',
-  'Peanuts',
+  'Peanuts (Nuts)',
   'Soybeans',
-  'Nuts',
   'Mustard',
   'Eggs'
 ];
+
+Map userData = {
+  'Milk': false,
+  'Gluten': false,
+  'Lupin': false,
+  'Celery': false,
+  'Fish': false,
+  'Crustaceans': false,
+  'Sesame-Seeds': false,
+  'Molluscs': false,
+  'Peanuts (Nuts)': false,
+  'Soybeans': false,
+  'Mustard': false,
+  'Eggs': false
+};
 
 class Conditions extends StatefulWidget {
   const Conditions({Key? key}) : super(key: key);
@@ -64,9 +76,21 @@ class _ConditionsState extends State<Conditions> {
         appBar: AppBar(
           centerTitle: true,
           surfaceTintColor: Colors.white,
-          title: const Text(
-            'Select all that Applies to you:',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          title: const Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                    text: 'Select all that Applies to you:\n',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    )),
+                TextSpan(
+                    text: 'If None, Click Save and Continue',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400))
+              ],
+            ),
+            textAlign: TextAlign.center,
           ),
           notificationPredicate: (ScrollNotification notification) {
             return notification.depth == 1;
@@ -96,18 +120,10 @@ class _ConditionsState extends State<Conditions> {
                   value: conditionCheckList[index],
                   onChanged: (bool? value) {
                     setState(() {
-                      if (conditions[index] == 'None') {
-                        // If "None" is selected, set all other checkboxes to false
-                        conditionCheckList.fillRange(0, index, false);
-                        conditionCheckList.fillRange(
-                            index + 1, conditions.length, false);
-                      } else {
-                        // Otherwise, toggle the checkbox value
-                        conditionCheckList[index] = value!;
-                      }
+                      conditionCheckList[index] = value!;
                     });
                   },
-                  title: Text('${conditions[index]}'),
+                  title: Text(conditions[index]),
                   tileColor: conditionCheckList[index] ? checked : Colors.white,
                 );
               },
@@ -120,18 +136,11 @@ class _ConditionsState extends State<Conditions> {
                   value: allergyCheckList[index],
                   onChanged: (bool? value) {
                     setState(() {
-                      if (allergies[index] == 'None') {
-                        // If "None" is selected, set all other checkboxes to false
-                        allergyCheckList.fillRange(0, index, false);
-                        allergyCheckList.fillRange(
-                            index + 1, allergies.length, false);
-                      } else {
-                        // Otherwise, toggle the checkbox value
-                        allergyCheckList[index] = value!;
-                      }
+                      allergyCheckList[index] = value!;
+                      userData[allergies[index]] = value;
                     });
                   },
-                  title: Text('${allergies[index]}'),
+                  title: Text(allergies[index]),
                   tileColor: allergyCheckList[index] ? checked2 : Colors.white,
                 );
               },
@@ -140,11 +149,18 @@ class _ConditionsState extends State<Conditions> {
         ),
         bottomNavigationBar: ElevatedButton(
           key: const Key('conditions'),
-          onPressed: () => Navigator.push(
-              context, MaterialPageRoute(builder: (context) => navBar())),
-          child: const Text('Save and Continue'),
+          onPressed: () {
+            FirebaseCommands().updateUser(userData);
+            for (var entry in userData.entries) {
+              print('${entry.key} : ${entry.value}');
+            }
+
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => navBar()));
+          },
           style: ButtonStyle(
               minimumSize: MaterialStateProperty.all<Size>(const Size(0, 55))),
+          child: const Text('Save and Continue'),
         ),
       ),
     );

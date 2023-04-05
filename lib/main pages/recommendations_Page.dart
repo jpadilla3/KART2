@@ -48,6 +48,7 @@ class _RecPageState extends State<RecommendationsPage> {
         body: CustomScrollView(
       slivers: [
         SliverAppBar.large(
+          expandedHeight: 147,
           leading: const Text(''),
           title: Text(
             'Recommendations',
@@ -64,8 +65,9 @@ class _RecPageState extends State<RecommendationsPage> {
                 size: 35,
               ),
               color: Colors.indigo[400],
-            )
+            ),
           ],
+          surfaceTintColor: Colors.white,
         ),
         SliverToBoxAdapter(
           child: Column(
@@ -119,7 +121,15 @@ class _RecPageState extends State<RecommendationsPage> {
                                     ConnectionState.done) {
                                   Map<String, dynamic> data = snapshot.data!
                                       .data() as Map<String, dynamic>;
-                                  return Text('${data['name']}');
+                                  return Expanded(
+                                    child: Text(
+                                      '${data['name']}',
+                                      textAlign: TextAlign.center,
+                                      overflow: TextOverflow.ellipsis,
+                                      softWrap: false,
+                                      maxLines: 2,
+                                    ),
+                                  );
                                 }
                                 return const Text('loading');
                               }),
@@ -146,27 +156,36 @@ class _RecPageState extends State<RecommendationsPage> {
                                     },
                                     child: Column(
                                       children: [
-                                        Container(
-                                          height: 120,
-                                          width: 120,
-                                          alignment: Alignment.center,
-                                          color: Colors.indigo[400],
-                                          child: const Text('Picture'),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 15),
+                                          child: Container(
+                                            height: 120,
+                                            width: 120,
+                                            alignment: Alignment.center,
+                                            color: Colors.indigo[400],
+                                            child: Text('Picture'),
+                                          ),
                                         ),
                                         Container(
                                           height: 50,
                                           width: 120,
                                           alignment: Alignment.center,
-                                          child: Text(
-                                            '${documentSnapshot['name']}',
-                                            textAlign: TextAlign.center,
+                                          child: Expanded(
+                                            child: Text(
+                                              '${documentSnapshot['name']}',
+                                              textAlign: TextAlign.center,
+                                              overflow: TextOverflow.ellipsis,
+                                              softWrap: false,
+                                              maxLines: 2,
+                                            ),
                                           ),
                                         )
                                       ],
                                     ),
                                   ),
                                   const Padding(
-                                    padding: EdgeInsets.only(bottom: 50),
+                                    padding: EdgeInsets.only(bottom: 10),
                                     child: SizedBox(
                                       width: 70,
                                       child: Icon(Icons.change_circle_outlined),
@@ -184,12 +203,16 @@ class _RecPageState extends State<RecommendationsPage> {
                                     },
                                     child: Column(
                                       children: [
-                                        Container(
-                                            height: 120,
-                                            width: 120,
-                                            color: Colors.indigo[400],
-                                            alignment: Alignment.center,
-                                            child: const Text('Picture')),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 15),
+                                          child: Container(
+                                              height: 120,
+                                              width: 120,
+                                              color: Colors.indigo[400],
+                                              alignment: Alignment.center,
+                                              child: Text('Picture')),
+                                        ),
                                         Container(
                                             height: 50,
                                             width: 120,

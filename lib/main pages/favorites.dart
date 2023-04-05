@@ -6,6 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:kart2/main%20pages/productPage.dart';
 import 'package:kart2/models/firebase_commands.dart';
 
+import '../models/scoreColor.dart';
+
 class FavPage extends StatefulWidget {
   const FavPage({super.key});
 
@@ -44,6 +46,8 @@ class _FavPageState extends State<FavPage> {
       body: CustomScrollView(
         slivers: [
           SliverAppBar.large(
+            expandedHeight: 147,
+            surfaceTintColor: Colors.white,
             leading: IconButton(
               onPressed: () {
                 Navigator.pop(context);
@@ -96,29 +100,99 @@ class _FavPageState extends State<FavPage> {
                                   icon: Icons.delete,
                                 ),
                               ]),
-                              child: ListTile(
+                              child: InkWell(
+                                highlightColor: Colors.grey[300],
+                                //behavior: HitTestBehavior.translucent,
                                 onTap: () {
+                                  // add your logic here
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => productPage(
                                               documentSnapshot['barcode'])));
                                 },
-                                leading: Image.network(
-                                    "https://www.eslc.org/wp-content/uploads/2019/08/placeholder-grey-square-600x600.jpg"),
-                                title: Text(documentSnapshot['name']),
-                                subtitle: Row(
+                                child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    const SizedBox(
-                                      width: 6,
+                                    Column(
+                                      children: [
+                                        Padding(
+                                            padding: const EdgeInsets.all(10.0),
+                                            child: Container(
+                                              height: 80,
+                                              width: 80,
+                                              color: Colors.blueGrey,
+                                            )),
+                                      ],
                                     ),
-                                    Text(
-                                        'Grade: ${documentSnapshot['grade'].toString().toUpperCase()}'),
+                                    SizedBox(
+                                      height: 100,
+                                      width: 200,
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    documentSnapshot['name'],
+                                                    textAlign: TextAlign.start,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 2,
+                                                    softWrap: false,
+                                                    style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(
+                                              height: 3,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                scoreColors().scoreColor(
+                                                    documentSnapshot['grade']),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 5),
+                                                  child: Text(
+                                                    'Grade: ${documentSnapshot['grade'].toString().toUpperCase()}',
+                                                    textAlign: TextAlign.start,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: const [
+                                          SizedBox(
+                                            child: Icon(
+                                              Icons.arrow_forward_ios,
+                                              color: Colors.indigo,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ],
-                                ),
-                                trailing: SizedBox(
-                                  child: Icon(Icons.arrow_forward_ios),
                                 ),
                               ),
                             );

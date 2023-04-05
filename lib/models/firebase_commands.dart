@@ -42,8 +42,39 @@ class FirebaseCommands {
         }); // create barcode info
       }
     } else {
-      throw Exception('Failed to fetch data');
+      return AboutDialog();
     }
+  }
+
+  Future addUser() async {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.email.toString())
+        .set({'username': FirebaseAuth.instance.currentUser!.email.toString()});
+  }
+
+  Future updateUser(Map userData) async {
+    var list = userData.values.toList();
+
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.email.toString())
+        .update({
+      'Allergies': {
+        "Milk": list[0],
+        'Gluten': list[1],
+        'Lupin': list[2],
+        'Celery': list[3],
+        'Fish': list[4],
+        'Crustaceans': list[5],
+        'Sesame-Seeds': list[6],
+        'Molluscs': list[7],
+        'Peanuts (Nuts)': list[8],
+        'Soybeans': list[9],
+        'Mustard': list[10],
+        'Eggs': list[11],
+      }
+    });
   }
 
   Future updateBarcode(String barcode) async {
