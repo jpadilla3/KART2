@@ -135,7 +135,7 @@ class _productPageState extends State<productPage> {
             ),
             //picture
             Container(
-              color: Colors.indigo[400],
+              color: Colors.transparent,
               child: SizedBox.square(
                   dimension: 150.0,
                   child: FutureBuilder<DocumentSnapshot>(
