@@ -1,20 +1,15 @@
 import 'dart:async';
-import 'dart:math';
-import 'package:http/http.dart' as http;
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:kart2/main%20pages/home.dart';
+
 import 'package:kart2/main%20pages/nav_bar.dart';
-import 'package:kart2/main%20pages/productPage.dart';
+
 import 'package:kart2/models/barcode_data_model.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:kart2/models/firebase_commands.dart';
+import 'package:kart2/models/firebase_commands.dart' as fire;
 import 'package:kart2/models/flutter_barcode_scanner.dart';
-import 'favorites.dart';
-import 'package:kart2/utils/constants.dart';
+import 'package:openfoodfacts/openfoodfacts.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -26,6 +21,26 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   String _scanBarcode = '';
   late Future<BarcodeData> futureBarcodeData;
+
+  Future getSuggestion(String word) async {
+    ProductSearchQueryConfiguration config = ProductSearchQueryConfiguration(
+        language: OpenFoodFactsLanguage.ENGLISH,
+        parametersList: <Parameter>[
+          SearchTerms(terms: [word]),
+          const SortBy(
+            option: SortOption.NUTRISCORE,
+          ),
+        ],
+        version: ProductQueryVersion.v3);
+
+    SearchResult result = await OpenFoodAPIClient.searchProducts(
+        User(userId: 'jpadilla3', password: 'abc123!'), config);
+
+    for (int i = 0; i < 5; i++) {
+      print(
+          "${result.products?[i].productName} : ${result.products?[i].barcode}");
+    }
+  }
 
   @override
   void initState() {
@@ -41,7 +56,7 @@ class _SearchPageState extends State<SearchPage> {
           await BarcodeScanner.scanBarcode('#ff6666', 'Cancel', true);
       //add barcode to firebase
       //passes current user email and barcode
-      FirebaseCommands().addBarcode(barcodeScanRes);
+      fire.FirebaseCommands().addBarcode(barcodeScanRes);
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
     }
@@ -156,6 +171,39 @@ class _SearchPageState extends State<SearchPage> {
 }
 
 class MySearchDelegate extends SearchDelegate {
+  List<String> search = [];
+  List<String> search1 = [];
+  List<String> bar = [];
+  Future getSearch(String word) async {
+    ProductSearchQueryConfiguration config = ProductSearchQueryConfiguration(
+        language: OpenFoodFactsLanguage.ENGLISH,
+        parametersList: <Parameter>[
+          SearchTerms(terms: [word]),
+          const SortBy(
+            option: SortOption.POPULARITY,
+          ),
+          TagFilter.fromType(
+              tagFilterType: TagFilterType.COUNTRIES, tagName: 'united-states'),
+        ],
+        version: ProductQueryVersion.v3);
+
+    SearchResult result = await OpenFoodAPIClient.searchProducts(
+        const User(userId: 'jpadilla3', password: 'abc123!'), config);
+
+    for (int i = 0; i < 15; i++) {
+      print(
+          "${result.products?[i].productName} : ${result.products?[i].countriesTags}");
+
+      search.add('${result.products?[i].productName}');
+      search1.add('${result.products?[i].nutriscore}');
+      bar.add('${result.products?[i].barcode}');
+    }
+
+    print(search.length);
+  }
+
+  List<String> prevSearch = [];
+
   @override
   Widget? buildLeading(BuildContext context) => IconButton(
       icon: const Icon(
@@ -168,36 +216,71 @@ class MySearchDelegate extends SearchDelegate {
   List<Widget>? buildActions(BuildContext context) => [
         IconButton(
           icon: const Icon(
-            Icons.clear,
+            Icons.search,
             color: Colors.black,
           ),
           onPressed: () {
-            if (query.isEmpty) {
-              close(context, null);
+            if (prevSearch.contains(query)) {
+              int pos = prevSearch.indexOf(query);
+              final String first = prevSearch.removeAt(pos);
+              prevSearch.add(first);
             } else {
-              query = '';
+              prevSearch.add(query);
             }
+
+            showResults(context);
+            search.clear();
+            //getSuggestion(query);
           },
         )
       ];
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    List<String> suggestions = [];
     return ListView.builder(
-        itemCount: suggestions.length,
+        itemCount: prevSearch.length,
         itemBuilder: (context, index) {
-          final suggestion = suggestions[index];
+          var revSearch = List.from(prevSearch.reversed);
+          final suggestion = revSearch[index];
           return ListTile(
             title: Text(suggestion),
             onTap: () {
               query = suggestion;
+              if (prevSearch.contains(query)) {
+                int pos = prevSearch.indexOf(query);
+                final String first = prevSearch.removeAt(pos);
+                prevSearch.add(first);
+              } else {
+                prevSearch.add(query);
+              }
               showResults(context);
+              search.clear();
             },
           );
         });
   }
 
   @override
-  Widget buildResults(BuildContext context) => const Center();
+  Widget buildResults(BuildContext context) => Center(
+        child: FutureBuilder(
+            future: getSearch(query),
+            builder: (context, snaphsot) {
+              if (snaphsot.connectionState == ConnectionState.done) {
+                return ListView.builder(
+                    itemCount: search.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(search[index]),
+                        subtitle:
+                            Text('Grade: ${search1[index].toUpperCase()}'),
+                        onTap: () {
+                          fire.FirebaseCommands().searchBarcode(bar[index]);
+                        },
+                      );
+                    });
+              } else {
+                return const CircularProgressIndicator();
+              }
+            }),
+      );
 }
