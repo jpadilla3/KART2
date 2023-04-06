@@ -95,7 +95,10 @@ class FirebaseCommands {
         .doc(FirebaseAuth.instance.currentUser!.email.toString())
         .collection('search')
         .doc(barcode)
-        .set({}); //input searched barcodes
+        .set({
+      "barcode": barcode,
+      'time': FieldValue.serverTimestamp()
+    }); //input searched barcodes
   }
 
   Future favoriteBarcode(String barcode, String name, String grade) async {
