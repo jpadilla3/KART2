@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:kart2/models/barcode_data_model.dart';
 import 'package:http/http.dart' as http;
 
-import '../main pages/productPage.dart';
-
 class FirebaseCommands {
   //add barcode to firebase
   Future addBarcode(String barcode) async {
@@ -38,7 +36,8 @@ class FirebaseCommands {
           'total sugars': barcodeData.product?.nutriments?.sugars ?? 0,
           'protein': barcodeData.product?.nutriments?.proteins ?? 0,
           'fiber': barcodeData.product?.nutriscoreData?.fiber ?? 0,
-          'picture': barcodeData.product?.selectedImages?.front?.small?.en
+          'picture': barcodeData.product?.selectedImages?.front?.small?.en ??
+              'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg'
         }); // create barcode info
       }
     } else {
@@ -89,16 +88,39 @@ class FirebaseCommands {
         .set({'barcode': '000001', 'name': 'orange'});
   }
 
-  Future searchBarcode(String barcode) async {
-    return FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.email.toString())
-        .collection('search')
-        .doc(barcode)
-        .set({
-      "barcode": barcode,
-      'time': FieldValue.serverTimestamp()
-    }); //input searched barcodes
+  Future searchBarcode(String barcode, Map data) async {
+    final String url =
+        'https://us.openfoodfacts.org/api/v2/product/$barcode?fields=_keywords,allergens,allergens_tags,brands,categories,categories_tags,compared_to_category,food_groups,food_groups_tags,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json';
+    final response = await http.get(Uri.parse(url));
+    final barcodeData = barcodeDataFromJson(response.body);
+
+    if (response.statusCode == 200) {
+      if (int.parse(barcode) > 0) {
+        return FirebaseFirestore.instance
+            .collection('users')
+            .doc(FirebaseAuth.instance.currentUser!.email.toString())
+            .collection('search')
+            .doc(barcode)
+            .set({
+          'time': FieldValue.serverTimestamp(),
+          'barcode': barcode,
+          'name': barcodeData.product?.productName! ?? 'Product',
+          'score': barcodeData.product?.nutriscoreScore ?? 0,
+          'grade': barcodeData.product?.nutritionGrades ?? 'No Grade',
+          'calories': barcodeData.product?.nutriments?.energy ?? 0,
+          'total fat': barcodeData.product?.nutriments?.fat ?? 0,
+          'saturated fat': barcodeData.product?.nutriments?.saturatedFat ?? 0,
+          'sodium': barcodeData.product?.nutriments?.sodium ?? 0,
+          'total carbohydrate':
+              barcodeData.product?.nutriments?.carbohydrates ?? 0,
+          'total sugars': barcodeData.product?.nutriments?.sugars ?? 0,
+          'protein': barcodeData.product?.nutriments?.proteins ?? 0,
+          'fiber': barcodeData.product?.nutriscoreData?.fiber ?? 0,
+          'picture': data['pic'] ??
+              'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg'
+        }); //input searched barcodes
+      }
+    }
   }
 
   Future favoriteBarcode(String barcode, String name, String grade) async {
@@ -126,12 +148,19 @@ class FirebaseCommands {
   }
 
   //destroy barcode from firebase
-  Future<void> destroyBarcode(String barcode) async {
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.email.toString())
-        .collection('scanned')
-        .doc(barcode)
-        .delete();
+  Future<void> destroyBarcode(String barcode, bool choice) async {
+    choice
+        ? await FirebaseFirestore.instance
+            .collection('users')
+            .doc(FirebaseAuth.instance.currentUser!.email.toString())
+            .collection('scanned')
+            .doc(barcode)
+            .delete()
+        : await FirebaseFirestore.instance
+            .collection('users')
+            .doc(FirebaseAuth.instance.currentUser!.email.toString())
+            .collection('search')
+            .doc(barcode)
+            .delete();
   }
 }

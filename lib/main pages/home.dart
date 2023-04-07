@@ -187,7 +187,7 @@ class _HomePageState extends State<HomePage> {
                                       snackMessage(
                                           true, documentSnapshot['barcode']);
                                       FirebaseCommands().destroyBarcode(
-                                          documentSnapshot['barcode']);
+                                          documentSnapshot['barcode'], true);
                                       FirebaseCommands().removeFavorite(
                                           documentSnapshot['barcode']);
                                     },
