@@ -469,7 +469,7 @@ class _productPageState extends State<productPage> {
           highlightColor: Colors.indigo,
           highlightShape: BoxShape.rectangle,
           onTap: () {
-            FirebaseCommands().destroyBarcode(widget.barcode);
+            FirebaseCommands().destroyBarcode(widget.barcode, true);
             FirebaseCommands().removeFavorite(widget.barcode);
             snackMessage(true, widget.barcode);
           },

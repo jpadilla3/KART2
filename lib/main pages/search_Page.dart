@@ -1,15 +1,22 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fires;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 import 'package:kart2/main%20pages/nav_bar.dart';
+import 'package:kart2/main%20pages/productPage.dart';
 
 import 'package:kart2/models/barcode_data_model.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kart2/models/firebase_commands.dart' as fire;
 import 'package:kart2/models/flutter_barcode_scanner.dart';
+import 'package:kart2/models/scoreColor.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
+
+List<String> prevSearch = [];
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -47,6 +54,24 @@ class _SearchPageState extends State<SearchPage> {
     super.initState();
   }
 
+  void snackMessage(bool action, String barcode) {
+    //true for delete
+    //false for favorite
+    if (action == true) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("You have successfully deleted $barcode"),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.only(bottom: 50),
+      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Added $barcode to favorites"),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.only(bottom: 50),
+      ));
+    }
+  }
+
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> scanBarcodeNormal() async {
     String barcodeScanRes;
@@ -71,109 +96,294 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
+  final CollectionReference _barcodes = FirebaseFirestore.instance
+      .collection('users')
+      .doc(fires.FirebaseAuth.instance.currentUser!.email.toString())
+      .collection('search');
+
   //fetchBarcodeData function gets the data with certian fields from barcode and parses it.
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 70,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        showSearch(
-                            context: context, delegate: MySearchDelegate());
-                      },
-                      child: Container(
-                        height: 50,
-                        width: 290,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: Colors.indigo),
-                            borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                bottomLeft: Radius.circular(10))),
-                        child: Row(
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(left: 10),
-                              child: Icon(
-                                Icons.search,
-                                color: Colors.black,
-                              ),
+      appBar: AppBar(
+        toolbarHeight: 100,
+        flexibleSpace: SafeArea(
+          minimum: EdgeInsets.only(top: 50),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Column(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      showSearch(
+                          context: context, delegate: MySearchDelegate());
+                    },
+                    child: Container(
+                      height: 50,
+                      width: 290,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.indigo),
+                          borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              bottomLeft: Radius.circular(10))),
+                      child: Row(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: Icon(
+                              Icons.search,
+                              color: Colors.black,
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20),
-                              child: Text(
-                                'Search',
-                                style: GoogleFonts.bebasNeue(
-                                    color: Colors.black, fontSize: 20),
-                              ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 20),
+                            child: Text(
+                              'Search',
+                              style: GoogleFonts.bebasNeue(
+                                  color: Colors.black, fontSize: 20),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-                Column(children: [
-                  Container(
-                    height: 50,
-                    width: 60,
-                    decoration: BoxDecoration(
-                        color: Colors.indigo[400],
-                        borderRadius: const BorderRadius.only(
-                            topRight: Radius.circular(10),
-                            bottomRight: Radius.circular(10))),
-                    child: IconButton(
-                        onPressed: () async {
-                          await scanBarcodeNormal();
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const navBar()));
-                        },
-                        icon: const Icon(
-                          Icons.photo_camera_rounded,
-                          color: Colors.white,
-                        )),
                   ),
-                ])
+                ],
+              ),
+              Column(children: [
+                Container(
+                  height: 50,
+                  width: 60,
+                  decoration: BoxDecoration(
+                      color: Colors.indigo[400],
+                      borderRadius: const BorderRadius.only(
+                          topRight: Radius.circular(10),
+                          bottomRight: Radius.circular(10))),
+                  child: IconButton(
+                      onPressed: () async {
+                        await scanBarcodeNormal();
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const navBar()));
+                      },
+                      icon: const Icon(
+                        Icons.photo_camera_rounded,
+                        color: Colors.white,
+                      )),
+                ),
+              ])
+            ],
+          ),
+        ),
+      ),
+      backgroundColor: Colors.white,
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Column(
+              children: [
+                StreamBuilder(
+                    stream:
+                        _barcodes.orderBy('time', descending: true).snapshots(),
+                    builder:
+                        (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
+                      if (streamSnapshot.hasData) {
+                        if (streamSnapshot.data!.size > 0) {
+                          return ListView.separated(
+                              separatorBuilder:
+                                  (BuildContext context, int index) =>
+                                      const Divider(
+                                        height: 3,
+                                        indent: 12,
+                                        endIndent: 12,
+                                      ),
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: streamSnapshot.data!.docs.length,
+                              itemBuilder: (context, index) {
+                                final DocumentSnapshot documentSnapshot =
+                                    streamSnapshot.data!.docs[index];
+                                return Slidable(
+                                  endActionPane: ActionPane(
+                                      motion: const DrawerMotion(),
+                                      children: [
+                                        SlidableAction(
+                                          onPressed: (context) async {
+                                            snackMessage(false,
+                                                documentSnapshot['barcode']);
+                                            fire.FirebaseCommands()
+                                                .favoriteBarcode(
+                                                    documentSnapshot['barcode'],
+                                                    documentSnapshot['name'],
+                                                    documentSnapshot['grade']);
+                                          },
+                                          backgroundColor: Colors.red,
+                                          icon: Icons.favorite,
+                                        ),
+                                        SlidableAction(
+                                          onPressed: (context) {
+                                            snackMessage(true,
+                                                documentSnapshot['barcode']);
+                                            fire.FirebaseCommands()
+                                                .destroyBarcode(
+                                                    documentSnapshot['barcode'],
+                                                    false);
+                                            fire.FirebaseCommands()
+                                                .removeFavorite(
+                                                    documentSnapshot[
+                                                        'barcode']);
+                                          },
+                                          backgroundColor: Colors.indigo,
+                                          icon: Icons.delete,
+                                        ),
+                                      ]),
+                                  child: InkWell(
+                                    highlightColor: Colors.grey[300],
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => productPage(
+                                                  documentSnapshot[
+                                                      'barcode'])));
+                                    },
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Column(
+                                          children: [
+                                            Padding(
+                                                padding:
+                                                    const EdgeInsets.all(10.0),
+                                                child: Container(
+                                                  height: 80,
+                                                  width: 80,
+                                                  child: Image.network(
+                                                      '${documentSnapshot['picture']}'),
+                                                )),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 100,
+                                          width: 200,
+                                          child: Center(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    Expanded(
+                                                      child: Text(
+                                                        documentSnapshot[
+                                                            'name'],
+                                                        textAlign:
+                                                            TextAlign.start,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 2,
+                                                        softWrap: false,
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(
+                                                  height: 3,
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    scoreColors().scoreColor(
+                                                        documentSnapshot[
+                                                            'grade']),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 5),
+                                                      child: Text(
+                                                        'Grade: ${documentSnapshot['grade'].toString().toUpperCase()}',
+                                                        textAlign:
+                                                            TextAlign.start,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: const [
+                                              SizedBox(
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right: 10),
+                                                  child: Icon(
+                                                    Icons.arrow_forward_ios,
+                                                    color: Colors.indigo,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              });
+                        } else {
+                          return Column(
+                            children: [
+                              const SizedBox(
+                                height: 200,
+                              ),
+                              Container(
+                                height: 200,
+                                width: 200,
+                                child: Image.asset("assets/images/Search.png"),
+                              ),
+                              Text(
+                                "Enter a Search",
+                                style: GoogleFonts.bebasNeue(
+                                    color: Colors.black, fontSize: 30),
+                              )
+                            ],
+                          );
+                        }
+                      } else {
+                        return const CircularProgressIndicator();
+                      }
+                    })
               ],
             ),
-            const SizedBox(
-              height: 200,
-            ),
-            Container(
-              height: 200,
-              width: 200,
-              child: Image.asset("assets/images/Search.png"),
-            ),
-            Text(
-              "Enter a Search",
-              style: GoogleFonts.bebasNeue(color: Colors.black, fontSize: 30),
-            )
-          ],
-        ),
+          )
+        ],
       ),
     );
   }
 }
 
 class MySearchDelegate extends SearchDelegate {
-  List<String> search = [];
-  List<String> search1 = [];
   List<String> bar = [];
+  List<Map> data = [];
   Future getSearch(String word) async {
     ProductSearchQueryConfiguration config = ProductSearchQueryConfiguration(
         language: OpenFoodFactsLanguage.ENGLISH,
@@ -191,18 +401,17 @@ class MySearchDelegate extends SearchDelegate {
         const User(userId: 'jpadilla3', password: 'abc123!'), config);
 
     for (int i = 0; i < 15; i++) {
-      print(
-          "${result.products?[i].productName} : ${result.products?[i].countriesTags}");
-
-      search.add('${result.products?[i].productName}');
-      search1.add('${result.products?[i].nutriscore}');
       bar.add('${result.products?[i].barcode}');
+      data.add({
+        "name": result.products?[i].productName ?? "null",
+        "grade": result.products?[i].nutriscore ?? "Not Avaliable",
+        "barcode": result.products?[i].barcode ?? 'null',
+        "pic": result.products?[i].imageFrontUrl ??
+            'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg',
+      });
+      print("${data[i]['name']} : ${data[i]['barcode']}");
     }
-
-    print(search.length);
   }
-
-  List<String> prevSearch = [];
 
   @override
   Widget? buildLeading(BuildContext context) => IconButton(
@@ -229,7 +438,7 @@ class MySearchDelegate extends SearchDelegate {
             }
 
             showResults(context);
-            search.clear();
+            data.clear();
             //getSuggestion(query);
           },
         )
@@ -254,7 +463,7 @@ class MySearchDelegate extends SearchDelegate {
                 prevSearch.add(query);
               }
               showResults(context);
-              search.clear();
+              data.clear();
             },
           );
         });
@@ -267,15 +476,102 @@ class MySearchDelegate extends SearchDelegate {
             builder: (context, snaphsot) {
               if (snaphsot.connectionState == ConnectionState.done) {
                 return ListView.builder(
-                    itemCount: search.length,
+                    itemCount: data.length,
                     itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(search[index]),
-                        subtitle:
-                            Text('Grade: ${search1[index].toUpperCase()}'),
+                      return InkWell(
+                        highlightColor: Colors.grey[300],
                         onTap: () {
-                          fire.FirebaseCommands().searchBarcode(bar[index]);
+                          fire.FirebaseCommands().searchBarcode(
+                              data[index]['barcode'], data[index]);
+
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      productPage(bar[index])));
+                          data.clear();
                         },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              children: [
+                                Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Container(
+                                      height: 80,
+                                      width: 80,
+                                      child: Image.network(
+                                          '${data[index]['pic']}'),
+                                    )),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 100,
+                              width: 200,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                            child: Text(
+                                          data[index]['name'],
+                                          textAlign: TextAlign.start,
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 2,
+                                          softWrap: false,
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ))
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 3,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        scoreColors()
+                                            .scoreColor(data[index]['grade']),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 5),
+                                          child: Text(
+                                            'Grade: ${data[index]['grade'].toString().toUpperCase()}',
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        )
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: const [
+                                  SizedBox(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(right: 10),
+                                      child: Icon(
+                                        Icons.arrow_forward_ios,
+                                        color: Colors.indigo,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       );
                     });
               } else {
