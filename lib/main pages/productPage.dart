@@ -10,7 +10,8 @@ import 'package:kart2/models/scoreColor.dart';
 
 class productPage extends StatefulWidget {
   String barcode;
-  productPage(this.barcode);
+  bool type;
+  productPage(this.barcode, this.type);
 
   @override
   State<productPage> createState() => _productPageState();

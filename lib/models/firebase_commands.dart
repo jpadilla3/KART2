@@ -23,6 +23,7 @@ class FirebaseCommands {
             .doc(barcode) // create barcode
             .set({
           'time': FieldValue.serverTimestamp(),
+          "ID": true,
           'barcode': barcode,
           'name': barcodeData.product?.productName! ?? 'Product',
           'score': barcodeData.product?.nutriscoreScore ?? 0,
@@ -103,27 +104,33 @@ class FirebaseCommands {
             .doc(barcode)
             .set({
           'time': FieldValue.serverTimestamp(),
+          "ID": false,
           'barcode': barcode,
           'name': barcodeData.product?.productName! ?? 'Product',
-          'score': barcodeData.product?.nutriscoreScore ?? 0,
-          'grade': barcodeData.product?.nutritionGrades ?? 'No Grade',
-          'calories': barcodeData.product?.nutriments?.energy ?? 0,
-          'total fat': barcodeData.product?.nutriments?.fat ?? 0,
-          'saturated fat': barcodeData.product?.nutriments?.saturatedFat ?? 0,
-          'sodium': barcodeData.product?.nutriments?.sodium ?? 0,
-          'total carbohydrate':
-              barcodeData.product?.nutriments?.carbohydrates ?? 0,
-          'total sugars': barcodeData.product?.nutriments?.sugars ?? 0,
-          'protein': barcodeData.product?.nutriments?.proteins ?? 0,
-          'fiber': barcodeData.product?.nutriscoreData?.fiber ?? 0,
+          "nutrition": {
+            'score': barcodeData.product?.nutriscoreScore ?? 0,
+            'grade': barcodeData.product?.nutritionGrades ?? 'No Grade',
+            'calories': barcodeData.product?.nutriments?.energy ?? 0,
+            'total fat': barcodeData.product?.nutriments?.fat ?? 0,
+            'saturated fat': barcodeData.product?.nutriments?.saturatedFat ?? 0,
+            'sodium': barcodeData.product?.nutriments?.sodium ?? 0,
+            'total carbohydrate':
+                barcodeData.product?.nutriments?.carbohydrates ?? 0,
+            'total sugars': barcodeData.product?.nutriments?.sugars ?? 0,
+            'protein': barcodeData.product?.nutriments?.proteins ?? 0,
+            'fiber': barcodeData.product?.nutriscoreData?.fiber ?? 0,
+            'ingredients': data['ingredients']
+          },
           'picture': data['pic'] ??
-              'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg'
+              'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg',
+          'Allergens': barcodeData.product?.allergens ?? "Not Avaliable",
         }); //input searched barcodes
       }
     }
   }
 
-  Future favoriteBarcode(String barcode, String name, String grade) async {
+  Future favoriteBarcode(
+      String barcode, String name, String grade, bool ID, String pic) async {
     return FirebaseFirestore.instance
         .collection('users') //go to general collection
         .doc(FirebaseAuth.instance.currentUser!.email
@@ -134,7 +141,8 @@ class FirebaseCommands {
       'time': FieldValue.serverTimestamp(),
       'barcode': barcode,
       'name': name,
-      'grade': grade
+      'grade': grade,
+      'ID': ID
     }); //create info about barcode
   }
 

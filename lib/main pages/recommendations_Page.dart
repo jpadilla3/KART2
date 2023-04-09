@@ -7,7 +7,6 @@ import 'package:kart2/main%20pages/List.dart';
 import 'package:kart2/main%20pages/info.dart';
 import 'package:kart2/main%20pages/productPage.dart';
 import 'package:kart2/models/flutter_barcode_scanner.dart';
-import 'package:kart2/main pages/search_Page.dart';
 
 import '../models/firebase_commands.dart';
 
@@ -151,8 +150,8 @@ class _RecPageState extends State<RecommendationsPage> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) => productPage(
-                                                  documentSnapshot[
-                                                      'barcode'])));
+                                                  documentSnapshot['barcode'],
+                                                  true)));
                                     },
                                     child: Column(
                                       children: [

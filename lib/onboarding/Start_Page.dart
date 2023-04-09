@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:kart2/main%20pages/home.dart';
-import 'package:kart2/main%20pages/nav_bar.dart';
-import 'package:kart2/main%20pages/search_Page.dart';
+
 import 'package:kart2/models/firebase_commands.dart';
 import 'package:kart2/onboarding/sign%20up%20pages/about%20pages/transitionPage.dart';
 import 'package:kart2/onboarding/textfield.dart';
