@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -177,7 +178,9 @@ class _HomePageState extends State<HomePage> {
                                       FirebaseCommands().favoriteBarcode(
                                           documentSnapshot['barcode'],
                                           documentSnapshot['name'],
-                                          documentSnapshot['grade']);
+                                          documentSnapshot['grade'],
+                                          true,
+                                          documentSnapshot['picture']);
                                     },
                                     backgroundColor: Colors.red,
                                     icon: Icons.favorite,
@@ -204,7 +207,8 @@ class _HomePageState extends State<HomePage> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => productPage(
-                                            documentSnapshot['barcode'])));
+                                            documentSnapshot['barcode'],
+                                            true)));
                               },
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,

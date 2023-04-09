@@ -8,6 +8,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 
 import 'package:kart2/main%20pages/nav_bar.dart';
 import 'package:kart2/main%20pages/productPage.dart';
+import 'package:kart2/main%20pages/search_product_page.dart';
 
 import 'package:kart2/models/barcode_data_model.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -218,7 +219,11 @@ class _SearchPageState extends State<SearchPage> {
                                                 .favoriteBarcode(
                                                     documentSnapshot['barcode'],
                                                     documentSnapshot['name'],
-                                                    documentSnapshot['grade']);
+                                                    documentSnapshot[
+                                                        'nutrition']['grade'],
+                                                    false,
+                                                    documentSnapshot[
+                                                        'picture']);
                                           },
                                           backgroundColor: Colors.red,
                                           icon: Icons.favorite,
@@ -247,8 +252,8 @@ class _SearchPageState extends State<SearchPage> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) => productPage(
-                                                  documentSnapshot[
-                                                      'barcode'])));
+                                                  documentSnapshot['barcode'],
+                                                  false)));
                                     },
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
@@ -307,13 +312,14 @@ class _SearchPageState extends State<SearchPage> {
                                                   children: [
                                                     scoreColors().scoreColor(
                                                         documentSnapshot[
-                                                            'grade']),
+                                                                'nutrition']
+                                                            ['grade']),
                                                     Padding(
                                                       padding:
                                                           const EdgeInsets.only(
                                                               left: 5),
                                                       child: Text(
-                                                        'Grade: ${documentSnapshot['grade'].toString().toUpperCase()}',
+                                                        'Grade: ${documentSnapshot['nutrition']['grade'].toString().toUpperCase()}',
                                                         textAlign:
                                                             TextAlign.start,
                                                       ),
@@ -383,7 +389,7 @@ class _SearchPageState extends State<SearchPage> {
 
 class MySearchDelegate extends SearchDelegate {
   List<String> bar = [];
-  List<Map> data = [];
+  List<Map<String, dynamic>> data = [];
   Future getSearch(String word) async {
     ProductSearchQueryConfiguration config = ProductSearchQueryConfiguration(
         language: OpenFoodFactsLanguage.ENGLISH,
@@ -400,16 +406,44 @@ class MySearchDelegate extends SearchDelegate {
     SearchResult result = await OpenFoodAPIClient.searchProducts(
         const User(userId: 'jpadilla3', password: 'abc123!'), config);
 
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 20; i++) {
       bar.add('${result.products?[i].barcode}');
       data.add({
+        "brand": result.products?[i].brands ?? result.products?[i].productName,
         "name": result.products?[i].productName ?? "null",
         "grade": result.products?[i].nutriscore ?? "Not Avaliable",
         "barcode": result.products?[i].barcode ?? 'null',
         "pic": result.products?[i].imageFrontUrl ??
             'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg',
+        "ingredients": result.products?[i].ingredientsText,
+        "nutrients": {
+          'calories': result.products?[i].nutriments
+                  ?.getValue(Nutrient.energyKCal, PerSize.oneHundredGrams) ??
+              0,
+          "total fat": result.products?[i].nutriments
+                  ?.getValue(Nutrient.fat, PerSize.oneHundredGrams) ??
+              0,
+          "saturated fat": result.products?[i].nutriments
+                  ?.getValue(Nutrient.saturatedFat, PerSize.oneHundredGrams) ??
+              0,
+          "sodium": result.products?[i].nutriments
+                  ?.getValue(Nutrient.sodium, PerSize.oneHundredGrams) ??
+              0,
+          "total carb": result.products?[i].nutriments
+                  ?.getValue(Nutrient.carbohydrates, PerSize.oneHundredGrams) ??
+              0,
+          "fiber": result.products?[i].nutriments
+                  ?.getValue(Nutrient.fiber, PerSize.oneHundredGrams) ??
+              0,
+          "sugar": result.products?[i].nutriments
+                  ?.getValue(Nutrient.sugars, PerSize.oneHundredGrams) ??
+              0,
+          "protein": result.products?[i].nutriments
+                  ?.getValue(Nutrient.proteins, PerSize.oneHundredGrams) ??
+              0
+        }
       });
-      print("${data[i]['name']} : ${data[i]['barcode']}");
+      print("${data[i]['name']} : ${result.products?[i].brands}");
     }
   }
 
@@ -488,8 +522,10 @@ class MySearchDelegate extends SearchDelegate {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      productPage(bar[index])));
-                          data.clear();
+                                      searchProduct(data[index])));
+                          Timer(const Duration(seconds: 1), () {
+                            data.clear();
+                          });
                         },
                         child: Row(
                           mainAxisSize: MainAxisSize.max,

@@ -109,7 +109,8 @@ class _FavPageState extends State<FavPage> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => productPage(
-                                              documentSnapshot['barcode'])));
+                                              documentSnapshot['barcode'],
+                                              documentSnapshot['ID'])));
                                 },
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
