@@ -411,6 +411,8 @@ class MySearchDelegate extends SearchDelegate {
 
     for (int i = 0; i < 20; i++) {
       bar.add('${result.products?[i].barcode}');
+
+      /*
       if (result.products![i].ingredientsAnalysisTags!.veganStatus
               .toString()
               .contains('VeganStatus.VEGAN_STATUS_UNKNOWN') ||
@@ -434,6 +436,7 @@ class MySearchDelegate extends SearchDelegate {
       } else {
         vegetarian = true;
       }
+      */
 
       data.add({
         "brand": result.products?[i].brands ?? result.products?[i].productName,
@@ -468,14 +471,19 @@ class MySearchDelegate extends SearchDelegate {
           "protein": result.products?[i].nutriments
                   ?.getValue(Nutrient.proteins, PerSize.oneHundredGrams) ??
               0,
-          "vegan": vegan,
-          "vegetarian": vegetarian
+          "vegan": result.products?[i].ingredientsAnalysisTags?.veganStatus
+                  .toString() ??
+              "VeganStatus.NON_VEGAN",
+          "vegetarian": result
+                  .products?[i].ingredientsAnalysisTags?.vegetarianStatus
+                  .toString() ??
+              "VegetarianStatus.NON_VEGETARIAN",
         },
         "allergens": result.products?[i].allergens?.names ?? "Not avaliable",
       });
 
       print(
-          "${data[i]['name']} : ${result.products?[i].ingredientsAnalysisTags?.vegetarianStatus} : ${data[i]['nutrients']['vegetarian']}");
+          "${data[i]['name']} : ${result.products?[i].ingredientsAnalysisTags?.vegetarianStatus}");
     }
   }
 
