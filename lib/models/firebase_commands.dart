@@ -90,6 +90,26 @@ class FirebaseCommands {
   }
 
   Future searchBarcode(String barcode, Map data) async {
+    bool vegan = false;
+    bool vegetarian = true;
+    if (data['nutrients']['vegan']
+            .contains('VeganStatus.VEGAN_STATUS_UNKNOWN') ||
+        data['nutrients']['vegan'].contains('VeganStatus.NON_VEGAN')) {
+      vegan = false;
+    } else {
+      vegan = true;
+    }
+    if (data['nutrients']['vegetarian']
+            .contains('VegetarianStatus.VEGETARIAN_STATUS_UNKNOWN') ||
+        data['nutrients']['vegetarian']
+            .contains('VegetarianStatus.NON_VEGETARIAN') ||
+        data['nutrients']['vegetarian']
+            .contains('VegetarianStatus.MAYBE_VEGETARIAN')) {
+      vegetarian = false;
+    } else {
+      vegetarian = true;
+    }
+
     final String url =
         'https://us.openfoodfacts.org/api/v2/product/$barcode?fields=_keywords,allergens,allergens_tags,brands,categories,categories_tags,compared_to_category,food_groups,food_groups_tags,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json';
     final response = await http.get(Uri.parse(url));
@@ -123,7 +143,8 @@ class FirebaseCommands {
           },
           'picture': data['pic'] ??
               'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg',
-          'Allergens': barcodeData.product?.allergens ?? "Not Avaliable",
+          'Allergens': data['allergens'] ?? "Not Avaliable",
+          'conditions': {'vegan': vegan, 'vegetarian': vegetarian},
         }); //input searched barcodes
       }
     }
