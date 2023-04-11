@@ -412,32 +412,6 @@ class MySearchDelegate extends SearchDelegate {
     for (int i = 0; i < 20; i++) {
       bar.add('${result.products?[i].barcode}');
 
-      /*
-      if (result.products![i].ingredientsAnalysisTags!.veganStatus
-              .toString()
-              .contains('VeganStatus.VEGAN_STATUS_UNKNOWN') ||
-          result.products![i].ingredientsAnalysisTags!.veganStatus
-              .toString()
-              .contains('VeganStatus.NON_VEGAN')) {
-        vegan = false;
-      } else {
-        vegan = true;
-      }
-      if (result.products![i].ingredientsAnalysisTags!.vegetarianStatus
-              .toString()
-              .contains('VegetarianStatus.VEGETARIAN_STATUS_UNKNOWN') ||
-          result.products![i].ingredientsAnalysisTags!.vegetarianStatus
-              .toString()
-              .contains('VegetarianStatus.NON_VEGETARIAN') ||
-          result.products![i].ingredientsAnalysisTags!.vegetarianStatus
-              .toString()
-              .contains('VegetarianStatus.MAYBE_VEGETARIAN')) {
-        vegetarian = false;
-      } else {
-        vegetarian = true;
-      }
-      */
-
       data.add({
         "brand": result.products?[i].brands ?? result.products?[i].productName,
         "name": result.products?[i].productName ?? "null",

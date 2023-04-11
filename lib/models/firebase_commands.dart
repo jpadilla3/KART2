@@ -92,13 +92,7 @@ class FirebaseCommands {
   Future searchBarcode(String barcode, Map data) async {
     bool vegan = false;
     bool vegetarian = true;
-    if (data['nutrients']['vegan']
-            .contains('VeganStatus.VEGAN_STATUS_UNKNOWN') ||
-        data['nutrients']['vegan'].contains('VeganStatus.NON_VEGAN')) {
-      vegan = false;
-    } else {
-      vegan = true;
-    }
+
     if (data['nutrients']['vegetarian']
             .contains('VegetarianStatus.VEGETARIAN_STATUS_UNKNOWN') ||
         data['nutrients']['vegetarian']
@@ -107,6 +101,15 @@ class FirebaseCommands {
             .contains('VegetarianStatus.MAYBE_VEGETARIAN')) {
       vegetarian = false;
     } else {
+      vegetarian = true;
+    }
+
+    if (data['nutrients']['vegan']
+            .contains('VeganStatus.VEGAN_STATUS_UNKNOWN') ||
+        data['nutrients']['vegan'].contains('VeganStatus.NON_VEGAN')) {
+      vegan = false;
+    } else {
+      vegan = true;
       vegetarian = true;
     }
 
