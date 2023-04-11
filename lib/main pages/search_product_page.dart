@@ -133,9 +133,6 @@ class _searchProductState extends State<searchProduct> {
                         child: Image.network('${widget.data['pic']}'))
                   ],
                 ),
-                const SizedBox(
-                  width: 10,
-                ),
                 Column(
                   children: [
                     Container(
@@ -171,7 +168,7 @@ class _searchProductState extends State<searchProduct> {
             //calories
             rowInfo(
               'Calories',
-              '${widget.data['nutrients']['calories']} kcals',
+              '${widget.data['nutrients']['calories'].toStringAsFixed(1)} kcals',
               Icon(
                 Ionicons.flame_outline,
                 size: 30,
@@ -192,7 +189,7 @@ class _searchProductState extends State<searchProduct> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      '${widget.data['nutrients']['total fat']} g',
+                      '${widget.data['nutrients']['total fat'].toStringAsFixed(1)} g',
                     ),
                     Icon(Icons.keyboard_arrow_down)
                   ],
@@ -206,15 +203,15 @@ class _searchProductState extends State<searchProduct> {
                     Ionicons.water_outline,
                     color: Colors.black,
                   ),
-                  trailing:
-                      Text('${widget.data['nutrients']['saturated fat']} g'),
+                  trailing: Text(
+                      '${widget.data['nutrients']['saturated fat'].toStringAsFixed(1)} g'),
                 ),
               ],
             ),
             //sodium
             rowInfo(
               "Sodium",
-              '${widget.data['nutrients']['sodium']} g',
+              '${widget.data['nutrients']['sodium'].toStringAsFixed(1)} g',
               Icon(
                 MaterialCommunityIcons.shaker_outline,
                 size: 30,
@@ -234,7 +231,8 @@ class _searchProductState extends State<searchProduct> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text('${widget.data['nutrients']['total carb']} g'),
+                    Text(
+                        '${widget.data['nutrients']['total carb'].toStringAsFixed(1)} g'),
                     Icon(Icons.keyboard_arrow_down)
                   ],
                 ),
@@ -247,7 +245,8 @@ class _searchProductState extends State<searchProduct> {
                     MaterialIcons.accessibility_new,
                     color: Colors.black,
                   ),
-                  trailing: Text('${widget.data['nutrients']['fiber']} g'),
+                  trailing: Text(
+                      '${widget.data['nutrients']['fiber'].toStringAsFixed(1)} g'),
                 ),
                 ListTile(
                   title: Text('Total Sugars'),
@@ -255,14 +254,15 @@ class _searchProductState extends State<searchProduct> {
                     Ionicons.cube_outline,
                     color: Colors.black,
                   ),
-                  trailing: Text('${widget.data['nutrients']['sugar']} g'),
+                  trailing: Text(
+                      '${widget.data['nutrients']['sugar'].toStringAsFixed(1)} g'),
                 ),
               ],
             ),
             //protein
             rowInfo(
               "Protein",
-              '${widget.data['nutrients']['protein']} g',
+              '${widget.data['nutrients']['protein'].toStringAsFixed(1)} g',
               Icon(
                 MaterialCommunityIcons.food_steak,
                 size: 30,
