@@ -16,6 +16,9 @@ import 'package:kart2/models/firebase_commands.dart' as fire;
 import 'package:kart2/models/flutter_barcode_scanner.dart';
 import 'package:kart2/models/scoreColor.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
+import 'package:shimmer/shimmer.dart';
+
+import 'shimmerlist.dart';
 
 List<String> prevSearch = [];
 
@@ -375,7 +378,14 @@ class _SearchPageState extends State<SearchPage> {
                           );
                         }
                       } else {
-                        return const CircularProgressIndicator();
+                        return ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: 10,
+                          itemBuilder: (context, index) {
+                            return buildRowShimmer();
+                          },
+                        );
                       }
                     })
               ],
@@ -651,8 +661,61 @@ class MySearchDelegate extends SearchDelegate {
                       );
                     });
               } else {
-                return const CircularProgressIndicator();
+                return ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: 10,
+                  itemBuilder: (context, index) {
+                    return buildRowShimmer();
+                  },
+                );
               }
             }),
       );
 }
+
+Widget buildRowShimmer() => Row(
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        Column(
+          children: [
+            Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Shimmer.fromColors(
+                  baseColor: Colors.grey,
+                  highlightColor: Colors.grey[100]!,
+                  child: Container(
+                    height: 80,
+                    width: 80,
+                    color: Colors.grey,
+                  ),
+                )),
+          ],
+        ),
+        SizedBox(
+          width: 230,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: ShimmerLoader.rectangular(
+                  width: 200,
+                  height: 16,
+                ),
+              ),
+              const SizedBox(
+                height: 6,
+              ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: ShimmerLoader.rectangular(
+                  width: 100,
+                  height: 16,
+                ),
+              ),
+            ],
+          ),
+        )
+      ],
+    );

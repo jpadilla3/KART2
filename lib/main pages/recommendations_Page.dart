@@ -7,8 +7,10 @@ import 'package:kart2/main%20pages/List.dart';
 import 'package:kart2/main%20pages/info.dart';
 import 'package:kart2/main%20pages/productPage.dart';
 import 'package:kart2/models/flutter_barcode_scanner.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../models/firebase_commands.dart';
+import 'shimmerlist.dart';
 
 class RecommendationsPage extends StatefulWidget {
   const RecommendationsPage({super.key});
@@ -18,6 +20,7 @@ class RecommendationsPage extends StatefulWidget {
 }
 
 class _RecPageState extends State<RecommendationsPage> {
+  bool isLoading = false;
   final CollectionReference _barcodes = FirebaseFirestore.instance
       .collection('users')
       .doc(FirebaseAuth.instance.currentUser!.email.toString())
@@ -38,6 +41,15 @@ class _RecPageState extends State<RecommendationsPage> {
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.only(bottom: 50),
       ));
+    }
+    void initState() {
+      isLoading = true;
+      Future.delayed(const Duration(seconds: 2), () {
+        setState(() {
+          isLoading = false;
+        });
+      });
+      super.initState();
     }
   }
 
@@ -251,7 +263,14 @@ class _RecPageState extends State<RecommendationsPage> {
                       );
                     }
                   } else {
-                    return const Text('loading...');
+                    return ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: 3,
+                      itemBuilder: (context, index) {
+                        return buildRowShimmer();
+                      },
+                    );
                   }
                 },
               ),
@@ -261,4 +280,60 @@ class _RecPageState extends State<RecommendationsPage> {
       ],
     ));
   }
+
+  Widget buildRowShimmer() => Padding(
+        padding: const EdgeInsets.only(left: 0),
+        child: Container(
+          height: 200,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Column(
+                children: [
+                  Shimmer.fromColors(
+                    baseColor: Colors.grey,
+                    highlightColor: Colors.grey[100]!,
+                    child: Container(
+                        height: 120,
+                        width: 120,
+                        color: Colors.grey,
+                        alignment: Alignment.center,
+                        child:
+                            ShimmerLoader.rectangular(width: 16, height: 16)),
+                  ),
+                  Container(
+                    height: 50,
+                    width: 120,
+                    alignment: Alignment.center,
+                    child: ShimmerLoader.rectangular(width: 50, height: 16),
+                  ),
+                ],
+              ),
+              SizedBox(
+                width: 70,
+                child: Icon(Icons.change_circle_outlined),
+              ),
+              Column(
+                children: [
+                  Shimmer.fromColors(
+                    baseColor: Colors.grey,
+                    highlightColor: Colors.grey[100]!,
+                    child: Container(
+                      height: 120,
+                      width: 120,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  Container(
+                    height: 50,
+                    width: 120,
+                    alignment: Alignment.center,
+                    child: ShimmerLoader.rectangular(width: 50, height: 16),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
 }

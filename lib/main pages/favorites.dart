@@ -5,8 +5,10 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kart2/main%20pages/productPage.dart';
 import 'package:kart2/models/firebase_commands.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../models/scoreColor.dart';
+import 'shimmerlist.dart';
 
 class FavPage extends StatefulWidget {
   const FavPage({super.key});
@@ -220,7 +222,14 @@ class _FavPageState extends State<FavPage> {
                         );
                       }
                     } else {
-                      return const Text('loading...');
+                      return ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: 10,
+                        itemBuilder: (context, index) {
+                          return buildRowShimmer();
+                        },
+                      );
                     }
                   },
                 ),
@@ -231,4 +240,50 @@ class _FavPageState extends State<FavPage> {
       ),
     );
   }
+
+  Widget buildRowShimmer() => Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Column(
+            children: [
+              Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Shimmer.fromColors(
+                    baseColor: Colors.grey,
+                    highlightColor: Colors.grey[100]!,
+                    child: Container(
+                      height: 80,
+                      width: 80,
+                      color: Colors.grey,
+                    ),
+                  )),
+            ],
+          ),
+          SizedBox(
+            width: 230,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: ShimmerLoader.rectangular(
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    height: 16,
+                  ),
+                ),
+                const SizedBox(
+                  height: 6,
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: ShimmerLoader.rectangular(
+                    width: MediaQuery.of(context).size.width * 0.3,
+                    height: 16,
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      );
 }

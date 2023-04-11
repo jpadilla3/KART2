@@ -18,6 +18,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kart2/models/firebase_commands.dart';
 import 'package:kart2/models/flutter_barcode_scanner.dart';
 import 'package:kart2/models/scoreColor.dart';
+import 'package:shimmer/shimmer.dart';
+import 'shimmerlist.dart';
 
 import '../models/barcode_data_model.dart';
 
@@ -29,6 +31,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool isLoading = false;
   String _scanBarcode = '';
   late Future<BarcodeData> futureBarcodeData;
   //might have to change this for ever page
@@ -68,6 +71,15 @@ class _HomePageState extends State<HomePage> {
         margin: const EdgeInsets.only(bottom: 50),
       ));
     }
+    void initState() {
+      isLoading = true;
+      Future.delayed(const Duration(seconds: 2), () {
+        setState(() {
+          isLoading = false;
+        });
+      });
+      super.initState();
+    }
   }
 
   Future<void> scanBarcodeNormal() async {
@@ -91,6 +103,7 @@ class _HomePageState extends State<HomePage> {
 
     setState(() {
       _scanBarcode = barcodeScanRes;
+      isLoading = false;
     });
   }
 
@@ -314,7 +327,14 @@ class _HomePageState extends State<HomePage> {
                       );
                     }
                   } else {
-                    return const CircularProgressIndicator();
+                    return ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: 10,
+                      itemBuilder: (context, index) {
+                        return buildRowShimmer();
+                      },
+                    );
                   }
                 },
               ),
@@ -324,4 +344,50 @@ class _HomePageState extends State<HomePage> {
       ]),
     );
   }
+
+  Widget buildRowShimmer() => Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Column(
+            children: [
+              Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Shimmer.fromColors(
+                    baseColor: Colors.grey,
+                    highlightColor: Colors.grey[100]!,
+                    child: Container(
+                      height: 80,
+                      width: 80,
+                      color: Colors.grey,
+                    ),
+                  )),
+            ],
+          ),
+          SizedBox(
+            width: 230,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: ShimmerLoader.rectangular(
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    height: 16,
+                  ),
+                ),
+                const SizedBox(
+                  height: 6,
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: ShimmerLoader.rectangular(
+                    width: MediaQuery.of(context).size.width * 0.3,
+                    height: 16,
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      );
 }
