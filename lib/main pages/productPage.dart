@@ -4,9 +4,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
+import 'package:kart2/main%20pages/shimmerlist.dart';
 import 'package:kart2/models/firebase_commands.dart';
 import 'package:kart2/main%20pages/search_page.dart';
 import 'package:kart2/models/scoreColor.dart';
+import 'package:shimmer/shimmer.dart';
 
 class productPage extends StatefulWidget {
   String barcode;
@@ -52,7 +54,7 @@ class _productPageState extends State<productPage> {
                       bottom: BorderSide(width: 1.0, color: Colors.grey))),
               child: SizedBox(
                 height: 60,
-                width: 125,
+                width: 110,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -77,12 +79,12 @@ class _productPageState extends State<productPage> {
                         bottom: BorderSide(width: 1.0, color: Colors.grey))),
                 child: SizedBox(
                   height: 60,
-                  width: 252,
+                  width: 102,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(right: 25),
+                        padding: const EdgeInsets.only(right: 10),
                         child: Text(
                           amount,
                           textAlign: TextAlign.center,
@@ -154,7 +156,7 @@ class _productPageState extends State<productPage> {
                       } else if (snapshot.hasData && !snapshot.data!.exists) {
                         return const Text("Document does not exist");
                       } else {
-                        return const CircularProgressIndicator();
+                        return buildPicShimmer();
                       }
                     },
                   )),
@@ -183,7 +185,7 @@ class _productPageState extends State<productPage> {
                     } else if (snapshot.hasData && !snapshot.data!.exists) {
                       return const Text("Document does not exist");
                     } else {
-                      return const CircularProgressIndicator();
+                      return buildTextShimmer();
                     }
                   },
                 )),
@@ -232,7 +234,7 @@ class _productPageState extends State<productPage> {
                   } else if (snapshot.hasData && !snapshot.data!.exists) {
                     return const Text("Document does not exist");
                   } else {
-                    return const CircularProgressIndicator();
+                    return buildTextShimmer();
                   }
                 },
               ))),
@@ -376,7 +378,7 @@ class _productPageState extends State<productPage> {
                   } else if (snapshot.hasData && !snapshot.data!.exists) {
                     return const Text("Document does not exist");
                   } else {
-                    return const CircularProgressIndicator();
+                    return buildNutShimmer();
                   }
                 },
               )),
@@ -403,7 +405,7 @@ class _productPageState extends State<productPage> {
           height: 10,
         ),
         SizedBox(
-            height: 225,
+            height: 210,
             child: ListView.builder(
                 physics: const ClampingScrollPhysics(),
                 shrinkWrap: true,
@@ -505,4 +507,65 @@ class _productPageState extends State<productPage> {
       ])),
     );
   }
+
+  Widget buildPicShimmer() => Container(
+          child: SizedBox.square(
+        dimension: 120,
+        child: Shimmer.fromColors(
+          baseColor: Colors.grey,
+          highlightColor: Colors.grey[100]!,
+          child: Container(
+            height: 80,
+            width: 80,
+            color: Colors.grey,
+          ),
+        ),
+      ));
+  Widget buildTextShimmer() => Container(
+        child: ShimmerLoader.rectangular(width: 150, height: 16),
+      );
+
+  Widget buildNutShimmer() => Center(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 15,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const ShimmerLoader.rectangular(width: 350, height: 18),
+              ],
+            ),
+            const SizedBox(height: 50),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const ShimmerLoader.rectangular(width: 350, height: 18),
+              ],
+            ),
+            const SizedBox(height: 50),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const ShimmerLoader.rectangular(width: 350, height: 18),
+              ],
+            ),
+            const SizedBox(height: 50),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const ShimmerLoader.rectangular(width: 350, height: 18),
+              ],
+            ),
+            const SizedBox(height: 50),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const ShimmerLoader.rectangular(width: 350, height: 18),
+              ],
+            ),
+          ],
+        ),
+      );
 }
