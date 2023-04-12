@@ -25,21 +25,26 @@ class FirebaseCommands {
           'time': FieldValue.serverTimestamp(),
           "ID": true,
           'barcode': barcode,
+          "nutrition": {
+            'score': barcodeData.product?.nutriscoreScore ?? 0,
+            'grade': barcodeData.product?.nutritionGrades ?? 'No Grade',
+            'calories': barcodeData.product?.nutriments?.energy ?? 0,
+            'total fat': barcodeData.product?.nutriments?.fat ?? 0,
+            'saturated fat': barcodeData.product?.nutriments?.saturatedFat ?? 0,
+            'sodium': barcodeData.product?.nutriments?.sodium ?? 0,
+            'total carbohydrate':
+                barcodeData.product?.nutriments?.carbohydrates ?? 0,
+            'total sugars': barcodeData.product?.nutriments?.sugars ?? 0,
+            'protein': barcodeData.product?.nutriments?.proteins ?? 0,
+            'fiber': barcodeData.product?.nutriscoreData?.fiber ?? 0,
+            //insert allergens
+          },
           'name': barcodeData.product?.productName! ?? 'Product',
-          'score': barcodeData.product?.nutriscoreScore ?? 0,
-          'grade': barcodeData.product?.nutritionGrades ?? 'No Grade',
-          'calories': barcodeData.product?.nutriments?.energy ?? 0,
-          'total fat': barcodeData.product?.nutriments?.fat ?? 0,
-          'saturated fat': barcodeData.product?.nutriments?.saturatedFat ?? 0,
-          'sodium': barcodeData.product?.nutriments?.sodium ?? 0,
-          'total carbohydrate':
-              barcodeData.product?.nutriments?.carbohydrates ?? 0,
-          'total sugars': barcodeData.product?.nutriments?.sugars ?? 0,
-          'protein': barcodeData.product?.nutriments?.proteins ?? 0,
-          'fiber': barcodeData.product?.nutriscoreData?.fiber ?? 0,
           'picture': barcodeData.product?.selectedImages?.front?.small?.en ??
               'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg'
-        }); // create barcode info
+          //set allergens
+          //set conditions (vegan, vegetarian)
+        });
       }
     } else {
       return AboutDialog();
