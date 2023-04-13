@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kart2/models/firebase_commands.dart';
+import 'package:kart2/models/grade_cal.dart';
 import 'package:kart2/models/scoreColor.dart';
 
 class searchProduct extends StatefulWidget {
@@ -151,13 +152,28 @@ class _searchProductState extends State<searchProduct> {
                     const SizedBox(
                       height: 20,
                     ),
-                    SizedBox(
-                      height: 50,
-                      width: 150,
-                      child: scoreColors().scorePic(
-                        widget.data['grade'],
-                      ),
-                    )
+                    FutureBuilder(
+                        future: GradeCal().gradeCalculate(
+                            widget.data['allergens'], widget.data['grade']),
+                        builder: ((context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            if (snapshot.hasError) {
+                              return Text(
+                                '${snapshot.error} occurred',
+                              );
+                            } else {
+                              final data1 = snapshot.data as String;
+                              return SizedBox(
+                                height: 50,
+                                width: 150,
+                                child: scoreColors().scorePic(data1),
+                              );
+                            }
+                          } else {
+                            return Text("loading...");
+                          }
+                        })),
                   ],
                 )
               ],
@@ -165,6 +181,27 @@ class _searchProductState extends State<searchProduct> {
             const SizedBox(
               height: 10,
             ),
+            FutureBuilder(
+                future: GradeCal().gradeCalculateInfo(
+                    widget.data['allergens'], widget.data['grade']),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.hasError) {
+                      return Text(
+                        '${snapshot.error} occurred',
+                      );
+                    } else {
+                      final data1 = snapshot.data as String;
+                      return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            scoreColors().scoreInfo(data1),
+                          ]);
+                    }
+                  } else {
+                    return Text("loading...");
+                  }
+                }),
             //calories
             rowInfo(
               'Calories',

@@ -88,4 +88,26 @@ class scoreColors {
       );
     }
   }
+
+  scoreInfo(String allergen) {
+    if (allergen == 'false') {
+      return Text('');
+    } else {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10), color: Colors.red[100]),
+          alignment: Alignment.center,
+          height: 50,
+          width: 300,
+          child: Text(
+            'This Product Contains $allergen',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.red[700]),
+          ),
+        ),
+      );
+    }
+  }
 }

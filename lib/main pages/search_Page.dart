@@ -14,6 +14,7 @@ import 'package:kart2/models/barcode_data_model.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kart2/models/firebase_commands.dart' as fire;
 import 'package:kart2/models/flutter_barcode_scanner.dart';
+import 'package:kart2/models/grade_cal.dart';
 import 'package:kart2/models/scoreColor.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 
@@ -108,6 +109,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: const Text(''),
         toolbarHeight: 100,
         flexibleSpace: SafeArea(
           minimum: EdgeInsets.only(top: 50),
@@ -295,7 +297,7 @@ class _SearchPageState extends State<SearchPage> {
                                                             .ellipsis,
                                                         maxLines: 2,
                                                         softWrap: false,
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                             fontWeight:
                                                                 FontWeight
                                                                     .bold),
@@ -306,26 +308,55 @@ class _SearchPageState extends State<SearchPage> {
                                                 const SizedBox(
                                                   height: 3,
                                                 ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  children: [
-                                                    scoreColors().scoreColor(
-                                                        documentSnapshot[
-                                                                'nutrition']
-                                                            ['grade']),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 5),
-                                                      child: Text(
-                                                        'Grade: ${documentSnapshot['nutrition']['grade'].toString().toUpperCase()}',
-                                                        textAlign:
-                                                            TextAlign.start,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
+                                                FutureBuilder(
+                                                    future: GradeCal()
+                                                        .gradeCalculate(
+                                                            documentSnapshot[
+                                                                'Allergens'],
+                                                            documentSnapshot[
+                                                                    'nutrition']
+                                                                ['grade']),
+                                                    builder:
+                                                        (BuildContext context,
+                                                            snapshot) {
+                                                      if (snapshot
+                                                              .connectionState ==
+                                                          ConnectionState
+                                                              .done) {
+                                                        if (snapshot.hasError) {
+                                                          return Text(
+                                                              '${snapshot.error} occurred');
+                                                        } else {
+                                                          final data1 = snapshot
+                                                              .data as String;
+                                                          return Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              scoreColors()
+                                                                  .scoreColor(
+                                                                      data1),
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .only(
+                                                                        left:
+                                                                            5),
+                                                                child: Text(
+                                                                  'Grade: ${data1.toUpperCase()}',
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .start,
+                                                                ),
+                                                              )
+                                                            ],
+                                                          );
+                                                        }
+                                                      } else {
+                                                        return Text('loading');
+                                                      }
+                                                    }),
                                               ],
                                             ),
                                           ),
@@ -456,8 +487,7 @@ class MySearchDelegate extends SearchDelegate {
         "allergens": result.products?[i].allergens?.names ?? "Not avaliable",
       });
 
-      print(
-          "${data[i]['name']} : ${result.products?[i].ingredientsAnalysisTags?.vegetarianStatus}");
+      print("${data[i]['name']} : ${data[i]['barcode']}");
     }
   }
 
@@ -583,22 +613,43 @@ class MySearchDelegate extends SearchDelegate {
                                     const SizedBox(
                                       height: 3,
                                     ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        scoreColors()
-                                            .scoreColor(data[index]['grade']),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 5),
-                                          child: Text(
-                                            'Grade: ${data[index]['grade'].toString().toUpperCase()}',
-                                            textAlign: TextAlign.start,
-                                          ),
-                                        )
-                                      ],
-                                    )
+                                    FutureBuilder(
+                                        future: GradeCal().gradeCalculate(
+                                            data[index]['allergens'],
+                                            data[index]['grade']),
+                                        builder:
+                                            (BuildContext context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.done) {
+                                            if (snapshot.hasError) {
+                                              return Text(
+                                                  '${snapshot.error} occurred');
+                                            } else {
+                                              final data1 =
+                                                  snapshot.data as String;
+                                              return Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  scoreColors()
+                                                      .scoreColor(data1),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 5),
+                                                    child: Text(
+                                                      'Grade: ${data1.toUpperCase()}',
+                                                      textAlign:
+                                                          TextAlign.start,
+                                                    ),
+                                                  )
+                                                ],
+                                              );
+                                            }
+                                          } else {
+                                            return Text('loading');
+                                          }
+                                        })
                                   ],
                                 ),
                               ),
