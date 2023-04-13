@@ -109,7 +109,7 @@ class _searchProductState extends State<searchProduct> {
           overflow: TextOverflow.ellipsis,
           maxLines: 2,
           softWrap: false,
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         leading: IconButton(
             onPressed: () {
@@ -145,7 +145,7 @@ class _searchProductState extends State<searchProduct> {
                         overflow: TextOverflow.ellipsis,
                         maxLines: 2,
                         softWrap: false,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 15),
                       ),
                     ),
@@ -171,7 +171,7 @@ class _searchProductState extends State<searchProduct> {
                               );
                             }
                           } else {
-                            return Text("loading...");
+                            return const Text("loading...");
                           }
                         })),
                   ],
@@ -199,7 +199,7 @@ class _searchProductState extends State<searchProduct> {
                           ]);
                     }
                   } else {
-                    return Text("loading...");
+                    return const Text("loading...");
                   }
                 }),
             //calories
@@ -228,15 +228,15 @@ class _searchProductState extends State<searchProduct> {
                     Text(
                       '${widget.data['nutrients']['total fat'].toStringAsFixed(1)} g',
                     ),
-                    Icon(Icons.keyboard_arrow_down)
+                    const Icon(Icons.keyboard_arrow_down)
                   ],
                 ),
               ),
               childrenPadding: const EdgeInsets.only(left: 60),
               children: [
                 ListTile(
-                  title: Text('Saturated Fat'),
-                  leading: Icon(
+                  title: const Text('Saturated Fat'),
+                  leading: const Icon(
                     Ionicons.water_outline,
                     color: Colors.black,
                   ),
@@ -270,15 +270,15 @@ class _searchProductState extends State<searchProduct> {
                   children: [
                     Text(
                         '${widget.data['nutrients']['total carb'].toStringAsFixed(1)} g'),
-                    Icon(Icons.keyboard_arrow_down)
+                    const Icon(Icons.keyboard_arrow_down)
                   ],
                 ),
               ),
               childrenPadding: const EdgeInsets.only(left: 60),
               children: [
                 ListTile(
-                  title: Text('Dietary Fiber'),
-                  leading: Icon(
+                  title: const Text('Dietary Fiber'),
+                  leading: const Icon(
                     MaterialIcons.accessibility_new,
                     color: Colors.black,
                   ),
@@ -286,8 +286,8 @@ class _searchProductState extends State<searchProduct> {
                       '${widget.data['nutrients']['fiber'].toStringAsFixed(1)} g'),
                 ),
                 ListTile(
-                  title: Text('Total Sugars'),
-                  leading: Icon(
+                  title: const Text('Total Sugars'),
+                  leading: const Icon(
                     Ionicons.cube_outline,
                     color: Colors.black,
                   ),

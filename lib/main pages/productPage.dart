@@ -7,6 +7,7 @@ import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:kart2/main%20pages/shimmerlist.dart';
 import 'package:kart2/models/firebase_commands.dart';
 import 'package:kart2/main%20pages/search_page.dart';
+import 'package:kart2/models/grade_cal.dart';
 import 'package:kart2/models/scoreColor.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -106,148 +107,191 @@ class _productPageState extends State<productPage> {
         .doc(FirebaseAuth.instance.currentUser!.email.toString())
         .collection('scanned');
 
+    final CollectionReference _search = FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.email.toString())
+        .collection('search');
+
     return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 80,
+        centerTitle: true,
+        title: FutureBuilder(
+          future: widget.type
+              ? _scanned.doc(widget.barcode).get()
+              : _search.doc(widget.barcode).get(),
+          builder:
+              (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              Map<String, dynamic> data =
+                  snapshot.data!.data() as Map<String, dynamic>;
+              return Text(
+                '${data['brand']}',
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+                softWrap: false,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              );
+            } else if (snapshot.hasError) {
+              return const Text('Something went wrong');
+            } else {
+              return buildTextShimmer();
+            }
+          },
+        ),
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.indigo[400],
+            )),
+      ),
       //new Builder(builder: (BuildContext context) {}),
       body: SingleChildScrollView(
           child: Column(children: [
-        const SizedBox(
-          height: 60,
-        ),
-        //back button
         Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 5),
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back, size: 35),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                color: Colors.indigo[400],
-              ),
-            )
-          ],
-        ),
-        const SizedBox(
-          height: 15,
-        ),
-        Row(
-          children: [
-            const SizedBox(
-              width: 15,
-            ),
-            //picture
-            Container(
-              color: Colors.transparent,
-              child: SizedBox.square(
-                  dimension: 150.0,
-                  child: FutureBuilder<DocumentSnapshot>(
-                    future: _scanned.doc(widget.barcode).get(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<DocumentSnapshot> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done) {
-                        Map<String, dynamic> data =
-                            snapshot.data!.data() as Map<String, dynamic>;
-                        return Image.network(
-                          '${data['picture']}',
-                        );
-                      } else if (snapshot.hasError) {
-                        return const Text('Something went wrong');
-                      } else if (snapshot.hasData && !snapshot.data!.exists) {
-                        return const Text("Document does not exist");
-                      } else {
-                        return buildPicShimmer();
-                      }
-                    },
-                  )),
-            ),
-            //item name
-            Container(
-              child: SizedBox(
-                height: 150,
-                width: 195,
-                child: Center(
+            Column(
+              children: [
+                SizedBox.square(
+                    dimension: 180,
                     child: FutureBuilder<DocumentSnapshot>(
-                  future: _scanned.doc(widget.barcode).get(),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<DocumentSnapshot> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      Map<String, dynamic> data =
-                          snapshot.data!.data() as Map<String, dynamic>;
-                      return Text(
-                        '${data['name']}',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w500),
-                      );
-                    } else if (snapshot.hasError) {
-                      return const Text('Something went wrong');
-                    } else if (snapshot.hasData && !snapshot.data!.exists) {
-                      return const Text("Document does not exist");
-                    } else {
-                      return buildTextShimmer();
-                    }
-                  },
-                )),
-              ),
-            )
+                        future: widget.type
+                            ? _scanned.doc(widget.barcode).get()
+                            : _search.doc(widget.barcode).get(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<DocumentSnapshot> snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            Map<String, dynamic> data =
+                                snapshot.data!.data() as Map<String, dynamic>;
+                            return Image.network('${data['picture']}');
+                          } else {
+                            return buildPicShimmer();
+                          }
+                        }))
+              ],
+            ),
+            Column(
+              children: [
+                Container(
+                  height: 150,
+                  width: 180,
+                  alignment: Alignment.center,
+                  child: FutureBuilder(
+                      future: widget.type
+                          ? _scanned.doc(widget.barcode).get()
+                          : _search.doc(widget.barcode).get(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<DocumentSnapshot> snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          Map<String, dynamic> data =
+                              snapshot.data!.data() as Map<String, dynamic>;
+                          return Column(
+                            children: [
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                data['name'],
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                                softWrap: false,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15),
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              FutureBuilder(
+                                  future: GradeCal().gradeCalculate(
+                                      data['Allergens'],
+                                      data['nutrition']['grade']),
+                                  builder: ((context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.done) {
+                                      if (snapshot.hasError) {
+                                        return Text(
+                                          '${snapshot.error} occurred',
+                                        );
+                                      } else {
+                                        final data1 = snapshot.data as String;
+                                        return SizedBox(
+                                          height: 70,
+                                          width: 150,
+                                          child: scoreColors().scorePic(data1),
+                                        );
+                                      }
+                                    } else {
+                                      return const Text("loading...");
+                                    }
+                                  }))
+                            ],
+                          );
+                        } else {
+                          return buildTextShimmer();
+                        }
+                      }),
+                ),
+              ],
+            ),
           ],
         ),
-
         Row(
           children: [
-            const SizedBox(
-              width: 15,
-            ),
-            //score
-            Container(
-              height: 60,
-              width: 345,
-              child: SizedBox(
-                  child: Center(
-                      child: FutureBuilder<DocumentSnapshot>(
-                future: _scanned.doc(widget.barcode).get(),
+            FutureBuilder(
+                future: widget.type
+                    ? _scanned.doc(widget.barcode).get()
+                    : _search.doc(widget.barcode).get(),
                 builder: (BuildContext context,
                     AsyncSnapshot<DocumentSnapshot> snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     Map<String, dynamic> data =
                         snapshot.data!.data() as Map<String, dynamic>;
-
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(
-                          width: 6,
-                        ),
-                        scoreColors().scoreColor(data['grade']),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        Text(
-                          'Grade: ${data['grade'].toString().toUpperCase()}',
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                      ],
-                    );
-                  } else if (snapshot.hasError) {
-                    return const Text('Something went wrong');
-                  } else if (snapshot.hasData && !snapshot.data!.exists) {
-                    return const Text("Document does not exist");
+                    return FutureBuilder(
+                        future: GradeCal().gradeCalculateInfo(
+                            data['Allergens'], data['nutrition']['grade']),
+                        builder: ((context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            if (snapshot.hasError) {
+                              return Text(
+                                '${snapshot.error} occurred',
+                              );
+                            } else {
+                              final data1 = snapshot.data as String;
+                              return Row(
+                                  //mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 50,
+                                    ),
+                                    scoreColors().scoreInfo(data1),
+                                  ]);
+                            }
+                          } else {
+                            return buildTextShimmer();
+                          }
+                        }));
                   } else {
                     return buildTextShimmer();
                   }
-                },
-              ))),
-            )
+                })
           ],
         ),
-
         Container(
           color: Colors.white,
           child: SizedBox(
               width: 380,
               child: FutureBuilder<DocumentSnapshot>(
-                future: _scanned.doc(widget.barcode).get(),
+                future: widget.type
+                    ? _scanned.doc(widget.barcode).get()
+                    : _search.doc(widget.barcode).get(),
                 builder: (BuildContext context,
                     AsyncSnapshot<DocumentSnapshot> snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
@@ -257,7 +301,7 @@ class _productPageState extends State<productPage> {
                       children: [
                         rowInfo(
                           "Calories",
-                          '${data['calories']} kcals',
+                          '${data['nutrition']['calories']} kcals',
                           Icon(
                             Ionicons.flame_outline,
                             size: 30,
@@ -277,7 +321,7 @@ class _productPageState extends State<productPage> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  '${data['total fat'].toStringAsFixed(1)} g',
+                                  '${data['nutrition']['total fat']} g',
                                 ),
                                 const Icon(Icons.keyboard_arrow_down)
                               ],
@@ -292,30 +336,13 @@ class _productPageState extends State<productPage> {
                                 color: Colors.black,
                               ),
                               trailing: Text(
-                                  '${data['saturated fat'].toStringAsFixed(1)} g'),
+                                  '${data['nutrition']['saturated fat']} g'),
                             ),
-                            // ListTile(
-                            //   title: Text('Trans Fat'),
-                            //   leading: Icon(
-                            //     Ionicons.cube_outline,
-                            //     color: Colors.black,
-                            //   ),
-                            //   trailing: Text("0g"),
-                            // ),
                           ],
                         ),
-                        // rowInfo(
-                        //   "Cholesterol",
-                        //   "160mg",
-                        //   Icon(
-                        //     Ionicons.cube_outline,
-                        //     size: 30,
-                        //     color: Colors.grey[600],
-                        //   ),
-                        // ),
                         rowInfo(
                           "Sodium",
-                          '${data['sodium'].toStringAsFixed(1)} g',
+                          '${data['nutrition']['sodium']} g',
                           Icon(
                             MaterialCommunityIcons.shaker_outline,
                             size: 30,
@@ -335,7 +362,7 @@ class _productPageState extends State<productPage> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                    '${data['total carbohydrate'].toStringAsFixed(1)} g'),
+                                    '${data['nutrition']['total carbohydrate']} g'),
                                 const Icon(Icons.keyboard_arrow_down)
                               ],
                             ),
@@ -348,8 +375,7 @@ class _productPageState extends State<productPage> {
                                 MaterialIcons.accessibility_new,
                                 color: Colors.black,
                               ),
-                              trailing:
-                                  Text('${data['fiber'].toStringAsFixed(1)} g'),
+                              trailing: Text('${data['nutrition']['fiber']} g'),
                             ),
                             ListTile(
                               title: const Text('Total Sugars'),
@@ -358,13 +384,13 @@ class _productPageState extends State<productPage> {
                                 color: Colors.black,
                               ),
                               trailing: Text(
-                                  '${data['total sugars'].toStringAsFixed(1)} g'),
+                                  '${data['nutrition']['total sugars']} g'),
                             ),
                           ],
                         ),
                         rowInfo(
                           "Protein",
-                          '${data['protein'].toStringAsFixed(1)} g',
+                          '${data['nutrition']['protein']} g',
                           Icon(
                             MaterialCommunityIcons.food_steak,
                             size: 30,
@@ -465,7 +491,6 @@ class _productPageState extends State<productPage> {
             ),
           ),
         ),
-
         InkResponse(
           borderRadius:
               const BorderRadius.vertical(bottom: Radius.circular(10)),

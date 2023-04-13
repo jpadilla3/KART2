@@ -43,7 +43,7 @@ class GradeCal {
     }
   }
 
-  gradeCalculateInfo(List<String> ProductAllergen, String Grade) async {
+  gradeCalculateInfo(List<dynamic> ProductAllergen, String Grade) async {
     List<String> al = [
       'Milk',
       'Gluten',

@@ -133,6 +133,7 @@ class FirebaseCommands {
             .set({
           'time': FieldValue.serverTimestamp(),
           "ID": false,
+          "brand": data['brand'],
           'barcode': barcode,
           'name': barcodeData.product?.productName! ?? 'Product',
           "nutrition": {
