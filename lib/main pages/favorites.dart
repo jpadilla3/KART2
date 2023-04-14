@@ -124,7 +124,8 @@ class _FavPageState extends State<FavPage> {
                                             child: Container(
                                               height: 80,
                                               width: 80,
-                                              color: Colors.blueGrey,
+                                              child: Image.network(
+                                                  '${documentSnapshot['picture']}'),
                                             )),
                                       ],
                                     ),

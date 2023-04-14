@@ -38,7 +38,7 @@ class FirebaseCommands {
             'protein': barcodeData.product?.nutriments?.proteins ?? 0,
             'fiber': barcodeData.product?.nutriscoreData?.fiber ?? 0,
           },
-          "Allergens": "none", //set allergens
+          "Allergens": {'none'}, //set allergens
           'name': barcodeData.product?.productName! ?? 'Product',
           'picture': barcodeData.product?.selectedImages?.front?.small?.en ??
               'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg'
@@ -194,7 +194,8 @@ class FirebaseCommands {
       'barcode': barcode,
       'name': name,
       'grade': grade,
-      'ID': ID
+      'ID': ID,
+      'picture': pic
     }); //create info about barcode
   }
 
