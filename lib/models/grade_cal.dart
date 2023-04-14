@@ -26,18 +26,26 @@ class GradeCal {
         .doc(FirebaseAuth.instance.currentUser?.email.toString())
         .get();
 
+    int count = 0;
+
     if (docSnapshot.exists) {
       Map<String, dynamic> data = docSnapshot.data()!;
       for (int i = 0; i < 12; i++) {
         if (data["Allergies"][al[i]] == true) {
           allergy.add(al[i]);
+        } else {
+          count++;
         }
       }
-      for (int i = 0; i < allergy.length; i++) {
-        if (ProductAllergen.contains(allergy[i].toLowerCase())) {
-          return 'e';
-        } else {
-          return Grade;
+      if (count == 12) {
+        return Grade;
+      } else {
+        for (int i = 0; i < allergy.length; i++) {
+          if (ProductAllergen.contains(allergy[i].toLowerCase())) {
+            return 'e';
+          } else {
+            return Grade;
+          }
         }
       }
     }
@@ -65,19 +73,26 @@ class GradeCal {
     var docSnapshot = await col
         .doc(FirebaseAuth.instance.currentUser?.email.toString())
         .get();
+    int count = 0;
 
     if (docSnapshot.exists) {
       Map<String, dynamic> data = docSnapshot.data()!;
       for (int i = 0; i < 12; i++) {
         if (data["Allergies"][al[i]] == true) {
           allergy.add(al[i]);
+        } else {
+          count++;
         }
       }
-      for (int i = 0; i < allergy.length; i++) {
-        if (ProductAllergen.contains(allergy[i].toLowerCase())) {
-          return allergy[i];
-        } else {
-          return 'false';
+      if (count == 12) {
+        return 'false';
+      } else {
+        for (int i = 0; i < allergy.length; i++) {
+          if (ProductAllergen.contains(allergy[i].toLowerCase())) {
+            return allergy[i];
+          } else {
+            return 'false';
+          }
         }
       }
     }

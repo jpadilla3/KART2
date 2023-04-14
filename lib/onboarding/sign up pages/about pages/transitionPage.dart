@@ -8,6 +8,7 @@ import 'package:kart2/onboarding/sign%20up%20pages/about%20pages/intro_screen3.d
 import 'package:kart2/onboarding/sign%20up%20pages/about%20pages/intro_screen4.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:kart2/onboarding/sign up pages/Conditions/Allergies.dart';
+import 'package:kart2/models/firebase_commands.dart';
 
 class aboutPages extends StatefulWidget {
   const aboutPages({super.key});
@@ -85,6 +86,7 @@ class _aboutPagesState extends State<aboutPages> {
                           key: const Key('continue'),
                         ),
                         onTap: () {
+                          FirebaseCommands().updateUser2();
                           Navigator.push(
                               context,
                               MaterialPageRoute(

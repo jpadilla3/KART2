@@ -58,6 +58,28 @@ class FirebaseCommands {
         .set({'username': FirebaseAuth.instance.currentUser!.email.toString()});
   }
 
+  Future updateUser2() async {
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.email.toString())
+        .update({
+      'Allergies': {
+        "Milk": false,
+        'Gluten': false,
+        'Lupin': false,
+        'Celery': false,
+        'Fish': false,
+        'Crustaceans': false,
+        'Sesame-Seeds': false,
+        'Molluscs': false,
+        'Peanuts (Nuts)': false,
+        'Soybeans': false,
+        'Mustard': false,
+        'Eggs': false,
+      }
+    });
+  }
+
   Future updateUser(Map userData) async {
     var list = userData.values.toList();
 
