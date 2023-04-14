@@ -37,16 +37,16 @@ class GradeCal {
           count++;
         }
       }
+
       if (count == 12) {
         return Grade;
       } else {
         for (int i = 0; i < allergy.length; i++) {
           if (ProductAllergen.contains(allergy[i].toLowerCase())) {
-            return 'e';
-          } else {
-            return Grade;
+            Grade = 'e';
           }
         }
+        return Grade;
       }
     }
   }
@@ -84,16 +84,20 @@ class GradeCal {
           count++;
         }
       }
+      String allergic = '';
+
       if (count == 12) {
         return 'false';
       } else {
         for (int i = 0; i < allergy.length; i++) {
           if (ProductAllergen.contains(allergy[i].toLowerCase())) {
-            return allergy[i];
+            allergic = allergy[i];
+            break;
           } else {
-            return 'false';
+            allergic = 'false';
           }
         }
+        return allergic;
       }
     }
   }
