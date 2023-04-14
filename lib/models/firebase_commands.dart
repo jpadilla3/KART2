@@ -37,12 +37,12 @@ class FirebaseCommands {
             'total sugars': barcodeData.product?.nutriments?.sugars ?? 0,
             'protein': barcodeData.product?.nutriments?.proteins ?? 0,
             'fiber': barcodeData.product?.nutriscoreData?.fiber ?? 0,
-            //insert allergens
           },
+          "Allergens": "none", //set allergens
           'name': barcodeData.product?.productName! ?? 'Product',
           'picture': barcodeData.product?.selectedImages?.front?.small?.en ??
               'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg'
-          //set allergens
+
           //set conditions (vegan, vegetarian)
         });
       }
