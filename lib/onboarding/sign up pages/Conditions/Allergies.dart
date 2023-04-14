@@ -154,6 +154,7 @@ class _ConditionsState extends State<Conditions> {
             for (var entry in userData.entries) {
               print('${entry.key} : ${entry.value}');
             }
+            userData.updateAll((key, value) => value = false);
 
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => navBar()));

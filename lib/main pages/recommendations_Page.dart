@@ -174,8 +174,9 @@ class _RecPageState extends State<RecommendationsPage> {
                                             height: 120,
                                             width: 120,
                                             alignment: Alignment.center,
-                                            color: Colors.indigo[400],
-                                            child: Text('Picture'),
+                                            color: Colors.transparent,
+                                            child: Image.network(
+                                                '${documentSnapshot['picture']}'),
                                           ),
                                         ),
                                         Container(

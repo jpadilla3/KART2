@@ -191,7 +191,8 @@ class _HomePageState extends State<HomePage> {
                                       FirebaseCommands().favoriteBarcode(
                                           documentSnapshot['barcode'],
                                           documentSnapshot['name'],
-                                          documentSnapshot['grade'],
+                                          documentSnapshot['nutrition']
+                                              ['grade'],
                                           true,
                                           documentSnapshot['picture']);
                                     },
@@ -235,7 +236,8 @@ class _HomePageState extends State<HomePage> {
                                           child: Container(
                                             height: 80,
                                             width: 80,
-                                            color: Colors.blueGrey,
+                                            child: Image.network(
+                                                '${documentSnapshot['picture']}'),
                                           )),
                                     ],
                                   ),
@@ -274,12 +276,13 @@ class _HomePageState extends State<HomePage> {
                                                 MainAxisAlignment.start,
                                             children: [
                                               scoreColors().scoreColor(
-                                                  documentSnapshot['grade']),
+                                                  documentSnapshot['nutrition']
+                                                      ['grade']),
                                               Padding(
                                                 padding: const EdgeInsets.only(
                                                     left: 5),
                                                 child: Text(
-                                                  'Grade: ${documentSnapshot['grade'].toString().toUpperCase()}',
+                                                  'Grade: ${documentSnapshot['nutrition']['grade'].toString().toUpperCase()}',
                                                   textAlign: TextAlign.start,
                                                 ),
                                               ),
