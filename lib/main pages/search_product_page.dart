@@ -152,28 +152,11 @@ class _searchProductState extends State<searchProduct> {
                     const SizedBox(
                       height: 20,
                     ),
-                    FutureBuilder(
-                        future: GradeCal().gradeCalculate(
-                            widget.data['allergens'], widget.data['grade']),
-                        builder: ((context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.done) {
-                            if (snapshot.hasError) {
-                              return Text(
-                                '${snapshot.error} occurred',
-                              );
-                            } else {
-                              final data1 = snapshot.data as String;
-                              return SizedBox(
-                                height: 50,
-                                width: 150,
-                                child: scoreColors().scorePic(data1),
-                              );
-                            }
-                          } else {
-                            return const Text("loading...");
-                          }
-                        })),
+                    SizedBox(
+                      height: 50,
+                      width: 150,
+                      child: scoreColors().scorePic(widget.data['grade']),
+                    )
                   ],
                 )
               ],
@@ -365,7 +348,8 @@ class _searchProductState extends State<searchProduct> {
                     widget.data['name'],
                     widget.data['grade'],
                     false,
-                    widget.data['pic']);
+                    widget.data['pic'],
+                    widget.data['allergens']);
                 snackMessage(false, widget.data['barcode']);
               },
               child: Container(

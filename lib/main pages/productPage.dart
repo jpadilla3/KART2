@@ -208,29 +208,11 @@ class _productPageState extends State<productPage> {
                               const SizedBox(
                                 height: 20,
                               ),
-                              FutureBuilder(
-                                  future: GradeCal().gradeCalculate(
-                                      data['Allergens'],
-                                      data['nutrition']['grade']),
-                                  builder: ((context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.done) {
-                                      if (snapshot.hasError) {
-                                        return Text(
-                                          '${snapshot.error} occurred',
-                                        );
-                                      } else {
-                                        final data1 = snapshot.data as String;
-                                        return SizedBox(
-                                          height: 70,
-                                          width: 150,
-                                          child: scoreColors().scorePic(data1),
-                                        );
-                                      }
-                                    } else {
-                                      return const Text("loading...");
-                                    }
-                                  }))
+                              SizedBox(
+                                  height: 70,
+                                  width: 150,
+                                  child: scoreColors()
+                                      .scorePic(data['nutrition']['grade']))
                             ],
                           );
                         } else {
