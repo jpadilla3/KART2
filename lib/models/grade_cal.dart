@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class GradeCal {
-  gradeCalculate(List<dynamic> ProductAllergen, String Grade) async {
+  gradeCalculate(List<dynamic> ProductAllergen) async {
     List<String> al = [
       'Milk',
       'Gluten',
@@ -27,6 +27,7 @@ class GradeCal {
         .get();
 
     int count = 0;
+    bool aler = false;
 
     if (docSnapshot.exists) {
       Map<String, dynamic> data = docSnapshot.data()!;
@@ -39,14 +40,17 @@ class GradeCal {
       }
 
       if (count == 12) {
-        return Grade;
+        return false;
       } else {
         for (int i = 0; i < allergy.length; i++) {
           if (ProductAllergen.contains(allergy[i].toLowerCase())) {
-            Grade = 'e';
+            aler = true;
+            break;
+          } else {
+            aler = false;
           }
         }
-        return Grade;
+        return aler;
       }
     }
   }

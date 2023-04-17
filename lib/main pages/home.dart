@@ -17,6 +17,7 @@ import 'package:kart2/main%20pages/favorites.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kart2/models/firebase_commands.dart';
 import 'package:kart2/models/flutter_barcode_scanner.dart';
+import 'package:kart2/models/grade_cal.dart';
 import 'package:kart2/models/scoreColor.dart';
 import 'package:shimmer/shimmer.dart';
 import 'shimmerlist.dart';
@@ -194,7 +195,8 @@ class _HomePageState extends State<HomePage> {
                                           documentSnapshot['nutrition']
                                               ['grade'],
                                           true,
-                                          documentSnapshot['picture']);
+                                          documentSnapshot['picture'],
+                                          documentSnapshot['Allergens']);
                                     },
                                     backgroundColor: Colors.red,
                                     icon: Icons.favorite,
@@ -293,12 +295,46 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   ),
                                   Expanded(
-                                    child: Column(
+                                    child: Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.end,
-                                      children: const [
-                                        SizedBox(
+                                      children: [
+                                        FutureBuilder(
+                                            future: GradeCal().gradeCalculate(
+                                                documentSnapshot['Allergens']),
+                                            builder: (BuildContext context,
+                                                snapshot) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.done) {
+                                                if (snapshot.hasError) {
+                                                  return Text(
+                                                      '${snapshot.error} occurred');
+                                                } else {
+                                                  final data =
+                                                      snapshot.data as bool;
+
+                                                  if (data == true) {
+                                                    return const SizedBox(
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                right: 10),
+                                                        child: Icon(
+                                                          Icons.info_outline,
+                                                          color: Colors.red,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  } else {
+                                                    return const Text('');
+                                                  }
+                                                }
+                                              } else {
+                                                return const Text('');
+                                              }
+                                            }),
+                                        const SizedBox(
                                           child: Padding(
                                             padding: EdgeInsets.only(right: 10),
                                             child: Icon(

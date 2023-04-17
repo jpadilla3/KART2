@@ -5,6 +5,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kart2/main%20pages/productPage.dart';
 import 'package:kart2/models/firebase_commands.dart';
+import 'package:kart2/models/grade_cal.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../models/scoreColor.dart';
@@ -181,16 +182,55 @@ class _FavPageState extends State<FavPage> {
                                       ),
                                     ),
                                     Expanded(
-                                      child: Column(
+                                      child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.end,
                                         crossAxisAlignment:
                                             CrossAxisAlignment.end,
-                                        children: const [
-                                          SizedBox(
-                                            child: Icon(
-                                              Icons.arrow_forward_ios,
-                                              color: Colors.indigo,
+                                        children: [
+                                          FutureBuilder(
+                                              future: GradeCal().gradeCalculate(
+                                                  documentSnapshot[
+                                                      'Allergens']),
+                                              builder: (BuildContext context,
+                                                  snapshot) {
+                                                if (snapshot.connectionState ==
+                                                    ConnectionState.done) {
+                                                  if (snapshot.hasError) {
+                                                    return Text(
+                                                        '${snapshot.error} occurred');
+                                                  } else {
+                                                    final data =
+                                                        snapshot.data as bool;
+
+                                                    if (data == true) {
+                                                      return const SizedBox(
+                                                        child: Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  right: 10),
+                                                          child: Icon(
+                                                            Icons.info_outline,
+                                                            color: Colors.red,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    } else {
+                                                      return const Text('');
+                                                    }
+                                                  }
+                                                } else {
+                                                  return const Text('');
+                                                }
+                                              }),
+                                          const SizedBox(
+                                            child: Padding(
+                                              padding:
+                                                  EdgeInsets.only(right: 10),
+                                              child: Icon(
+                                                Icons.arrow_forward_ios,
+                                                color: Colors.indigo,
+                                              ),
                                             ),
                                           ),
                                         ],

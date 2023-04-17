@@ -227,8 +227,9 @@ class _SearchPageState extends State<SearchPage> {
                                                     documentSnapshot[
                                                         'nutrition']['grade'],
                                                     false,
+                                                    documentSnapshot['picture'],
                                                     documentSnapshot[
-                                                        'picture']);
+                                                        'Allergens']);
                                           },
                                           backgroundColor: Colors.red,
                                           icon: Icons.favorite,
@@ -311,67 +312,79 @@ class _SearchPageState extends State<SearchPage> {
                                                 const SizedBox(
                                                   height: 3,
                                                 ),
-                                                FutureBuilder(
-                                                    future: GradeCal()
-                                                        .gradeCalculate(
-                                                            documentSnapshot[
-                                                                'Allergens'],
-                                                            documentSnapshot[
-                                                                    'nutrition']
-                                                                ['grade']),
-                                                    builder:
-                                                        (BuildContext context,
-                                                            snapshot) {
-                                                      if (snapshot
-                                                              .connectionState ==
-                                                          ConnectionState
-                                                              .done) {
-                                                        if (snapshot.hasError) {
-                                                          return Text(
-                                                              '${snapshot.error} occurred');
-                                                        } else {
-                                                          final data1 = snapshot
-                                                              .data as String;
-                                                          return Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              scoreColors()
-                                                                  .scoreColor(
-                                                                      data1),
-                                                              Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                            .only(
-                                                                        left:
-                                                                            5),
-                                                                child: Text(
-                                                                  'Grade: ${data1.toUpperCase()}',
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .start,
-                                                                ),
-                                                              )
-                                                            ],
-                                                          );
-                                                        }
-                                                      } else {
-                                                        return Text('loading');
-                                                      }
-                                                    }),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    scoreColors().scoreColor(
+                                                        documentSnapshot[
+                                                                'nutrition']
+                                                            ['grade']),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 5),
+                                                      child: Text(
+                                                        'Grade: ${documentSnapshot['nutrition']['grade'].toUpperCase()}',
+                                                        textAlign:
+                                                            TextAlign.start,
+                                                      ),
+                                                    )
+                                                  ],
+                                                )
                                               ],
                                             ),
                                           ),
                                         ),
                                         Expanded(
-                                          child: Column(
+                                          child: Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.end,
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.end,
-                                            children: const [
-                                              SizedBox(
+                                            children: [
+                                              FutureBuilder(
+                                                  future: GradeCal()
+                                                      .gradeCalculate(
+                                                          documentSnapshot[
+                                                              'Allergens']),
+                                                  builder:
+                                                      (BuildContext context,
+                                                          snapshot) {
+                                                    if (snapshot
+                                                            .connectionState ==
+                                                        ConnectionState.done) {
+                                                      if (snapshot.hasError) {
+                                                        return Text(
+                                                            '${snapshot.error} occurred');
+                                                      } else {
+                                                        final data = snapshot
+                                                            .data as bool;
+
+                                                        if (data == true) {
+                                                          return const SizedBox(
+                                                            child: Padding(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      right:
+                                                                          10),
+                                                              child: Icon(
+                                                                Icons
+                                                                    .info_outline,
+                                                                color:
+                                                                    Colors.red,
+                                                              ),
+                                                            ),
+                                                          );
+                                                        } else {
+                                                          return const Text('');
+                                                        }
+                                                      }
+                                                    } else {
+                                                      return const Text('');
+                                                    }
+                                                  }),
+                                              const SizedBox(
                                                 child: Padding(
                                                   padding: EdgeInsets.only(
                                                       right: 10),
@@ -623,53 +636,64 @@ class MySearchDelegate extends SearchDelegate {
                                     const SizedBox(
                                       height: 3,
                                     ),
-                                    FutureBuilder(
-                                        future: GradeCal().gradeCalculate(
-                                            data[index]['allergens'],
-                                            data[index]['grade']),
-                                        builder:
-                                            (BuildContext context, snapshot) {
-                                          if (snapshot.connectionState ==
-                                              ConnectionState.done) {
-                                            if (snapshot.hasError) {
-                                              return Text(
-                                                  '${snapshot.error} occurred');
-                                            } else {
-                                              final data1 =
-                                                  snapshot.data as String;
-                                              return Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  scoreColors()
-                                                      .scoreColor(data1),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 5),
-                                                    child: Text(
-                                                      'Grade: ${data1.toUpperCase()}',
-                                                      textAlign:
-                                                          TextAlign.start,
-                                                    ),
-                                                  )
-                                                ],
-                                              );
-                                            }
-                                          } else {
-                                            return Text('loading');
-                                          }
-                                        })
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        scoreColors()
+                                            .scoreColor(data[index]['grade']),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 5),
+                                          child: Text(
+                                            'Grade: ${data[index]['grade'].toUpperCase()}',
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        )
+                                      ],
+                                    )
                                   ],
                                 ),
                               ),
                             ),
                             Expanded(
-                              child: Column(
+                              child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 crossAxisAlignment: CrossAxisAlignment.end,
-                                children: const [
-                                  SizedBox(
+                                children: [
+                                  FutureBuilder(
+                                      future: GradeCal().gradeCalculate(
+                                          data[index]['allergens']),
+                                      builder:
+                                          (BuildContext context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.done) {
+                                          if (snapshot.hasError) {
+                                            return Text(
+                                                '${snapshot.error} occurred');
+                                          } else {
+                                            final data = snapshot.data as bool;
+
+                                            if (data == true) {
+                                              return const SizedBox(
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right: 10),
+                                                  child: Icon(
+                                                    Icons.info_outline,
+                                                    color: Colors.red,
+                                                  ),
+                                                ),
+                                              );
+                                            } else {
+                                              return const Text('');
+                                            }
+                                          }
+                                        } else {
+                                          return const Text('');
+                                        }
+                                      }),
+                                  const SizedBox(
                                     child: Padding(
                                       padding: EdgeInsets.only(right: 10),
                                       child: Icon(

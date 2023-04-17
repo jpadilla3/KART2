@@ -181,8 +181,8 @@ class FirebaseCommands {
     }
   }
 
-  Future favoriteBarcode(
-      String barcode, String name, String grade, bool ID, String pic) async {
+  Future favoriteBarcode(String barcode, String name, String grade, bool ID,
+      String pic, List<dynamic> allergy) async {
     return FirebaseFirestore.instance
         .collection('users') //go to general collection
         .doc(FirebaseAuth.instance.currentUser!.email
@@ -195,7 +195,8 @@ class FirebaseCommands {
       'name': name,
       'grade': grade,
       'ID': ID,
-      'picture': pic
+      'picture': pic,
+      "Allergens": allergy
     }); //create info about barcode
   }
 
