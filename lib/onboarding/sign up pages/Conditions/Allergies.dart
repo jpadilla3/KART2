@@ -5,7 +5,7 @@ import 'package:kart2/main%20pages/home.dart';
 import 'package:kart2/models/firebase_commands.dart';
 
 List<String> titles = <String>[
-  'Conditions',
+  'Diets & Intolerances',
   'Allergies',
 ];
 List<String> conditions = <String>['Vegan', 'Vegetarian', 'Lactose Intolerent'];
@@ -39,7 +39,7 @@ Map userData = {
 Map userData2 = {
   'Vegan': false,
   'Vegetarian': false,
-  'Lactose Intolerent': false,
+  'Lactose Intolerant': false,
 };
 
 class Conditions extends StatefulWidget {
@@ -92,7 +92,7 @@ class _ConditionsState extends State<Conditions> {
           bottom: TabBar(
             tabs: <Widget>[
               Tab(
-                icon: const Icon(MaterialCommunityIcons.medical_bag),
+                icon: const Icon(MaterialCommunityIcons.scale),
                 text: titles[0],
               ),
               Tab(
@@ -113,6 +113,7 @@ class _ConditionsState extends State<Conditions> {
                   onChanged: (bool? value) {
                     setState(() {
                       conditionCheckList[index] = value!;
+                      userData2[conditions[index]] = value;
                     });
                   },
                   title: Text(conditions[index]),
@@ -147,6 +148,9 @@ class _ConditionsState extends State<Conditions> {
               print('${entry.key} : ${entry.value}');
             }
             userData.updateAll((key, value) => value = false);
+            for (var entry in userData2.entries) {
+              print('${entry.key} : ${entry.value}');
+            }
             userData2.updateAll((key, value) => value = false);
 
             Navigator.push(

@@ -81,7 +81,7 @@ class FirebaseCommands {
       'Conditions': {
         'Vegan': false,
         'Vegetarian': false,
-        'Lactose Intolerent': false,
+        'Lactose Intolerant': false,
       }
     });
   }
@@ -109,7 +109,7 @@ class FirebaseCommands {
       'Conditions': {
         'Vegan': list2[0],
         'Vegetarian': list2[1],
-        'Lactose Intolerent': list2[2],
+        'Lactose Intolerant': list2[2],
       }
     });
   }
