@@ -366,8 +366,7 @@ class _SearchPageState extends State<SearchPage> {
                                                             child: Padding(
                                                               padding: EdgeInsets
                                                                   .only(
-                                                                      right:
-                                                                          10),
+                                                                      right: 2),
                                                               child: Icon(
                                                                 Icons
                                                                     .info_outline,
@@ -677,8 +676,8 @@ class MySearchDelegate extends SearchDelegate {
                                             if (data == true) {
                                               return const SizedBox(
                                                 child: Padding(
-                                                  padding: EdgeInsets.only(
-                                                      right: 10),
+                                                  padding:
+                                                      EdgeInsets.only(right: 2),
                                                   child: Icon(
                                                     Icons.info_outline,
                                                     color: Colors.red,
