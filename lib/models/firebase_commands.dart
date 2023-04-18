@@ -66,7 +66,6 @@ class FirebaseCommands {
         .doc(FirebaseAuth.instance.currentUser!.email.toString())
         .update({
       'Allergies': {
-        "Milk": false,
         'Gluten': false,
         'Lupin': false,
         'Celery': false,
@@ -78,30 +77,39 @@ class FirebaseCommands {
         'Soybeans': false,
         'Mustard': false,
         'Eggs': false,
+      },
+      'Conditions': {
+        'Vegan': false,
+        'Vegetarian': false,
+        'Lactose Intolerent': false,
       }
     });
   }
 
-  Future updateUser(Map userData) async {
+  Future updateUser(Map userData, userData2) async {
     var list = userData.values.toList();
-
+    var list2 = userData2.values.toList();
     FirebaseFirestore.instance
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.email.toString())
         .update({
       'Allergies': {
-        "Milk": list[0],
-        'Gluten': list[1],
-        'Lupin': list[2],
-        'Celery': list[3],
-        'Fish': list[4],
-        'Crustaceans': list[5],
-        'Sesame-Seeds': list[6],
-        'Molluscs': list[7],
-        'Peanuts (Nuts)': list[8],
-        'Soybeans': list[9],
-        'Mustard': list[10],
-        'Eggs': list[11],
+        'Gluten': list[0],
+        'Lupin': list[1],
+        'Celery': list[2],
+        'Fish': list[3],
+        'Crustaceans': list[4],
+        'Sesame-Seeds': list[5],
+        'Molluscs': list[6],
+        'Peanuts (Nuts)': list[7],
+        'Soybeans': list[8],
+        'Mustard': list[9],
+        'Eggs': list[10],
+      },
+      'Conditions': {
+        'Vegan': list2[0],
+        'Vegetarian': list2[1],
+        'Lactose Intolerent': list2[2],
       }
     });
   }

@@ -8,20 +8,8 @@ List<String> titles = <String>[
   'Conditions',
   'Allergies',
 ];
-List<String> conditions = <String>[
-  'Type 1 or 2 Diabites',
-  ' Coeliac disease',
-  'Thyroid disease',
-  'Polycystic ovary syndrome',
-  'Diabetes insipidus',
-  'Necrobiosis lipoidica diabeticorum',
-  'Mastopathy',
-  'Haemochromatosis',
-  'Insulin resistance and severe insulin resistance',
-  'Pancreatitis'
-];
+List<String> conditions = <String>['Vegan', 'Vegetarian', 'Lactose Intolerent'];
 List<String> allergies = <String>[
-  'Milk',
   'Gluten',
   'Lupin',
   'Celery',
@@ -36,7 +24,6 @@ List<String> allergies = <String>[
 ];
 
 Map userData = {
-  'Milk': false,
   'Gluten': false,
   'Lupin': false,
   'Celery': false,
@@ -48,6 +35,11 @@ Map userData = {
   'Soybeans': false,
   'Mustard': false,
   'Eggs': false
+};
+Map userData2 = {
+  'Vegan': false,
+  'Vegetarian': false,
+  'Lactose Intolerent': false,
 };
 
 class Conditions extends StatefulWidget {
@@ -150,11 +142,12 @@ class _ConditionsState extends State<Conditions> {
         bottomNavigationBar: ElevatedButton(
           key: const Key('conditions'),
           onPressed: () {
-            FirebaseCommands().updateUser(userData);
+            FirebaseCommands().updateUser(userData, userData2);
             for (var entry in userData.entries) {
               print('${entry.key} : ${entry.value}');
             }
             userData.updateAll((key, value) => value = false);
+            userData2.updateAll((key, value) => value = false);
 
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => navBar()));
