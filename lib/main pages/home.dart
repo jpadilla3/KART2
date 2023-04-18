@@ -319,7 +319,7 @@ class _HomePageState extends State<HomePage> {
                                                       child: Padding(
                                                         padding:
                                                             EdgeInsets.only(
-                                                                right: 10),
+                                                                right: 2),
                                                         child: Icon(
                                                           Icons.info_outline,
                                                           color: Colors.red,

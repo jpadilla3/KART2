@@ -251,7 +251,7 @@ class _productPageState extends State<productPage> {
                                   //mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     SizedBox(
-                                      width: 50,
+                                      width: 35,
                                     ),
                                     scoreColors().scoreInfo(data1),
                                   ]);

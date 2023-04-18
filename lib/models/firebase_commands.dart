@@ -25,6 +25,8 @@ class FirebaseCommands {
           'time': FieldValue.serverTimestamp(),
           "ID": true,
           'barcode': barcode,
+          'brand':
+              barcodeData.product?.brands ?? barcodeData.product?.productName!,
           "nutrition": {
             'score': barcodeData.product?.nutriscoreScore ?? 0,
             'grade': barcodeData.product?.nutritionGrades ?? 'No Grade',
