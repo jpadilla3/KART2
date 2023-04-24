@@ -164,6 +164,7 @@ class _searchProductState extends State<searchProduct> {
             const SizedBox(
               height: 10,
             ),
+            /*
             FutureBuilder(
                 future: GradeCal().gradeCalculateInfo(
                     widget.data['allergens'], widget.data['grade']),
@@ -178,13 +179,13 @@ class _searchProductState extends State<searchProduct> {
                       return Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            scoreColors().scoreInfo(data1),
+                            //scoreColors().scoreInfo(data1),
                           ]);
                     }
                   } else {
                     return const Text("loading...");
                   }
-                }),
+                }),*/
             //calories
             rowInfo(
               'Calories',
@@ -349,7 +350,8 @@ class _searchProductState extends State<searchProduct> {
                     widget.data['grade'],
                     false,
                     widget.data['pic'],
-                    widget.data['allergens']);
+                    widget.data['allergens'],
+                    widget.data['conditions']);
                 snackMessage(false, widget.data['barcode']);
               },
               child: Container(

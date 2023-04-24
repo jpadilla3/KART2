@@ -8,7 +8,7 @@ List<String> titles = <String>[
   'Diets & Intolerances',
   'Allergies',
 ];
-List<String> conditions = <String>['Vegan', 'Vegetarian', 'Lactose Intolerent'];
+List<String> conditions = <String>['Vegan', 'Vegetarian', 'Lactose Intolerant'];
 List<String> allergies = <String>[
   'Gluten',
   'Lupin',

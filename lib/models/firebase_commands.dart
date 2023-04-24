@@ -15,7 +15,7 @@ class FirebaseCommands {
 
     if (response.statusCode == 200) {
       if (int.parse(barcode) > 0) {
-        return FirebaseFirestore.instance
+        FirebaseFirestore.instance
             .collection('users') //go to users
             .doc(FirebaseAuth.instance.currentUser!.email
                 .toString()) // go to current user
@@ -40,7 +40,9 @@ class FirebaseCommands {
             'protein': barcodeData.product?.nutriments?.proteins ?? 0,
             'fiber': barcodeData.product?.nutriscoreData?.fiber ?? 0,
           },
-          "Allergens": {'none'}, //set allergens
+          "Allergens":
+              barcodeData.product?.allergensTags ?? 'none', //set allergens
+          "conditions": {'none'},
           'name': barcodeData.product?.productName! ?? 'Product',
           'picture': barcodeData.product?.selectedImages?.front?.small?.en ??
               'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg'
@@ -129,25 +131,38 @@ class FirebaseCommands {
   Future searchBarcode(String barcode, Map data) async {
     bool vegan = false;
     bool vegetarian = true;
+    List<String> con = [];
 
-    if (data['nutrients']['vegetarian']
+    if (data['conditions']['vegetarian']
             .contains('VegetarianStatus.VEGETARIAN_STATUS_UNKNOWN') ||
-        data['nutrients']['vegetarian']
+        data['conditions']['vegetarian']
             .contains('VegetarianStatus.NON_VEGETARIAN') ||
-        data['nutrients']['vegetarian']
+        data['conditions']['vegetarian']
             .contains('VegetarianStatus.MAYBE_VEGETARIAN')) {
       vegetarian = false;
     } else {
       vegetarian = true;
     }
 
-    if (data['nutrients']['vegan']
+    if (data['conditions']['vegan']
             .contains('VeganStatus.VEGAN_STATUS_UNKNOWN') ||
-        data['nutrients']['vegan'].contains('VeganStatus.NON_VEGAN')) {
+        data['conditions']['vegan'].contains('VeganStatus.NON_VEGAN')) {
       vegan = false;
     } else {
       vegan = true;
       vegetarian = true;
+    }
+    if (vegan == true) {
+      con.add('vegan');
+    }
+    if (vegetarian == true) {
+      con.add('vegetarian');
+    }
+    if (data['allergens'].contains('milk') ||
+        data['allergens'].contains('lactic') ||
+        data['ingredients'].contains('lactic') ||
+        data['ingredients'].contains('cheese')) {
+      con.add('lactose intolerant');
     }
 
     final String url =
@@ -185,14 +200,14 @@ class FirebaseCommands {
           'picture': data['pic'] ??
               'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg',
           'Allergens': data['allergens'] ?? "Not Avaliable",
-          'conditions': {'vegan': vegan, 'vegetarian': vegetarian},
+          'conditions': con,
         }); //input searched barcodes
       }
     }
   }
 
   Future favoriteBarcode(String barcode, String name, String grade, bool ID,
-      String pic, List<dynamic> allergy) async {
+      String pic, List<dynamic> allergy, List<dynamic> condition) async {
     return FirebaseFirestore.instance
         .collection('users') //go to general collection
         .doc(FirebaseAuth.instance.currentUser!.email
@@ -206,7 +221,8 @@ class FirebaseCommands {
       'grade': grade,
       'ID': ID,
       'picture': pic,
-      "Allergens": allergy
+      "Allergens": allergy,
+      "conditions": condition
     }); //create info about barcode
   }
 
