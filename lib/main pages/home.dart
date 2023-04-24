@@ -8,6 +8,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kart2/main%20pages/scan_page.dart';
 import 'package:kart2/main%20pages/search_page.dart';
 import 'package:kart2/main%20pages/productPage.dart';
 import 'package:kart2/main%20pages/profile_page.dart';
@@ -34,6 +35,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool isLoading = false;
   String _scanBarcode = '';
+  bool type = false;
   late Future<BarcodeData> futureBarcodeData;
   //might have to change this for ever page
   List pages = [
@@ -83,6 +85,40 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future itemScan(String barcode) async {
+    Map<String, dynamic> item = {};
+    final String url =
+        'https://us.openfoodfacts.org/api/v2/product/$barcode?fields=_keywords,allergens,allergens_tags,brands,categories,categories_tags,compared_to_category,food_groups,food_groups_tags,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json';
+    final response = await http.get(Uri.parse(url));
+    final barcodeData = barcodeDataFromJson(response.body);
+
+    if (response.statusCode == 200) {
+      if (int.parse(barcode) > 0) {
+        item['brand'] =
+            barcodeData.product?.brands ?? barcodeData.product?.productName!;
+        item['score'] = barcodeData.product?.nutriscoreScore ?? 0;
+        item['grade'] = barcodeData.product?.nutritionGrades ?? 'No Grade';
+        item['calories'] = barcodeData.product?.nutriments?.energy ?? 0;
+        item['total fat'] = barcodeData.product?.nutriments?.fat ?? 0;
+        item['saturated fat'] =
+            barcodeData.product?.nutriments?.saturatedFat ?? 0;
+        item['sodium'] = barcodeData.product?.nutriments?.sodium ?? 0;
+        item['total carbohydrate'] =
+            barcodeData.product?.nutriments?.carbohydrates ?? 0;
+        item['total sugars'] = barcodeData.product?.nutriments?.sugars ?? 0;
+        item['protein'] = barcodeData.product?.nutriments?.proteins ?? 0;
+        item['fiber'] = barcodeData.product?.nutriscoreData?.fiber ?? 0;
+        item['name'] = barcodeData.product?.productName! ?? 'Product';
+        item['picture'] = barcodeData
+                .product?.selectedImages?.front?.small?.en ??
+            'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg';
+        return item;
+      } else {
+        return AboutDialog();
+      }
+    }
+  }
+
   Future<void> scanBarcodeNormal() async {
     String barcodeScanRes;
     // Platform messages may fail, so we use a try/catch PlatformException.
@@ -92,7 +128,7 @@ class _HomePageState extends State<HomePage> {
       //add barcode to firebase
       //passes current user email and barcode
       FirebaseCommands().addBarcode(barcodeScanRes);
-      FirebaseCommands().updateBarcode(barcodeScanRes);
+      FirebaseCommands().updateBarcode(barcodeScanRes); //recommendation
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
     }
@@ -105,6 +141,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _scanBarcode = barcodeScanRes;
       isLoading = false;
+      type = true;
     });
   }
 
@@ -114,6 +151,9 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           await scanBarcodeNormal(); //adds barcode to firebase
+          Map items = await itemScan(_scanBarcode);
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => ScanPage(items)));
         },
         backgroundColor: Colors.indigo[400],
         child: const Icon(
@@ -196,7 +236,8 @@ class _HomePageState extends State<HomePage> {
                                               ['grade'],
                                           true,
                                           documentSnapshot['picture'],
-                                          documentSnapshot['Allergens']);
+                                          documentSnapshot['Allergens'],
+                                          documentSnapshot['conditions']);
                                     },
                                     backgroundColor: Colors.red,
                                     icon: Icons.favorite,
@@ -302,7 +343,8 @@ class _HomePageState extends State<HomePage> {
                                       children: [
                                         FutureBuilder(
                                             future: GradeCal().gradeCalculate(
-                                                documentSnapshot['Allergens']),
+                                                documentSnapshot['Allergens'],
+                                                documentSnapshot['conditions']),
                                             builder: (BuildContext context,
                                                 snapshot) {
                                               if (snapshot.connectionState ==
@@ -311,10 +353,10 @@ class _HomePageState extends State<HomePage> {
                                                   return Text(
                                                       '${snapshot.error} occurred');
                                                 } else {
-                                                  final data =
-                                                      snapshot.data as bool;
+                                                  final data = snapshot.data
+                                                      as List<bool>;
 
-                                                  if (data == true) {
+                                                  if (data[0] == true) {
                                                     return const SizedBox(
                                                       child: Padding(
                                                         padding:

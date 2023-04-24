@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:kart2/onboarding/sign%20up%20pages/Conditions/Allergies.dart';
 
 class GradeCal {
-  gradeCalculate(List<dynamic> ProductAllergen) async {
+  gradeCalculate(
+      List<dynamic> ProductAllergen, List<dynamic> productCondition) async {
     List<String> al = [
-      'Milk',
       'Gluten',
       'Lupin',
       'Celery',
@@ -18,8 +19,10 @@ class GradeCal {
       'Mustard',
       'Eggs'
     ];
+    List<String> con = ['Vegan', 'Vegetarian', 'Lactose Intolerant'];
 
     List<String> allergy = [];
+    List<String> condition = [];
 
     var col = FirebaseFirestore.instance.collection('users');
     var docSnapshot = await col
@@ -27,20 +30,31 @@ class GradeCal {
         .get();
 
     int count = 0;
+    int count2 = 0;
     bool aler = false;
+    bool condi = true;
+    bool lac = false;
 
     if (docSnapshot.exists) {
       Map<String, dynamic> data = docSnapshot.data()!;
-      for (int i = 0; i < 12; i++) {
+      for (int i = 0; i < 11; i++) {
         if (data["Allergies"][al[i]] == true) {
           allergy.add(al[i]);
         } else {
           count++;
         }
       }
-
-      if (count == 12) {
-        return false;
+      for (int j = 0; j < 3; j++) {
+        if (data["Conditions"][con[j]] == true) {
+          condition.add(con[j]);
+        } else {
+          count2++;
+        }
+      }
+      if (count == 11 && count2 == 3) {
+        aler = false;
+        condi = true;
+        lac = false;
       } else {
         for (int i = 0; i < allergy.length; i++) {
           if (ProductAllergen.contains(allergy[i].toLowerCase())) {
@@ -50,14 +64,31 @@ class GradeCal {
             aler = false;
           }
         }
-        return aler;
+
+        if ((condition.contains('Vegan') &&
+                productCondition.contains('vegan')) ||
+            (condition.contains('Vegetarian') &&
+                productCondition.contains('vegetarian'))) {
+          condi = false;
+        } else {
+          condi = true;
+        }
+        if (condition.contains('Lactose Intolerant') &&
+            productCondition.contains('lactose intolerant')) {
+          lac = true;
+        } else {
+          lac = false;
+        }
+
+        print(lac);
       }
+      return [aler, condi, lac];
     }
   }
 
-  gradeCalculateInfo(List<dynamic> ProductAllergen, String Grade) async {
+  gradeCalculateInfo(
+      List<dynamic> ProductAllergen, List<dynamic> productCondition) async {
     List<String> al = [
-      'Milk',
       'Gluten',
       'Lupin',
       'Celery',
@@ -70,28 +101,41 @@ class GradeCal {
       'Mustard',
       'Eggs'
     ];
+    List<String> con = ['Vegan', 'Vegetarian', 'Lactose Intolerant'];
 
     List<String> allergy = [];
+    List<String> condition = [];
 
     var col = FirebaseFirestore.instance.collection('users');
     var docSnapshot = await col
         .doc(FirebaseAuth.instance.currentUser?.email.toString())
         .get();
     int count = 0;
+    int count2 = 0;
 
     if (docSnapshot.exists) {
       Map<String, dynamic> data = docSnapshot.data()!;
-      for (int i = 0; i < 12; i++) {
+      for (int i = 0; i < 11; i++) {
         if (data["Allergies"][al[i]] == true) {
           allergy.add(al[i]);
         } else {
           count++;
         }
       }
+      for (int j = 0; j < 3; j++) {
+        if (data['Conditions'][con[j]] == true) {
+          condition.add(con[j]);
+        } else {
+          count2++;
+        }
+      }
       String allergic = '';
+      String condit = '';
+      String lac = '';
 
-      if (count == 12) {
-        return 'false';
+      if (count == 11 && count2 == 3) {
+        allergic = 'false';
+        condit = 'false';
       } else {
         for (int i = 0; i < allergy.length; i++) {
           if (ProductAllergen.contains(allergy[i].toLowerCase())) {
@@ -101,8 +145,20 @@ class GradeCal {
             allergic = 'false';
           }
         }
-        return allergic;
+
+        if (condition.contains('Vegetarian') &&
+            productCondition.contains('vegetarian')) {
+          condit = 'Vegetarian';
+        }
+        if (condition.contains("Vegan") && productCondition.contains('vegan')) {
+          condit = 'Vegan';
+        }
+        if (condition.contains('Lactose Intolerant') &&
+            productCondition.contains('lactose intolerant')) {
+          lac = 'Lactose Intolerant';
+        }
       }
+      return [allergic, condit, lac];
     }
   }
 }

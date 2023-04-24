@@ -229,7 +229,9 @@ class _SearchPageState extends State<SearchPage> {
                                                     false,
                                                     documentSnapshot['picture'],
                                                     documentSnapshot[
-                                                        'Allergens']);
+                                                        'Allergens'],
+                                                    documentSnapshot[
+                                                        'conditions']);
                                           },
                                           backgroundColor: Colors.red,
                                           icon: Icons.favorite,
@@ -347,7 +349,9 @@ class _SearchPageState extends State<SearchPage> {
                                                   future: GradeCal()
                                                       .gradeCalculate(
                                                           documentSnapshot[
-                                                              'Allergens']),
+                                                              'Allergens'],
+                                                          documentSnapshot[
+                                                              'conditions']),
                                                   builder:
                                                       (BuildContext context,
                                                           snapshot) {
@@ -359,9 +363,52 @@ class _SearchPageState extends State<SearchPage> {
                                                             '${snapshot.error} occurred');
                                                       } else {
                                                         final data = snapshot
-                                                            .data as bool;
+                                                            .data as List<bool>;
 
-                                                        if (data == true) {
+                                                        if (data[1] == false) {
+                                                          return const SizedBox(
+                                                            child: Padding(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      right: 2),
+                                                              child: Icon(
+                                                                Icons
+                                                                    .energy_savings_leaf,
+                                                                color: Colors
+                                                                    .green,
+                                                              ),
+                                                            ),
+                                                          );
+                                                        } else {
+                                                          return const Text('');
+                                                        }
+                                                      }
+                                                    } else {
+                                                      return const Text('');
+                                                    }
+                                                  }),
+                                              FutureBuilder(
+                                                  future: GradeCal()
+                                                      .gradeCalculate(
+                                                          documentSnapshot[
+                                                              'Allergens'],
+                                                          documentSnapshot[
+                                                              'conditions']),
+                                                  builder:
+                                                      (BuildContext context,
+                                                          snapshot) {
+                                                    if (snapshot
+                                                            .connectionState ==
+                                                        ConnectionState.done) {
+                                                      if (snapshot.hasError) {
+                                                        return Text(
+                                                            '${snapshot.error} occurred');
+                                                      } else {
+                                                        final data = snapshot
+                                                            .data as List<bool>;
+
+                                                        if (data[0] == true ||
+                                                            data[2]) {
                                                           return const SizedBox(
                                                             child: Padding(
                                                               padding: EdgeInsets
@@ -443,6 +490,7 @@ class _SearchPageState extends State<SearchPage> {
 class MySearchDelegate extends SearchDelegate {
   List<String> bar = [];
   List<Map<String, dynamic>> data = [];
+  List<List<String>> cond = [];
   Future getSearch(String word) async {
     ProductSearchQueryConfiguration config = ProductSearchQueryConfiguration(
         language: OpenFoodFactsLanguage.ENGLISH,
@@ -458,9 +506,6 @@ class MySearchDelegate extends SearchDelegate {
 
     SearchResult result = await OpenFoodAPIClient.searchProducts(
         const User(userId: 'jpadilla3', password: 'abc123!'), config);
-
-    bool vegan = false;
-    bool vegetarian = false;
 
     for (int i = 0; i < 20; i++) {
       bar.add('${result.products?[i].barcode}');
@@ -498,6 +543,8 @@ class MySearchDelegate extends SearchDelegate {
           "protein": result.products?[i].nutriments
                   ?.getValue(Nutrient.proteins, PerSize.oneHundredGrams) ??
               0,
+        },
+        "conditions": {
           "vegan": result.products?[i].ingredientsAnalysisTags?.veganStatus
                   .toString() ??
               "VeganStatus.NON_VEGAN",
@@ -660,9 +707,11 @@ class MySearchDelegate extends SearchDelegate {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
+                                  /*
                                   FutureBuilder(
                                       future: GradeCal().gradeCalculate(
-                                          data[index]['allergens']),
+                                          data[index]['allergens'],
+                                          data[index]['conditions']),
                                       builder:
                                           (BuildContext context, snapshot) {
                                         if (snapshot.connectionState ==
@@ -691,7 +740,7 @@ class MySearchDelegate extends SearchDelegate {
                                         } else {
                                           return const Text('');
                                         }
-                                      }),
+                                      }),*/
                                   const SizedBox(
                                     child: Padding(
                                       padding: EdgeInsets.only(right: 10),

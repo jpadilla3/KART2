@@ -84,7 +84,7 @@ class scoreColors {
   }
 
   scoreInfo(String allergen) {
-    if (allergen == 'false') {
+    if (allergen == 'false' || allergen == '') {
       return Text('');
     } else {
       return Padding(
@@ -97,6 +97,51 @@ class scoreColors {
           width: 300,
           child: Text(
             'This Product Contains $allergen',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.red[700]),
+          ),
+        ),
+      );
+    }
+  }
+
+  scoreInfo2(String condition) {
+    if (condition == 'false' || condition == '') {
+      return Text('');
+    } else {
+      return Padding(
+        padding: const EdgeInsets.only(top: 10, bottom: 10),
+        child: Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.green[100]),
+          alignment: Alignment.center,
+          height: 50,
+          width: 300,
+          child: Text(
+            'This Product is $condition',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.green[700]),
+          ),
+        ),
+      );
+    }
+  }
+
+  scoreInfo3(String condition) {
+    if (condition == 'false' || condition == '') {
+      return Text('');
+    } else {
+      return Padding(
+        padding: const EdgeInsets.only(top: 10, bottom: 10),
+        child: Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10), color: Colors.red[100]),
+          alignment: Alignment.center,
+          height: 50,
+          width: 325,
+          child: Text(
+            'This Product is Not $condition Friendly',
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.red[700]),
           ),

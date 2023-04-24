@@ -237,7 +237,7 @@ class _productPageState extends State<productPage> {
                         snapshot.data!.data() as Map<String, dynamic>;
                     return FutureBuilder(
                         future: GradeCal().gradeCalculateInfo(
-                            data['Allergens'], data['nutrition']['grade']),
+                            data['Allergens'], data['conditions']),
                         builder: ((context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.done) {
@@ -246,15 +246,35 @@ class _productPageState extends State<productPage> {
                                 '${snapshot.error} occurred',
                               );
                             } else {
-                              final data1 = snapshot.data as String;
-                              return Row(
-                                  //mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      width: 35,
-                                    ),
-                                    scoreColors().scoreInfo(data1),
-                                  ]);
+                              final data1 = snapshot.data as List<String>;
+                              return Column(
+                                children: [
+                                  Row(
+                                      //mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const SizedBox(
+                                          width: 35,
+                                        ),
+                                        scoreColors().scoreInfo(data1[0]),
+                                      ]),
+                                  Row(
+                                      //mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const SizedBox(
+                                          width: 35,
+                                        ),
+                                        scoreColors().scoreInfo2(data1[1]),
+                                      ]),
+                                  Row(
+                                      //mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const SizedBox(
+                                          width: 35,
+                                        ),
+                                        scoreColors().scoreInfo3(data1[2]),
+                                      ]),
+                                ],
+                              );
                             }
                           } else {
                             return buildTextShimmer();
