@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart' as fires;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:kart2/main%20pages/nav_bar.dart';
 import 'package:kart2/main%20pages/productPage.dart';
@@ -80,10 +81,12 @@ class _SearchPageState extends State<SearchPage> {
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> scanBarcodeNormal() async {
     String barcodeScanRes;
+    List<String> con = [];
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       barcodeScanRes =
           await BarcodeScanner.scanBarcode('#ff6666', 'Cancel', true);
+
       //add barcode to firebase
       //passes current user email and barcode
       fire.FirebaseCommands().addBarcode(barcodeScanRes);
@@ -345,6 +348,50 @@ class _SearchPageState extends State<SearchPage> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.end,
                                             children: [
+                                              //vegan
+                                              FutureBuilder(
+                                                  future: GradeCal()
+                                                      .gradeCalculate(
+                                                          documentSnapshot[
+                                                              'Allergens'],
+                                                          documentSnapshot[
+                                                              'conditions']),
+                                                  builder:
+                                                      (BuildContext context,
+                                                          snapshot) {
+                                                    if (snapshot
+                                                            .connectionState ==
+                                                        ConnectionState.done) {
+                                                      if (snapshot.hasError) {
+                                                        return Text(
+                                                            '${snapshot.error} occurred');
+                                                      } else {
+                                                        final data = snapshot
+                                                            .data as List<bool>;
+
+                                                        if (data[0] == false) {
+                                                          return const SizedBox(
+                                                            child: Padding(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      right: 2),
+                                                              child: Icon(
+                                                                Icons
+                                                                    .energy_savings_leaf,
+                                                                color: Colors
+                                                                    .green,
+                                                              ),
+                                                            ),
+                                                          );
+                                                        } else {
+                                                          return const Text('');
+                                                        }
+                                                      }
+                                                    } else {
+                                                      return const Text('');
+                                                    }
+                                                  }),
+                                              //vegetarian
                                               FutureBuilder(
                                                   future: GradeCal()
                                                       .gradeCalculate(
@@ -373,7 +420,7 @@ class _SearchPageState extends State<SearchPage> {
                                                                       right: 2),
                                                               child: Icon(
                                                                 Icons
-                                                                    .energy_savings_leaf,
+                                                                    .eco_outlined,
                                                                 color: Colors
                                                                     .green,
                                                               ),
@@ -387,6 +434,7 @@ class _SearchPageState extends State<SearchPage> {
                                                       return const Text('');
                                                     }
                                                   }),
+                                              //lactose
                                               FutureBuilder(
                                                   future: GradeCal()
                                                       .gradeCalculate(
@@ -407,8 +455,51 @@ class _SearchPageState extends State<SearchPage> {
                                                         final data = snapshot
                                                             .data as List<bool>;
 
-                                                        if (data[0] == true ||
-                                                            data[2]) {
+                                                        if (data[2] == true) {
+                                                          return SizedBox(
+                                                            child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .only(
+                                                                        right:
+                                                                            2),
+                                                                child:
+                                                                    Image.asset(
+                                                                  'assets/images/milk.png',
+                                                                  width: 30,
+                                                                  height: 30,
+                                                                )),
+                                                          );
+                                                        } else {
+                                                          return const Text('');
+                                                        }
+                                                      }
+                                                    } else {
+                                                      return const Text('');
+                                                    }
+                                                  }),
+                                              //allergy
+                                              FutureBuilder(
+                                                  future: GradeCal()
+                                                      .gradeCalculate(
+                                                          documentSnapshot[
+                                                              'Allergens'],
+                                                          documentSnapshot[
+                                                              'conditions']),
+                                                  builder:
+                                                      (BuildContext context,
+                                                          snapshot) {
+                                                    if (snapshot
+                                                            .connectionState ==
+                                                        ConnectionState.done) {
+                                                      if (snapshot.hasError) {
+                                                        return Text(
+                                                            '${snapshot.error} occurred');
+                                                      } else {
+                                                        final data = snapshot
+                                                            .data as List<bool>;
+
+                                                        if (data[3] == true) {
                                                           return const SizedBox(
                                                             child: Padding(
                                                               padding: EdgeInsets

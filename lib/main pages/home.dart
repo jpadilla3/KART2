@@ -92,6 +92,8 @@ class _HomePageState extends State<HomePage> {
     final response = await http.get(Uri.parse(url));
     final barcodeData = barcodeDataFromJson(response.body);
 
+    print(barcodeData.product!.ingredients![6]);
+
     if (response.statusCode == 200) {
       if (int.parse(barcode) > 0) {
         item['brand'] =
@@ -127,7 +129,7 @@ class _HomePageState extends State<HomePage> {
           await BarcodeScanner.scanBarcode('#ff6666', 'Cancel', true);
       //add barcode to firebase
       //passes current user email and barcode
-      FirebaseCommands().addBarcode(barcodeScanRes);
+      //FirebaseCommands().addBarcode(barcodeScanRes);
       FirebaseCommands().updateBarcode(barcodeScanRes); //recommendation
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
@@ -260,6 +262,7 @@ class _HomePageState extends State<HomePage> {
                               //behavior: HitTestBehavior.translucent,
                               onTap: () {
                                 // add your logic here
+
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(

@@ -188,6 +188,45 @@ class _FavPageState extends State<FavPage> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.end,
                                         children: [
+                                          //vegan
+                                          FutureBuilder(
+                                              future: GradeCal().gradeCalculate(
+                                                  documentSnapshot['Allergens'],
+                                                  documentSnapshot[
+                                                      'conditions']),
+                                              builder: (BuildContext context,
+                                                  snapshot) {
+                                                if (snapshot.connectionState ==
+                                                    ConnectionState.done) {
+                                                  if (snapshot.hasError) {
+                                                    return Text(
+                                                        '${snapshot.error} occurred');
+                                                  } else {
+                                                    final data = snapshot.data
+                                                        as List<bool>;
+
+                                                    if (data[0] == false) {
+                                                      return const SizedBox(
+                                                        child: Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  right: 2),
+                                                          child: Icon(
+                                                            Icons
+                                                                .energy_savings_leaf,
+                                                            color: Colors.green,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    } else {
+                                                      return const Text('');
+                                                    }
+                                                  }
+                                                } else {
+                                                  return const Text('');
+                                                }
+                                              }),
+                                          //vegetarian
                                           FutureBuilder(
                                               future: GradeCal().gradeCalculate(
                                                   documentSnapshot['Allergens'],
@@ -225,6 +264,7 @@ class _FavPageState extends State<FavPage> {
                                                   return const Text('');
                                                 }
                                               }),
+                                          //lactose
                                           FutureBuilder(
                                               future: GradeCal().gradeCalculate(
                                                   documentSnapshot['Allergens'],
@@ -241,8 +281,45 @@ class _FavPageState extends State<FavPage> {
                                                     final data = snapshot.data
                                                         as List<bool>;
 
-                                                    if (data[0] == true ||
-                                                        data[2] == true) {
+                                                    if (data[2] == true) {
+                                                      return SizedBox(
+                                                        child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    right: 2),
+                                                            child: Image.asset(
+                                                              'assets/images/milk.png',
+                                                              width: 30,
+                                                              height: 30,
+                                                            )),
+                                                      );
+                                                    } else {
+                                                      return const Text('');
+                                                    }
+                                                  }
+                                                } else {
+                                                  return const Text('');
+                                                }
+                                              }),
+                                          //allergy
+                                          FutureBuilder(
+                                              future: GradeCal().gradeCalculate(
+                                                  documentSnapshot['Allergens'],
+                                                  documentSnapshot[
+                                                      'conditions']),
+                                              builder: (BuildContext context,
+                                                  snapshot) {
+                                                if (snapshot.connectionState ==
+                                                    ConnectionState.done) {
+                                                  if (snapshot.hasError) {
+                                                    return Text(
+                                                        '${snapshot.error} occurred');
+                                                  } else {
+                                                    final data = snapshot.data
+                                                        as List<bool>;
+
+                                                    if (data[3] == true) {
                                                       return const SizedBox(
                                                         child: Padding(
                                                           padding:

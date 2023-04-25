@@ -34,6 +34,7 @@ class GradeCal {
     bool aler = false;
     bool condi = true;
     bool lac = false;
+    bool veg = true;
 
     if (docSnapshot.exists) {
       Map<String, dynamic> data = docSnapshot.data()!;
@@ -55,6 +56,7 @@ class GradeCal {
         aler = false;
         condi = true;
         lac = false;
+        veg = true;
       } else {
         for (int i = 0; i < allergy.length; i++) {
           if (ProductAllergen.contains(allergy[i].toLowerCase())) {
@@ -66,12 +68,16 @@ class GradeCal {
         }
 
         if ((condition.contains('Vegan') &&
-                productCondition.contains('vegan')) ||
-            (condition.contains('Vegetarian') &&
-                productCondition.contains('vegetarian'))) {
+            productCondition.contains('vegan'))) {
           condi = false;
         } else {
           condi = true;
+        }
+        if ((condition.contains('Vegetarian') &&
+            productCondition.contains('vegetarian'))) {
+          veg = false;
+        } else {
+          veg = true;
         }
         if (condition.contains('Lactose Intolerant') &&
             productCondition.contains('lactose intolerant')) {
@@ -82,7 +88,7 @@ class GradeCal {
 
         print(lac);
       }
-      return [aler, condi, lac];
+      return [condi, veg, lac, aler];
     }
   }
 
