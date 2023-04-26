@@ -17,7 +17,8 @@ List<String> allergies = <String>[
   'Crustaceans',
   'Sesame-Seeds',
   'Molluscs',
-  'Peanuts (Nuts)',
+  'Peanuts',
+  "Nuts",
   'Soybeans',
   'Mustard',
   'Eggs'
@@ -31,7 +32,8 @@ Map userData = {
   'Crustaceans': false,
   'Sesame-Seeds': false,
   'Molluscs': false,
-  'Peanuts (Nuts)': false,
+  'Peanuts': false,
+  'Nuts': false,
   'Soybeans': false,
   'Mustard': false,
   'Eggs': false

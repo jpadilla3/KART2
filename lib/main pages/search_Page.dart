@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:kart2/main%20pages/nav_bar.dart';
 import 'package:kart2/main%20pages/productPage.dart';
+import 'package:kart2/main%20pages/scan_page.dart';
 import 'package:kart2/main%20pages/search_product_page.dart';
 
 import 'package:kart2/models/barcode_data_model.dart';
@@ -34,6 +35,21 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   String _scanBarcode = '';
   late Future<BarcodeData> futureBarcodeData;
+  bool fav = false;
+  Future favs(barcode) async {
+    final favDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(fires.FirebaseAuth.instance.currentUser!.email.toString())
+        .collection('favorties')
+        .doc(barcode)
+        .get();
+
+    if (favDoc.exists) {
+      return fav = true;
+    } else {
+      return fav = false;
+    }
+  }
 
   Future getSuggestion(String word) async {
     ProductSearchQueryConfiguration config = ProductSearchQueryConfiguration(
@@ -75,6 +91,70 @@ class _SearchPageState extends State<SearchPage> {
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.only(bottom: 50),
       ));
+    }
+  }
+
+  Future itemScan(String barcode) async {
+    Map<String, dynamic> item = {};
+    List<String> alerg = [];
+    List<String> con = [];
+    int count = 0;
+    int count2 = 0;
+    final String url =
+        'https://us.openfoodfacts.org/api/v2/product/$barcode?fields=_keywords,allergens,allergens_tags,brands,categories,categories_tags,compared_to_category,food_groups,food_groups_tags,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json';
+    final response = await http.get(Uri.parse(url));
+    final barcodeData = barcodeDataFromJson(response.body);
+
+    if (response.statusCode == 200) {
+      if (int.parse(barcode) > 0) {
+        if (barcodeData.product!.allergensTags!.isNotEmpty) {
+          for (int i = 0; i < barcodeData.product!.allergensTags!.length; i++) {
+            alerg.add(barcodeData.product!.allergensTags![i].substring(3));
+          }
+        }
+        if (barcodeData.product!.allergensTags!.contains('en:milk') ||
+            barcodeData.product!.allergensTags!.contains('en:lactic')) {
+          con.add('lactose intolerant');
+        }
+
+        for (final ingredient in barcodeData.product!.ingredients!) {
+          if (ingredient.vegan != 'yes') {
+            count++;
+          }
+          if (ingredient.vegetarian != 'yes') {
+            count2++;
+          }
+        }
+        if (count == 0) {
+          con.add('vegan');
+        }
+        if (count2 == 0) {
+          con.add('vegetarian');
+        }
+        item['brand'] =
+            barcodeData.product?.brands ?? barcodeData.product?.productName!;
+        item['score'] = barcodeData.product?.nutriscoreScore ?? 0;
+        item['grade'] = barcodeData.product?.nutritionGrades ?? 'No Grade';
+        item['calories'] = barcodeData.product?.nutriments?.energy ?? 0;
+        item['total fat'] = barcodeData.product?.nutriments?.fat ?? 0;
+        item['saturated fat'] =
+            barcodeData.product?.nutriments?.saturatedFat ?? 0;
+        item['sodium'] = barcodeData.product?.nutriments?.sodium ?? 0;
+        item['total carbohydrate'] =
+            barcodeData.product?.nutriments?.carbohydrates ?? 0;
+        item['total sugars'] = barcodeData.product?.nutriments?.sugars ?? 0;
+        item['protein'] = barcodeData.product?.nutriments?.proteins ?? 0;
+        item['fiber'] = barcodeData.product?.nutriscoreData?.fiber ?? 0;
+        item['name'] = barcodeData.product?.productName! ?? 'Product';
+        item['picture'] = barcodeData
+                .product?.selectedImages?.front?.small?.en ??
+            'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg';
+        item['allergy'] = alerg;
+        item['condition'] = con;
+        return item;
+      } else {
+        return AboutDialog();
+      }
     }
   }
 
@@ -172,11 +252,12 @@ class _SearchPageState extends State<SearchPage> {
                           bottomRight: Radius.circular(10))),
                   child: IconButton(
                       onPressed: () async {
-                        await scanBarcodeNormal();
+                        await scanBarcodeNormal(); //adds barcode to firebase
+                        Map items = await itemScan(_scanBarcode);
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const navBar()));
+                                builder: (context) => ScanPage(items)));
                       },
                       icon: const Icon(
                         Icons.photo_camera_rounded,
@@ -258,13 +339,16 @@ class _SearchPageState extends State<SearchPage> {
                                       ]),
                                   child: InkWell(
                                     highlightColor: Colors.grey[300],
-                                    onTap: () {
+                                    onTap: () async {
+                                      bool favo = await favs(
+                                          documentSnapshot['barcode']);
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) => productPage(
                                                   documentSnapshot['barcode'],
-                                                  false)));
+                                                  false,
+                                                  favo)));
                                     },
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
@@ -797,42 +881,8 @@ class MySearchDelegate extends SearchDelegate {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  /*
-                                  FutureBuilder(
-                                      future: GradeCal().gradeCalculate(
-                                          data[index]['allergens'],
-                                          data[index]['conditions']),
-                                      builder:
-                                          (BuildContext context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.done) {
-                                          if (snapshot.hasError) {
-                                            return Text(
-                                                '${snapshot.error} occurred');
-                                          } else {
-                                            final data = snapshot.data as bool;
-
-                                            if (data == true) {
-                                              return const SizedBox(
-                                                child: Padding(
-                                                  padding:
-                                                      EdgeInsets.only(right: 2),
-                                                  child: Icon(
-                                                    Icons.info_outline,
-                                                    color: Colors.red,
-                                                  ),
-                                                ),
-                                              );
-                                            } else {
-                                              return const Text('');
-                                            }
-                                          }
-                                        } else {
-                                          return const Text('');
-                                        }
-                                      }),*/
-                                  const SizedBox(
+                                children: const [
+                                  SizedBox(
                                     child: Padding(
                                       padding: EdgeInsets.only(right: 10),
                                       child: Icon(

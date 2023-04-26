@@ -29,6 +29,7 @@ class _RecPageState extends State<RecommendationsPage> {
   bool isLoading = false;
   String _scanBarcode = '';
   bool type = false;
+  bool favo = false;
   final CollectionReference _barcodes = FirebaseFirestore.instance
       .collection('users')
       .doc(FirebaseAuth.instance.currentUser!.email.toString())
@@ -90,8 +91,29 @@ class _RecPageState extends State<RecommendationsPage> {
     });
   }
 
+  Future favs(barcode) async {
+    bool fav;
+    final favDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.email.toString())
+        .collection('favorties')
+        .doc(barcode)
+        .get();
+
+    if (favDoc.exists) {
+      fav = true;
+    } else {
+      fav = false;
+    }
+    return fav;
+  }
+
   Future itemScan(String barcode) async {
     Map<String, dynamic> item = {};
+    List<String> alerg = [];
+    List<String> con = [];
+    int count = 0;
+    int count2 = 0;
     final String url =
         'https://us.openfoodfacts.org/api/v2/product/$barcode?fields=_keywords,allergens,allergens_tags,brands,categories,categories_tags,compared_to_category,food_groups,food_groups_tags,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json';
     final response = await http.get(Uri.parse(url));
@@ -99,6 +121,30 @@ class _RecPageState extends State<RecommendationsPage> {
 
     if (response.statusCode == 200) {
       if (int.parse(barcode) > 0) {
+        if (barcodeData.product!.allergensTags!.isNotEmpty) {
+          for (int i = 0; i < barcodeData.product!.allergensTags!.length; i++) {
+            alerg.add(barcodeData.product!.allergensTags![i].substring(3));
+          }
+        }
+        if (barcodeData.product!.allergensTags!.contains('en:milk') ||
+            barcodeData.product!.allergensTags!.contains('en:lactic')) {
+          con.add('lactose intolerant');
+        }
+
+        for (final ingredient in barcodeData.product!.ingredients!) {
+          if (ingredient.vegan != 'yes') {
+            count++;
+          }
+          if (ingredient.vegetarian != 'yes') {
+            count2++;
+          }
+        }
+        if (count == 0) {
+          con.add('vegan');
+        }
+        if (count2 == 0) {
+          con.add('vegetarian');
+        }
         item['brand'] =
             barcodeData.product?.brands ?? barcodeData.product?.productName!;
         item['score'] = barcodeData.product?.nutriscoreScore ?? 0;
@@ -117,6 +163,8 @@ class _RecPageState extends State<RecommendationsPage> {
         item['picture'] = barcodeData
                 .product?.selectedImages?.front?.small?.en ??
             'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg';
+        item['allergy'] = alerg;
+        item['condition'] = con;
         return item;
       } else {
         return AboutDialog();
@@ -157,7 +205,7 @@ class _RecPageState extends State<RecommendationsPage> {
                   )),
               expandedHeight: 147,
               title: Text(
-                'Recommendations',
+                'history',
                 style: GoogleFonts.bebasNeue(color: Colors.black, fontSize: 45),
               ),
               actions: [
@@ -265,7 +313,8 @@ class _RecPageState extends State<RecommendationsPage> {
                                                       productPage(
                                                           documentSnapshot[
                                                               'barcode'],
-                                                          true)));
+                                                          true,
+                                                          favo)));
                                         },
                                         child: Column(
                                           children: [

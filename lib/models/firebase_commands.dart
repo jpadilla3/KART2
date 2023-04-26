@@ -8,9 +8,10 @@ import 'package:http/http.dart' as http;
 class FirebaseCommands {
   //add barcode to firebase
   Future addBarcode(String barcode) async {
-    bool vegan = false;
-    bool vegetarian = true;
+    List<String> alerg = [];
     List<String> con = [];
+    int count = 0;
+    int count2 = 0;
 
     final String url =
         'https://us.openfoodfacts.org/api/v2/product/$barcode?fields=_keywords,allergens,allergens_tags,brands,categories,categories_tags,compared_to_category,food_groups,food_groups_tags,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json';
@@ -19,10 +20,31 @@ class FirebaseCommands {
 
     if (response.statusCode == 200) {
       if (int.parse(barcode) > 0) {
+        if (barcodeData.product!.allergensTags!.isNotEmpty) {
+          for (int i = 0; i < barcodeData.product!.allergensTags!.length; i++) {
+            alerg.add(barcodeData.product!.allergensTags![i].substring(3));
+          }
+        }
         if (barcodeData.product!.allergensTags!.contains('en:milk') ||
             barcodeData.product!.allergensTags!.contains('en:lactic')) {
           con.add('lactose intolerant');
         }
+
+        for (final ingredient in barcodeData.product!.ingredients!) {
+          if (ingredient.vegan != 'yes') {
+            count++;
+          }
+          if (ingredient.vegetarian != 'yes') {
+            count2++;
+          }
+        }
+        if (count == 0) {
+          con.add('vegan');
+        }
+        if (count2 == 0) {
+          con.add('vegetarian');
+        }
+
         FirebaseFirestore.instance
             .collection('users') //go to users
             .doc(FirebaseAuth.instance.currentUser!.email
@@ -48,12 +70,11 @@ class FirebaseCommands {
             'protein': barcodeData.product?.nutriments?.proteins ?? 0,
             'fiber': barcodeData.product?.nutriscoreData?.fiber ?? 0,
           },
-          "Allergens":
-              barcodeData.product?.allergensTags ?? 'none', //set allergens
+          "Allergens": alerg, //set allergens
           "conditions": con,
           'name': barcodeData.product?.productName! ?? 'Product',
           'picture': barcodeData.product?.selectedImages?.front?.small?.en ??
-              'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg'
+              'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg',
 
           //set conditions (vegan, vegetarian)
         });
@@ -111,10 +132,11 @@ class FirebaseCommands {
         'Crustaceans': list[4],
         'Sesame-Seeds': list[5],
         'Molluscs': list[6],
-        'Peanuts (Nuts)': list[7],
-        'Soybeans': list[8],
-        'Mustard': list[9],
-        'Eggs': list[10],
+        'Peanuts': list[7],
+        'Nuts': list[8],
+        'Soybeans': list[9],
+        'Mustard': list[10],
+        'Eggs': list[11],
       },
       'Conditions': {
         'Vegan': list2[0],

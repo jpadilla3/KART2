@@ -96,6 +96,8 @@ class _searchProductState extends State<searchProduct> {
     }
   }
 
+  bool fav = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -119,6 +121,32 @@ class _searchProductState extends State<searchProduct> {
               Icons.arrow_back,
               color: Colors.indigo[400],
             )),
+        actions: [
+          IconButton(
+              onPressed: () {
+                setState(() {
+                  fav = !fav;
+                });
+                FirebaseCommands().favoriteBarcode(
+                    widget.data['barcode'],
+                    widget.data['name'],
+                    widget.data['grade'],
+                    false,
+                    widget.data['pic'],
+                    widget.data['allergens'],
+                    widget.data['conditions']);
+                snackMessage(false, widget.data['barcode']);
+              },
+              icon: fav
+                  ? Icon(
+                      Icons.favorite,
+                      color: Colors.indigo[400],
+                    )
+                  : Icon(
+                      Icons.favorite_border_outlined,
+                      color: Colors.indigo[400],
+                    ))
+        ],
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -164,28 +192,7 @@ class _searchProductState extends State<searchProduct> {
             const SizedBox(
               height: 10,
             ),
-            /*
-            FutureBuilder(
-                future: GradeCal().gradeCalculateInfo(
-                    widget.data['allergens'], widget.data['grade']),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    if (snapshot.hasError) {
-                      return Text(
-                        '${snapshot.error} occurred',
-                      );
-                    } else {
-                      final data1 = snapshot.data as String;
-                      return Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            //scoreColors().scoreInfo(data1),
-                          ]);
-                    }
-                  } else {
-                    return const Text("loading...");
-                  }
-                }),*/
+
             //calories
             rowInfo(
               'Calories',

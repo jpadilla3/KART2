@@ -262,13 +262,6 @@ class _HomePageState extends State<HomePage> {
                               //behavior: HitTestBehavior.translucent,
                               onTap: () {
                                 // add your logic here
-
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => productPage(
-                                            documentSnapshot['barcode'],
-                                            true)));
                               },
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
