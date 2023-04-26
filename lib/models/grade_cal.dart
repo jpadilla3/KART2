@@ -14,7 +14,8 @@ class GradeCal {
       'Crustaceans',
       'Sesame-Seeds',
       'Molluscs',
-      'Peanuts (Nuts)',
+      'Peanuts',
+      'Nuts',
       'Soybeans',
       'Mustard',
       'Eggs'
@@ -38,7 +39,7 @@ class GradeCal {
 
     if (docSnapshot.exists) {
       Map<String, dynamic> data = docSnapshot.data()!;
-      for (int i = 0; i < 11; i++) {
+      for (int i = 0; i < 12; i++) {
         if (data["Allergies"][al[i]] == true) {
           allergy.add(al[i]);
         } else {
@@ -52,7 +53,7 @@ class GradeCal {
           count2++;
         }
       }
-      if (count == 11 && count2 == 3) {
+      if (count == 12 && count2 == 3) {
         aler = false;
         condi = true;
         lac = false;
@@ -86,7 +87,7 @@ class GradeCal {
           lac = false;
         }
 
-        print(lac);
+        print(aler);
       }
       return [condi, veg, lac, aler];
     }
@@ -102,7 +103,8 @@ class GradeCal {
       'Crustaceans',
       'Sesame-Seeds',
       'Molluscs',
-      'Peanuts (Nuts)',
+      'Peanuts',
+      'Nuts',
       'Soybeans',
       'Mustard',
       'Eggs'
@@ -121,7 +123,7 @@ class GradeCal {
 
     if (docSnapshot.exists) {
       Map<String, dynamic> data = docSnapshot.data()!;
-      for (int i = 0; i < 11; i++) {
+      for (int i = 0; i < 12; i++) {
         if (data["Allergies"][al[i]] == true) {
           allergy.add(al[i]);
         } else {
@@ -136,12 +138,15 @@ class GradeCal {
         }
       }
       String allergic = '';
-      String condit = '';
+      String vegan = '';
+      String vegetarian = '';
       String lac = '';
 
-      if (count == 11 && count2 == 3) {
+      if (count == 12 && count2 == 3) {
         allergic = 'false';
-        condit = 'false';
+        vegan = 'false';
+        vegetarian = 'false';
+        lac = 'false';
       } else {
         for (int i = 0; i < allergy.length; i++) {
           if (ProductAllergen.contains(allergy[i].toLowerCase())) {
@@ -154,17 +159,17 @@ class GradeCal {
 
         if (condition.contains('Vegetarian') &&
             productCondition.contains('vegetarian')) {
-          condit = 'Vegetarian';
+          vegetarian = 'Vegetarian';
         }
         if (condition.contains("Vegan") && productCondition.contains('vegan')) {
-          condit = 'Vegan';
+          vegan = 'Vegan';
         }
         if (condition.contains('Lactose Intolerant') &&
             productCondition.contains('lactose intolerant')) {
           lac = 'Lactose Intolerant';
         }
       }
-      return [allergic, condit, lac];
+      return [vegan, vegetarian, lac, allergic];
     }
   }
 }

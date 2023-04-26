@@ -5,16 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:kart2/main%20pages/shimmerlist.dart';
+import 'package:kart2/models/barcode_data_model.dart';
 import 'package:kart2/models/firebase_commands.dart';
 import 'package:kart2/main%20pages/search_page.dart';
 import 'package:kart2/models/grade_cal.dart';
 import 'package:kart2/models/scoreColor.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:http/http.dart' as http;
 
 class productPage extends StatefulWidget {
   String barcode;
   bool type;
-  productPage(this.barcode, this.type);
+  bool fav;
+  productPage(this.barcode, this.type, this.fav);
 
   @override
   State<productPage> createState() => _productPageState();
@@ -32,6 +35,59 @@ class _productPageState extends State<productPage> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Added $barcode to favorites"),
       ));
+    }
+  }
+
+  Future favoriteItem(String barcode) async {
+    Map<String, dynamic> item = {};
+    List<String> con = [];
+    List<String> alerg = [];
+    int count = 0;
+    int count2 = 0;
+    final String url =
+        'https://us.openfoodfacts.org/api/v2/product/$barcode?fields=_keywords,allergens,allergens_tags,brands,categories,categories_tags,compared_to_category,food_groups,food_groups_tags,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json';
+    final response = await http.get(Uri.parse(url));
+    final barcodeData = barcodeDataFromJson(response.body);
+
+    if (response.statusCode == 200) {
+      if (int.parse(barcode) > 0) {
+        if (barcodeData.product!.allergensTags!.isNotEmpty) {
+          for (int i = 0; i < barcodeData.product!.allergensTags!.length; i++) {
+            alerg.add(barcodeData.product!.allergensTags![i].substring(3));
+          }
+        }
+        if (barcodeData.product!.allergensTags!.contains('en:milk') ||
+            barcodeData.product!.allergensTags!.contains('en:lactic')) {
+          con.add('lactose intolerant');
+        }
+
+        for (final ingredient in barcodeData.product!.ingredients!) {
+          if (ingredient.vegan != 'yes') {
+            count++;
+          }
+          if (ingredient.vegetarian != 'yes') {
+            count2++;
+          }
+        }
+        if (count == 0) {
+          con.add('vegan');
+        }
+        if (count2 == 0) {
+          con.add('vegetarian');
+        }
+        item['grade'] = barcodeData.product?.nutritionGrades ?? 'No Grade';
+        item['name'] = barcodeData.product?.productName! ?? 'Product';
+        item['picture'] = barcodeData
+                .product?.selectedImages?.front?.small?.en ??
+            'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg';
+        item['ID'] = widget.type;
+        item['barcode'] = barcode;
+        item['Allergens'] = alerg;
+        item['conditions'] = con;
+        return item;
+      } else {
+        return AboutDialog();
+      }
     }
   }
 
@@ -148,6 +204,47 @@ class _productPageState extends State<productPage> {
               Icons.arrow_back,
               color: Colors.indigo[400],
             )),
+        actions: [
+          IconButton(
+              onPressed: () async {
+                setState(() {
+                  widget.fav = !widget.fav;
+                });
+                Map item = await favoriteItem(widget.barcode);
+                widget.fav
+                    ? FirebaseCommands().favoriteBarcode(
+                        item['barcode'],
+                        item['name'],
+                        item['grade'],
+                        item['ID'],
+                        item['picture'],
+                        item['Allergens'],
+                        item['conditions'])
+                    : FirebaseCommands().removeFavorite(widget.barcode);
+
+                widget.fav ? snackMessage(false, widget.barcode) : Text('');
+              },
+              icon: widget.fav
+                  ? Icon(
+                      Icons.favorite,
+                      color: Colors.indigo[400],
+                    )
+                  : Icon(
+                      Icons.favorite_border_outlined,
+                      color: Colors.indigo[400],
+                    )),
+          IconButton(
+              onPressed: () {
+                FirebaseCommands().destroyBarcode(widget.barcode, widget.type);
+                FirebaseCommands().removeFavorite(widget.barcode);
+                snackMessage(true, widget.barcode);
+                Navigator.pop(context);
+              },
+              icon: Icon(
+                Ionicons.trash_outline,
+                color: Colors.indigo[400],
+              ))
+        ],
       ),
       //new Builder(builder: (BuildContext context) {}),
       body: SingleChildScrollView(
@@ -250,15 +347,15 @@ class _productPageState extends State<productPage> {
                               return Column(
                                 children: [
                                   Row(
-                                      //mainAxisAlignment: MainAxisAlignment.center,
+                                      //vegan
                                       children: [
                                         const SizedBox(
                                           width: 35,
                                         ),
-                                        scoreColors().scoreInfo(data1[0]),
+                                        scoreColors().scoreInfo2(data1[0]),
                                       ]),
                                   Row(
-                                      //mainAxisAlignment: MainAxisAlignment.center,
+                                      //vegetarian
                                       children: [
                                         const SizedBox(
                                           width: 35,
@@ -269,9 +366,17 @@ class _productPageState extends State<productPage> {
                                       //mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         const SizedBox(
-                                          width: 35,
+                                          width: 25,
                                         ),
                                         scoreColors().scoreInfo3(data1[2]),
+                                      ]),
+                                  Row(
+                                      //mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const SizedBox(
+                                          width: 20,
+                                        ),
+                                        scoreColors().scoreInfo(data1[3]),
                                       ]),
                                 ],
                               );
@@ -458,80 +563,8 @@ class _productPageState extends State<productPage> {
                       ),
                     ))),
         const SizedBox(
-          height: 40,
-        ),
-        InkResponse(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
-          highlightColor: Colors.indigo,
-          highlightShape: BoxShape.rectangle,
-          onTap: () {
-            //FirebaseCommands().favoriteBarcode(widget.barcode, );
-            snackMessage(false, widget.barcode);
-          },
-          child: Container(
-            height: 60,
-            width: 350,
-            decoration: BoxDecoration(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(10)),
-                border: Border.all(color: Colors.indigo, width: 2.0)),
-            child: Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Favorite',
-                    style: GoogleFonts.bebasNeue(
-                        fontSize: 20, color: Colors.black),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  const Icon(Icons.favorite_border_outlined,
-                      color: Colors.black)
-                ],
-              ),
-            ),
-          ),
-        ),
-        InkResponse(
-          borderRadius:
-              const BorderRadius.vertical(bottom: Radius.circular(10)),
-          highlightColor: Colors.indigo,
-          highlightShape: BoxShape.rectangle,
-          onTap: () {
-            FirebaseCommands().destroyBarcode(widget.barcode, true);
-            FirebaseCommands().removeFavorite(widget.barcode);
-            snackMessage(true, widget.barcode);
-          },
-          child: Container(
-            height: 60,
-            width: 350,
-            decoration: BoxDecoration(
-                borderRadius:
-                    const BorderRadius.vertical(bottom: Radius.circular(10)),
-                border: Border.all(color: Colors.indigo, width: 2.0)),
-            child: Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Delete',
-                    style: GoogleFonts.bebasNeue(
-                        fontSize: 20, color: Colors.black),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  const Icon(Ionicons.trash_outline, color: Colors.black)
-                ],
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(
           height: 70,
-        )
+        ),
       ])),
     );
   }

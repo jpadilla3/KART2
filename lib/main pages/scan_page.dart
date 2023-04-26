@@ -2,6 +2,8 @@ import "package:flutter/material.dart";
 import "package:flutter_font_icons/flutter_font_icons.dart";
 import "package:google_fonts/google_fonts.dart";
 import "package:ionicons/ionicons.dart" as ion;
+import "package:kart2/main%20pages/shimmerlist.dart";
+import "package:kart2/models/grade_cal.dart";
 
 import "../models/scoreColor.dart";
 
@@ -27,6 +29,10 @@ class _ScanPageState extends State<ScanPage> {
       ));
     }
   }
+
+  Widget buildTextShimmer() => Container(
+        child: ShimmerLoader.rectangular(width: 150, height: 16),
+      );
 
   rowInfo(String title, String amount, Icon pic) {
     return SingleChildScrollView(
@@ -162,6 +168,65 @@ class _ScanPageState extends State<ScanPage> {
                 )
               ],
             ),
+
+            //insert warnings
+            Row(
+              children: [
+                FutureBuilder(
+                    future: GradeCal().gradeCalculateInfo(
+                        widget.item['allergy'], widget.item['condition']),
+                    builder: ((context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        if (snapshot.hasError) {
+                          return Text(
+                            '${snapshot.error} occurred',
+                          );
+                        } else {
+                          final data1 = snapshot.data as List<String>;
+                          return Column(
+                            children: [
+                              Row(
+                                  //vegan
+                                  children: [
+                                    const SizedBox(
+                                      width: 35,
+                                    ),
+                                    scoreColors().scoreInfo2(data1[0]),
+                                  ]),
+                              Row(
+                                  //vegetarian
+                                  children: [
+                                    const SizedBox(
+                                      width: 35,
+                                    ),
+                                    scoreColors().scoreInfo2(data1[1]),
+                                  ]),
+                              Row(
+                                  //mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(
+                                      width: 25,
+                                    ),
+                                    scoreColors().scoreInfo3(data1[2]),
+                                  ]),
+                              Row(
+                                  //mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(
+                                      width: 20,
+                                    ),
+                                    scoreColors().scoreInfo(data1[3]),
+                                  ]),
+                            ],
+                          );
+                        }
+                      } else {
+                        return buildTextShimmer();
+                      }
+                    }))
+              ],
+            ),
+
             Container(
               color: Colors.white,
               child: SizedBox(
