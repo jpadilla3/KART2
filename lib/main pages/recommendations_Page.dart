@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kart2/main%20pages/List.dart';
@@ -561,11 +562,14 @@ class _RecPageState extends State<RecommendationsPage> {
                                         ),
                                       ),
                                       const Padding(
-                                        padding: EdgeInsets.only(bottom: 10),
+                                        padding:
+                                            const EdgeInsets.only(bottom: 10),
                                         child: SizedBox(
                                           width: 70,
                                           child: Icon(
-                                              Icons.change_circle_outlined),
+                                            Ionicons
+                                                .arrow_forward_circle_outline,
+                                          ),
                                         ),
                                       ),
                                       //recommended item

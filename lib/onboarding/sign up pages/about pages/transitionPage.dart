@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:kart2/main%20pages/home.dart';
+
 import 'package:kart2/main%20pages/nav_bar.dart';
 import 'package:kart2/onboarding/sign%20up%20pages/about%20pages/intro_screen1.dart';
 import 'package:kart2/onboarding/sign%20up%20pages/about%20pages/intro_screen2.dart';
