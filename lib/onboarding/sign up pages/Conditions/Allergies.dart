@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:kart2/main%20pages/nav_bar.dart';
-import 'package:kart2/main%20pages/home.dart';
+
 import 'package:kart2/models/firebase_commands.dart';
 
 List<String> titles = <String>[
