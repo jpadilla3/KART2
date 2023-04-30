@@ -101,19 +101,21 @@ class _SearchPageState extends State<SearchPage> {
     int count = 0;
     int count2 = 0;
     final String url =
-        'https://us.openfoodfacts.org/api/v2/product/$barcode?fields=_keywords,allergens,allergens_tags,brands,categories,categories_tags,compared_to_category,food_groups,food_groups_tags,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json';
+        'https://us.openfoodfacts.org/api/v2/product/$barcode?fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json';
     final response = await http.get(Uri.parse(url));
     final barcodeData = barcodeDataFromJson(response.body);
 
     if (response.statusCode == 200) {
       if (int.parse(barcode) > 0) {
-        if (barcodeData.product!.allergensTags!.isNotEmpty) {
-          for (int i = 0; i < barcodeData.product!.allergensTags!.length; i++) {
-            alerg.add(barcodeData.product!.allergensTags![i].substring(3));
+        if (barcodeData.product!.allergensTagsEn!.isNotEmpty) {
+          for (int i = 0;
+              i < barcodeData.product!.allergensTagsEn!.length;
+              i++) {
+            alerg.add(barcodeData.product!.allergensTagsEn![i].substring(3));
           }
         }
-        if (barcodeData.product!.allergensTags!.contains('en:milk') ||
-            barcodeData.product!.allergensTags!.contains('en:lactic')) {
+        if (barcodeData.product!.allergensTagsEn!.contains('en:milk') ||
+            barcodeData.product!.allergensTagsEn!.contains('en:lactic')) {
           con.add('lactose intolerant');
         }
 
@@ -133,18 +135,24 @@ class _SearchPageState extends State<SearchPage> {
         }
         item['brand'] =
             barcodeData.product?.brands ?? barcodeData.product?.productName!;
-        item['score'] = barcodeData.product?.nutriscoreScore ?? 0;
+        item['score'] = barcodeData.product?.nutriscoreScore ?? 0.toString();
         item['grade'] = barcodeData.product?.nutritionGrades ?? 'No Grade';
-        item['calories'] = barcodeData.product?.nutriments?.energy ?? 0;
-        item['total fat'] = barcodeData.product?.nutriments?.fat ?? 0;
+        item['calories'] =
+            barcodeData.product?.nutriments?.energy ?? 0.toString();
+        item['total fat'] =
+            barcodeData.product?.nutriments?.fat ?? 0.toString();
         item['saturated fat'] =
-            barcodeData.product?.nutriments?.saturatedFat ?? 0;
-        item['sodium'] = barcodeData.product?.nutriments?.sodium ?? 0;
+            barcodeData.product?.nutriments?.saturatedFat ?? 0.toString();
+        item['sodium'] =
+            barcodeData.product?.nutriments?.sodium ?? 0.toString();
         item['total carbohydrate'] =
-            barcodeData.product?.nutriments?.carbohydrates ?? 0;
-        item['total sugars'] = barcodeData.product?.nutriments?.sugars ?? 0;
-        item['protein'] = barcodeData.product?.nutriments?.proteins ?? 0;
-        item['fiber'] = barcodeData.product?.nutriscoreData?.fiber ?? 0;
+            barcodeData.product?.nutriments?.carbohydrates ?? 0.toString();
+        item['total sugars'] =
+            barcodeData.product?.nutriments?.sugars ?? 0.toString();
+        item['protein'] =
+            barcodeData.product?.nutriments?.proteins ?? 0.toString();
+        item['fiber'] =
+            barcodeData.product?.nutriscoreData?.fiber ?? 0.toString();
         item['name'] = barcodeData.product?.productName! ?? 'Product';
         item['picture'] = barcodeData
                 .product?.selectedImages?.front?.small?.en ??

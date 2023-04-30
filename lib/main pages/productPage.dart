@@ -45,19 +45,21 @@ class _productPageState extends State<productPage> {
     int count = 0;
     int count2 = 0;
     final String url =
-        'https://us.openfoodfacts.org/api/v2/product/$barcode?fields=_keywords,allergens,allergens_tags,brands,categories,categories_tags,compared_to_category,food_groups,food_groups_tags,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json';
+        'https://us.openfoodfacts.org/api/v2/product/$barcode?fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json';
     final response = await http.get(Uri.parse(url));
     final barcodeData = barcodeDataFromJson(response.body);
 
     if (response.statusCode == 200) {
       if (int.parse(barcode) > 0) {
-        if (barcodeData.product!.allergensTags!.isNotEmpty) {
-          for (int i = 0; i < barcodeData.product!.allergensTags!.length; i++) {
-            alerg.add(barcodeData.product!.allergensTags![i].substring(3));
+        if (barcodeData.product!.allergensTagsEn!.isNotEmpty) {
+          for (int i = 0;
+              i < barcodeData.product!.allergensTagsEn!.length;
+              i++) {
+            alerg.add(barcodeData.product!.allergensTagsEn![i].substring(3));
           }
         }
-        if (barcodeData.product!.allergensTags!.contains('en:milk') ||
-            barcodeData.product!.allergensTags!.contains('en:lactic')) {
+        if (barcodeData.product!.allergensTagsEn!.contains('en:milk') ||
+            barcodeData.product!.allergensTagsEn!.contains('en:lactic')) {
           con.add('lactose intolerant');
         }
 
@@ -408,7 +410,7 @@ class _productPageState extends State<productPage> {
                       children: [
                         rowInfo(
                           "Calories",
-                          '${data['nutrition']['calories']} kcals',
+                          '${double.parse(data['nutrition']['calories']).toStringAsFixed(0)} kcals',
                           Icon(
                             Ionicons.flame_outline,
                             size: 30,
@@ -428,7 +430,7 @@ class _productPageState extends State<productPage> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  '${data['nutrition']['total fat'].toStringAsFixed(1)} g',
+                                  '${double.parse(data['nutrition']['total fat']).toStringAsFixed(1)} g',
                                 ),
                                 const Icon(Icons.keyboard_arrow_down)
                               ],
@@ -443,13 +445,13 @@ class _productPageState extends State<productPage> {
                                 color: Colors.black,
                               ),
                               trailing: Text(
-                                  '${data['nutrition']['saturated fat'].toStringAsFixed(1)} g'),
+                                  '${double.parse(data['nutrition']['saturated fat']).toStringAsFixed(1)} g'),
                             ),
                           ],
                         ),
                         rowInfo(
                           "Sodium",
-                          '${data['nutrition']['sodium'].toStringAsFixed(1)} g',
+                          '${double.parse(data['nutrition']['sodium']).toStringAsFixed(1)} g',
                           Icon(
                             MaterialCommunityIcons.shaker_outline,
                             size: 30,
@@ -469,7 +471,7 @@ class _productPageState extends State<productPage> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                    '${data['nutrition']['total carbohydrate'].toStringAsFixed(1)} g'),
+                                    '${double.parse(data['nutrition']['total carbohydrate']).toStringAsFixed(1)} g'),
                                 const Icon(Icons.keyboard_arrow_down)
                               ],
                             ),
@@ -483,7 +485,7 @@ class _productPageState extends State<productPage> {
                                 color: Colors.black,
                               ),
                               trailing: Text(
-                                  '${data['nutrition']['fiber'].toStringAsFixed(1)} g'),
+                                  '${double.parse(data['nutrition']['fiber']).toStringAsFixed(1)} g'),
                             ),
                             ListTile(
                               title: const Text('Total Sugars'),
@@ -492,13 +494,13 @@ class _productPageState extends State<productPage> {
                                 color: Colors.black,
                               ),
                               trailing: Text(
-                                  '${data['nutrition']['total sugars'].toStringAsFixed(1)} g'),
+                                  '${double.parse(data['nutrition']['total sugars']).toStringAsFixed(1)} g'),
                             ),
                           ],
                         ),
                         rowInfo(
                           "Protein",
-                          '${data['nutrition']['protein'].toStringAsFixed(1)} g',
+                          '${double.parse(data['nutrition']['protein']).toStringAsFixed(1)} g',
                           Icon(
                             MaterialCommunityIcons.food_steak,
                             size: 30,
