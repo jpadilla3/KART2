@@ -1,8 +1,8 @@
 // To parse this JSON data, do
 // final searchData = searchDataFromJson(jsonString);
 
-// Model for search with these fields: '_keywords,allergens,allergens_tags,brands,categories,categories_tags,compared_to_category,food_groups,food_groups_tags,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces'
-//https://us.openfoodfacts.org/api/v2/search?categories_tags_en=dairies&nutrition_grades_tags=a&sort_by=nutriscore_score&fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json
+// Model for search with these fields: '_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,code,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces'
+//https://us.openfoodfacts.org/api/v2/search?categories_tags_en=dairies&nutrition_grades_tags=a&sort_by=nutriscore_score&fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,code,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json
 
 import 'dart:convert';
 
@@ -21,23 +21,23 @@ class SearchData {
     this.skip,
   });
 
-  int? count;
-  int? page;
-  int? pageCount;
-  int? pageSize;
+  String? count;
+  String? page;
+  String? pageCount;
+  String? pageSize;
   List<Product>? products;
-  int? skip;
+  String? skip;
 
   factory SearchData.fromJson(Map<String, dynamic> json) => SearchData(
-        count: json["count"],
-        page: json["page"],
-        pageCount: json["page_count"],
-        pageSize: json["page_size"],
+        count: json["count"]?.toString(),
+        page: json["page"]?.toString(),
+        pageCount: json["page_count"]?.toString(),
+        pageSize: json["page_size"]?.toString(),
         products: json["products"] == null
             ? []
             : List<Product>.from(
                 json["products"]!.map((x) => Product.fromJson(x))),
-        skip: json["skip"],
+        skip: json["skip"]?.toString(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -56,17 +56,18 @@ class Product {
   Product({
     this.keywords,
     this.allergens,
-    this.allergensTags,
+    this.allergensTagsEn,
     this.brands,
     this.categories,
-    this.categoriesTags,
+    this.categoriesTagsEn,
+    this.code,
     this.comparedToCategory,
     this.foodGroups,
-    this.foodGroupsTags,
+    this.foodGroupsTagsEn,
     this.imageFrontThumbUrl,
     this.ingredients,
     this.nutrientLevels,
-    this.nutrientLevelsTags,
+    this.nutrientLevelsTagsEn,
     this.nutriments,
     this.nutriscoreData,
     this.nutriscoreGrade,
@@ -79,21 +80,22 @@ class Product {
 
   List<String>? keywords;
   String? allergens;
-  List<String>? allergensTags;
+  List<String>? allergensTagsEn;
   String? brands;
   String? categories;
-  List<String>? categoriesTags;
+  List<String>? categoriesTagsEn;
+  String? code;
   String? comparedToCategory;
   String? foodGroups;
-  List<String>? foodGroupsTags;
+  List<String>? foodGroupsTagsEn;
   String? imageFrontThumbUrl;
-  List<Ingredient>? ingredients;
+  List<Ingredients>? ingredients;
   NutrientLevels? nutrientLevels;
-  List<String>? nutrientLevelsTags;
+  List<String>? nutrientLevelsTagsEn;
   Nutriments? nutriments;
   NutriscoreData? nutriscoreData;
   String? nutriscoreGrade;
-  double? nutriscoreScore;
+  String? nutriscoreScore;
   String? nutritionGrades;
   String? productName;
   SelectedImages? selectedImages;
@@ -103,72 +105,73 @@ class Product {
         keywords: json["_keywords"] == null
             ? []
             : List<String>.from(json["_keywords"]!.map((x) => x)),
-        allergens: json["allergens"],
-        allergensTags: json["allergens_tags"] == null
+        allergens: json["allergens"]?.toString(),
+        allergensTagsEn: json["allergens_tags_en"] == null
             ? []
-            : List<String>.from(json["allergens_tags"]!.map((x) => x)),
-        brands: json["brands"],
-        categories: json["categories"],
-        categoriesTags: json["categories_tags"] == null
+            : List<String>.from(json["allergens_tags_en"]!.map((x) => x)),
+        brands: json["brands"]?.toString(),
+        categories: json["categories"]?.toString(),
+        categoriesTagsEn: json["categories_tags_en"] == null
             ? []
-            : List<String>.from(json["categories_tags"]!.map((x) => x)),
-        comparedToCategory: json["compared_to_category"],
-        foodGroups: json["food_groups"],
-        foodGroupsTags: json["food_groups_tags"] == null
+            : List<String>.from(json["categories_tags_en"]!.map((x) => x)),
+        comparedToCategory: json["compared_to_category"]?.toString(),
+        code: json["code"]?.toString(),
+        foodGroups: json["food_groups"]?.toString(),
+        foodGroupsTagsEn: json["food_groups_tags_en"] == null
             ? []
-            : List<String>.from(json["food_groups_tags"]!.map((x) => x)),
-        imageFrontThumbUrl: json["image_front_thumb_url"],
+            : List<String>.from(json["food_groups_tags_en"]!.map((x) => x)),
+        imageFrontThumbUrl: json["image_front_thumb_url"]?.toString(),
         ingredients: json["ingredients"] == null
             ? []
-            : List<Ingredient>.from(
-                json["ingredients"]!.map((x) => Ingredient.fromJson(x))),
+            : List<Ingredients>.from(
+                json["ingredients"]!.map((x) => Ingredients.fromJson(x))),
         nutrientLevels: json["nutrient_levels"] == null
             ? null
             : NutrientLevels.fromJson(json["nutrient_levels"]),
-        nutrientLevelsTags: json["nutrient_levels_tags"] == null
+        nutrientLevelsTagsEn: json["nutrient_levels_tags_en"] == null
             ? []
-            : List<String>.from(json["nutrient_levels_tags"]!.map((x) => x)),
+            : List<String>.from(json["nutrient_levels_tags_en"]!.map((x) => x)),
         nutriments: json["nutriments"] == null
             ? null
             : Nutriments.fromJson(json["nutriments"]),
         nutriscoreData: json["nutriscore_data"] == null
             ? null
             : NutriscoreData.fromJson(json["nutriscore_data"]),
-        nutriscoreGrade: json["nutriscore_grade"],
-        nutriscoreScore: json["nutriscore_score"]?.toDouble(),
-        nutritionGrades: json["nutrition_grades"],
+        nutriscoreGrade: json["nutriscore_grade"]?.toString(),
+        nutriscoreScore: json["nutriscore_score"]?.toString(),
+        nutritionGrades: json["nutrition_grades"]?.toString(),
         productName: json["product_name"]?.toString(),
         selectedImages: json["selected_images"] == null
             ? null
             : SelectedImages.fromJson(json["selected_images"]),
-        traces: json["traces"],
+        traces: json["traces"]?.toString(),
       );
 
   Map<String, dynamic> toJson() => {
         "_keywords":
             keywords == null ? [] : List<dynamic>.from(keywords!.map((x) => x)),
         "allergens": allergens,
-        "allergens_tags": allergensTags == null
+        "allergens_tags_en": allergensTagsEn == null
             ? []
-            : List<dynamic>.from(allergensTags!.map((x) => x)),
+            : List<dynamic>.from(allergensTagsEn!.map((x) => x)),
         "brands": brands,
         "categories": categories,
-        "categories_tags": categoriesTags == null
+        "categories_tags_en": categoriesTagsEn == null
             ? []
-            : List<dynamic>.from(categoriesTags!.map((x) => x)),
+            : List<dynamic>.from(categoriesTagsEn!.map((x) => x)),
         "compared_to_category": comparedToCategory,
         "food_groups": foodGroups,
-        "food_groups_tags": foodGroupsTags == null
+        "food_groups_tags_en": foodGroupsTagsEn == null
             ? []
-            : List<dynamic>.from(foodGroupsTags!.map((x) => x)),
+            : List<dynamic>.from(foodGroupsTagsEn!.map((x) => x)),
         "image_front_thumb_url": imageFrontThumbUrl,
         "ingredients": ingredients == null
             ? []
             : List<dynamic>.from(ingredients!.map((x) => x.toJson())),
         "nutrient_levels": nutrientLevels?.toJson(),
-        "nutrient_levels_tags": nutrientLevelsTags == null
+        "nutrient_levels_tags_en": nutrientLevelsTagsEn == null
             ? []
-            : List<dynamic>.from(nutrientLevelsTags!.map((x) => x)),
+            : List<dynamic>.from(nutrientLevelsTagsEn!.map((x) => x)),
         "nutriments": nutriments?.toJson(),
         "nutriscore_data": nutriscoreData?.toJson(),
         "nutriscore_grade": nutriscoreGrade,
@@ -180,8 +183,8 @@ class Product {
       };
 }
 
-class Ingredient {
-  Ingredient({
+class Ingredients {
+  Ingredients({
     this.id,
     this.percentEstimate,
     this.percentMax,
@@ -201,15 +204,15 @@ class Ingredient {
   String? vegetarian;
   String? fromPalmOil;
 
-  factory Ingredient.fromJson(Map<String, dynamic> json) => Ingredient(
-        id: json["id"],
+  factory Ingredients.fromJson(Map<String, dynamic> json) => Ingredients(
+        id: json["id"]?.toString(),
         percentEstimate: json["percent_estimate"]?.toString(),
         percentMax: json["percent_max"]?.toString(),
         percentMin: json["percent_min"]?.toString(),
-        text: json["text"],
-        vegan: json["vegan"],
-        vegetarian: json["vegetarian"],
-        fromPalmOil: json["from_palm_oil"],
+        text: json["text"]?.toString(),
+        vegan: json["vegan"]?.toString(),
+        vegetarian: json["vegetarian"]?.toString(),
+        fromPalmOil: json["from_palm_oil"]?.toString(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -238,10 +241,10 @@ class NutrientLevels {
   String? sugars;
 
   factory NutrientLevels.fromJson(Map<String, dynamic> json) => NutrientLevels(
-        fat: json["fat"],
-        salt: json["salt"],
-        saturatedFat: json["saturated-fat"],
-        sugars: json["sugars"],
+        fat: json["fat"]?.toString(),
+        salt: json["salt"]?.toString(),
+        saturatedFat: json["saturated-fat"]?.toString(),
+        sugars: json["sugars"]?.toString(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -271,6 +274,7 @@ class Nutriments {
     this.fat100G,
     this.fatUnit,
     this.fatValue,
+    this.fiber,
     this.fruitsVegetablesNutsEstimateFromIngredients100G,
     this.fruitsVegetablesNutsEstimateFromIngredientsServing,
     this.novaGroup,
@@ -300,100 +304,102 @@ class Nutriments {
     this.sugarsValue,
   });
 
-  double? carbohydrates;
-  double? carbohydrates100G;
+  String? carbohydrates;
+  String? carbohydrates100G;
   String? carbohydratesUnit;
-  double? carbohydratesValue;
-  double? energy;
-  double? energyKcal;
-  double? energyKcal100G;
+  String? carbohydratesValue;
+  String? energy;
+  String? energyKcal;
+  String? energyKcal100G;
   String? energyKcalUnit;
-  double? energyKcalValue;
-  double? energyKcalValueComputed;
-  double? energy100G;
+  String? energyKcalValue;
+  String? energyKcalValueComputed;
+  String? energy100G;
   String? energyUnit;
-  double? energyValue;
-  double? fat;
-  double? fat100G;
+  String? energyValue;
+  String? fat;
+  String? fat100G;
   String? fatUnit;
-  double? fatValue;
-  double? fruitsVegetablesNutsEstimateFromIngredients100G;
-  double? fruitsVegetablesNutsEstimateFromIngredientsServing;
-  double? novaGroup;
-  double? novaGroup100G;
-  double? novaGroupServing;
-  double? nutritionScoreFr;
-  double? nutritionScoreFr100G;
-  double? proteins;
-  double? proteins100G;
+  String? fatValue;
+  String? fruitsVegetablesNutsEstimateFromIngredients100G;
+  String? fruitsVegetablesNutsEstimateFromIngredientsServing;
+  String? novaGroup;
+  String? novaGroup100G;
+  String? novaGroupServing;
+  String? nutritionScoreFr;
+  String? nutritionScoreFr100G;
+  String? proteins;
+  String? proteins100G;
   String? proteinsUnit;
-  double? proteinsValue;
-  double? salt;
-  double? salt100G;
+  String? proteinsValue;
+  String? salt;
+  String? salt100G;
   String? saltUnit;
-  double? saltValue;
-  double? saturatedFat;
-  double? saturatedFat100G;
+  String? saltValue;
+  String? fiber;
+  String? saturatedFat;
+  String? saturatedFat100G;
   String? saturatedFatUnit;
-  double? saturatedFatValue;
-  double? sodium;
-  double? sodium100G;
+  String? saturatedFatValue;
+  String? sodium;
+  String? sodium100G;
   String? sodiumUnit;
-  double? sodiumValue;
-  double? sugars;
-  double? sugars100G;
+  String? sodiumValue;
+  String? sugars;
+  String? sugars100G;
   String? sugarsUnit;
-  double? sugarsValue;
+  String? sugarsValue;
 
   factory Nutriments.fromJson(Map<String, dynamic> json) => Nutriments(
-        carbohydrates: json["carbohydrates"]?.toDouble(),
-        carbohydrates100G: json["carbohydrates_100g"]?.toDouble(),
-        carbohydratesUnit: json["carbohydrates_unit"],
-        carbohydratesValue: json["carbohydrates_value"]?.toDouble(),
-        energy: json["energy"]?.toDouble(),
-        energyKcal: json["energy-kcal"]?.toDouble(),
-        energyKcal100G: json["energy-kcal_100g"]?.toDouble(),
-        energyKcalUnit: json["energy-kcal_unit"],
-        energyKcalValue: json["energy-kcal_value"]?.toDouble(),
-        energyKcalValueComputed: json["energy-kcal_value_computed"]?.toDouble(),
-        energy100G: json["energy_100g"]?.toDouble(),
-        energyUnit: json["energy_unit"],
-        energyValue: json["energy_value"]?.toDouble(),
-        fat: json["fat"]?.toDouble(),
-        fat100G: json["fat_100g"]?.toDouble(),
-        fatUnit: json["fat_unit"],
-        fatValue: json["fat_value"]?.toDouble(),
+        carbohydrates: json["carbohydrates"]?.toString(),
+        carbohydrates100G: json["carbohydrates_100g"]?.toString(),
+        carbohydratesUnit: json["carbohydrates_unit"]?.toString(),
+        carbohydratesValue: json["carbohydrates_value"]?.toString(),
+        energy: json["energy"]?.toString(),
+        energyKcal: json["energy-kcal"]?.toString(),
+        energyKcal100G: json["energy-kcal_100g"]?.toString(),
+        energyKcalUnit: json["energy-kcal_unit"]?.toString(),
+        energyKcalValue: json["energy-kcal_value"]?.toString(),
+        energyKcalValueComputed: json["energy-kcal_value_computed"]?.toString(),
+        energy100G: json["energy_100g"]?.toString(),
+        energyUnit: json["energy_unit"]?.toString(),
+        energyValue: json["energy_value"]?.toString(),
+        fat: json["fat"]?.toString(),
+        fat100G: json["fat_100g"]?.toString(),
+        fatUnit: json["fat_unit"]?.toString(),
+        fatValue: json["fat_value"]?.toString(),
+        fiber: json["fiber"]?.toString(),
         fruitsVegetablesNutsEstimateFromIngredients100G:
             json["fruits-vegetables-nuts-estimate-from-ingredients_100g"]
-                ?.toDouble(),
+                ?.toString(),
         fruitsVegetablesNutsEstimateFromIngredientsServing:
             json["fruits-vegetables-nuts-estimate-from-ingredients_serving"]
-                ?.toDouble(),
-        novaGroup: json["nova-group"]?.toDouble(),
-        novaGroup100G: json["nova-group_100g"]?.toDouble(),
-        novaGroupServing: json["nova-group_serving"]?.toDouble(),
-        nutritionScoreFr: json["nutrition-score-fr"]?.toDouble(),
-        nutritionScoreFr100G: json["nutrition-score-fr_100g"]?.toDouble(),
-        proteins: json["proteins"]?.toDouble(),
-        proteins100G: json["proteins_100g"]?.toDouble(),
-        proteinsUnit: json["proteins_unit"],
-        proteinsValue: json["proteins_value"]?.toDouble(),
-        salt: json["salt"]?.toDouble(),
-        salt100G: json["salt_100g"]?.toDouble(),
-        saltUnit: json["salt_unit"],
-        saltValue: json["salt_value"]?.toDouble(),
-        saturatedFat: json["saturated-fat"]?.toDouble(),
-        saturatedFat100G: json["saturated-fat_100g"]?.toDouble(),
-        saturatedFatUnit: json["saturated-fat_unit"],
-        saturatedFatValue: json["saturated-fat_value"]?.toDouble(),
-        sodium: json["sodium"]?.toDouble(),
-        sodium100G: json["sodium_100g"]?.toDouble(),
-        sodiumUnit: json["sodium_unit"],
-        sodiumValue: json["sodium_value"]?.toDouble(),
-        sugars: json["sugars"]?.toDouble(),
-        sugars100G: json["sugars_100g"]?.toDouble(),
-        sugarsUnit: json["sugars_unit"],
-        sugarsValue: json["sugars_value"]?.toDouble(),
+                ?.toString(),
+        novaGroup: json["nova-group"]?.toString(),
+        novaGroup100G: json["nova-group_100g"]?.toString(),
+        novaGroupServing: json["nova-group_serving"]?.toString(),
+        nutritionScoreFr: json["nutrition-score-fr"]?.toString(),
+        nutritionScoreFr100G: json["nutrition-score-fr_100g"]?.toString(),
+        proteins: json["proteins"]?.toString(),
+        proteins100G: json["proteins_100g"]?.toString(),
+        proteinsUnit: json["proteins_unit"]?.toString(),
+        proteinsValue: json["proteins_value"]?.toString(),
+        salt: json["salt"]?.toString(),
+        salt100G: json["salt_100g"]?.toString(),
+        saltUnit: json["salt_unit"]?.toString(),
+        saltValue: json["salt_value"]?.toString(),
+        saturatedFat: json["saturated-fat"]?.toString(),
+        saturatedFat100G: json["saturated-fat_100g"]?.toString(),
+        saturatedFatUnit: json["saturated-fat_unit"]?.toString(),
+        saturatedFatValue: json["saturated-fat_value"]?.toString(),
+        sodium: json["sodium"]?.toString(),
+        sodium100G: json["sodium_100g"]?.toString(),
+        sodiumUnit: json["sodium_unit"]?.toString(),
+        sodiumValue: json["sodium_value"]?.toString(),
+        sugars: json["sugars"]?.toString(),
+        sugars100G: json["sugars_100g"]?.toString(),
+        sugarsUnit: json["sugars_unit"]?.toString(),
+        sugarsValue: json["sugars_value"]?.toString(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -482,77 +488,77 @@ class NutriscoreData {
     this.sugarsValue,
   });
 
-  double? energy;
-  double? energyPoints;
-  double? energyValue;
-  double? fiber;
-  double? fiberPoints;
-  double? fiberValue;
-  double? fruitsVegetablesNutsColzaWalnutOliveOils;
-  double? fruitsVegetablesNutsColzaWalnutOliveOilsPoints;
-  double? fruitsVegetablesNutsColzaWalnutOliveOilsValue;
+  String? energy;
+  String? energyPoints;
+  String? energyValue;
+  String? fiber;
+  String? fiberPoints;
+  String? fiberValue;
+  String? fruitsVegetablesNutsColzaWalnutOliveOils;
+  String? fruitsVegetablesNutsColzaWalnutOliveOilsPoints;
+  String? fruitsVegetablesNutsColzaWalnutOliveOilsValue;
   String? grade;
-  double? isBeverage;
-  double? isCheese;
-  double? isFat;
-  double? isWater;
-  double? negativePoints;
-  double? positivePoints;
-  double? proteins;
-  double? proteinsPoints;
-  double? proteinsValue;
-  double? saturatedFat;
-  double? saturatedFatPoints;
-  double? saturatedFatRatio;
-  double? saturatedFatRatioPoints;
-  double? saturatedFatRatioValue;
-  double? saturatedFatValue;
-  double? score;
-  double? sodium;
-  double? sodiumPoints;
-  double? sodiumValue;
-  double? sugars;
-  double? sugarsPoints;
-  double? sugarsValue;
+  String? isBeverage;
+  String? isCheese;
+  String? isFat;
+  String? isWater;
+  String? negativePoints;
+  String? positivePoints;
+  String? proteins;
+  String? proteinsPoints;
+  String? proteinsValue;
+  String? saturatedFat;
+  String? saturatedFatPoints;
+  String? saturatedFatRatio;
+  String? saturatedFatRatioPoints;
+  String? saturatedFatRatioValue;
+  String? saturatedFatValue;
+  String? score;
+  String? sodium;
+  String? sodiumPoints;
+  String? sodiumValue;
+  String? sugars;
+  String? sugarsPoints;
+  String? sugarsValue;
 
   factory NutriscoreData.fromJson(Map<String, dynamic> json) => NutriscoreData(
-        energy: json["energy"]?.toDouble(),
-        energyPoints: json["energy_points"]?.toDouble(),
-        energyValue: json["energy_value"]?.toDouble(),
-        fiber: json["fiber"]?.toDouble(),
-        fiberPoints: json["fiber_points"]?.toDouble(),
-        fiberValue: json["fiber_value"]?.toDouble(),
+        energy: json["energy"]?.toString(),
+        energyPoints: json["energy_points"]?.toString(),
+        energyValue: json["energy_value"]?.toString(),
+        fiber: json["fiber"]?.toString(),
+        fiberPoints: json["fiber_points"]?.toString(),
+        fiberValue: json["fiber_value"]?.toString(),
         fruitsVegetablesNutsColzaWalnutOliveOils:
-            json["fruits_vegetables_nuts_colza_walnut_olive_oils"]?.toDouble(),
+            json["fruits_vegetables_nuts_colza_walnut_olive_oils"]?.toString(),
         fruitsVegetablesNutsColzaWalnutOliveOilsPoints:
             json["fruits_vegetables_nuts_colza_walnut_olive_oils_points"]
-                ?.toDouble(),
+                ?.toString(),
         fruitsVegetablesNutsColzaWalnutOliveOilsValue:
             json["fruits_vegetables_nuts_colza_walnut_olive_oils_value"]
-                ?.toDouble(),
-        grade: json["grade"],
-        isBeverage: json["is_beverage"]?.toDouble(),
-        isCheese: json["is_cheese"]?.toDouble(),
-        isFat: json["is_fat"]?.toDouble(),
-        isWater: json["is_water"]?.toDouble(),
-        negativePoints: json["negative_points"]?.toDouble(),
-        positivePoints: json["positive_points"]?.toDouble(),
-        proteins: json["proteins"]?.toDouble(),
-        proteinsPoints: json["proteins_points"]?.toDouble(),
-        proteinsValue: json["proteins_value"]?.toDouble(),
-        saturatedFat: json["saturated_fat"]?.toDouble(),
-        saturatedFatPoints: json["saturated_fat_points"]?.toDouble(),
-        saturatedFatRatio: json["saturated_fat_ratio"]?.toDouble(),
-        saturatedFatRatioPoints: json["saturated_fat_ratio_points"]?.toDouble(),
-        saturatedFatRatioValue: json["saturated_fat_ratio_value"]?.toDouble(),
-        saturatedFatValue: json["saturated_fat_value"]?.toDouble()?.toDouble(),
-        score: json["score"]?.toDouble(),
-        sodium: json["sodium"]?.toDouble(),
-        sodiumPoints: json["sodium_points"]?.toDouble(),
-        sodiumValue: json["sodium_value"]?.toDouble(),
-        sugars: json["sugars"]?.toDouble(),
-        sugarsPoints: json["sugars_points"]?.toDouble(),
-        sugarsValue: json["sugars_value"]?.toDouble(),
+                ?.toString(),
+        grade: json["grade"]?.toString(),
+        isBeverage: json["is_beverage"]?.toString(),
+        isCheese: json["is_cheese"]?.toString(),
+        isFat: json["is_fat"]?.toString(),
+        isWater: json["is_water"]?.toString(),
+        negativePoints: json["negative_points"]?.toString(),
+        positivePoints: json["positive_points"]?.toString(),
+        proteins: json["proteins"]?.toString(),
+        proteinsPoints: json["proteins_points"]?.toString(),
+        proteinsValue: json["proteins_value"]?.toString(),
+        saturatedFat: json["saturated_fat"]?.toString(),
+        saturatedFatPoints: json["saturated_fat_points"]?.toString(),
+        saturatedFatRatio: json["saturated_fat_ratio"]?.toString(),
+        saturatedFatRatioPoints: json["saturated_fat_ratio_points"]?.toString(),
+        saturatedFatRatioValue: json["saturated_fat_ratio_value"]?.toString(),
+        saturatedFatValue: json["saturated_fat_value"]?.toString(),
+        score: json["score"]?.toString(),
+        sodium: json["sodium"]?.toString(),
+        sodiumPoints: json["sodium_points"]?.toString(),
+        sodiumValue: json["sodium_value"]?.toString(),
+        sugars: json["sugars"]?.toString(),
+        sugarsPoints: json["sugars_points"]?.toString(),
+        sugarsValue: json["sugars_value"]?.toString(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -635,7 +641,7 @@ class Display {
   });
   String? en;
   factory Display.fromJson(Map<String, dynamic> json) => Display(
-        en: json["en"],
+        en: json["en"]?.toString(),
       );
   Map<String, dynamic> toJson() => {
         "en": en,
@@ -648,7 +654,7 @@ class Small {
   });
   String? en;
   factory Small.fromJson(Map<String, dynamic> json) => Small(
-        en: json["en"],
+        en: json["en"]?.toString(),
       );
   Map<String, dynamic> toJson() => {
         "en": en,
@@ -661,7 +667,7 @@ class Thumb {
   });
   String? en;
   factory Thumb.fromJson(Map<String, dynamic> json) => Thumb(
-        en: json["en"],
+        en: json["en"]?.toString(),
       );
   Map<String, dynamic> toJson() => {
         "en": en,

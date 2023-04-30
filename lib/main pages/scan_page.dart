@@ -235,7 +235,7 @@ class _ScanPageState extends State<ScanPage> {
                   children: [
                     rowInfo(
                       "Calories",
-                      '${widget.item['calories'].toStringAsFixed(1)} kcals',
+                      '${double.parse(widget.item['calories']).toStringAsFixed(0)} kcals',
                       Icon(
                         ion.Ionicons.flame_outline,
                         size: 30,
@@ -255,7 +255,7 @@ class _ScanPageState extends State<ScanPage> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Text(
-                              '${widget.item['total fat'].toStringAsFixed(1)} g',
+                              '${double.parse(widget.item['total fat']).toStringAsFixed(1)} g',
                             ),
                             const Icon(Icons.keyboard_arrow_down)
                           ],
@@ -270,13 +270,13 @@ class _ScanPageState extends State<ScanPage> {
                             color: Colors.black,
                           ),
                           trailing: Text(
-                              '${widget.item['saturated fat'].toStringAsFixed(1)} g'),
+                              '${double.parse(widget.item['saturated fat']).toStringAsFixed(1)} g'),
                         ),
                       ],
                     ),
                     rowInfo(
                       "Sodium",
-                      '${widget.item['sodium'].toStringAsFixed(1)} g',
+                      '${double.parse(widget.item['sodium']).toStringAsFixed(1)} g',
                       Icon(
                         MaterialCommunityIcons.shaker_outline,
                         size: 30,
@@ -296,7 +296,7 @@ class _ScanPageState extends State<ScanPage> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Text(
-                                '${widget.item['total carbohydrate'].toStringAsFixed(1)} g'),
+                                '${double.parse(widget.item['total carbohydrate']).toStringAsFixed(1)} g'),
                             const Icon(Icons.keyboard_arrow_down)
                           ],
                         ),
@@ -310,7 +310,7 @@ class _ScanPageState extends State<ScanPage> {
                             color: Colors.black,
                           ),
                           trailing: Text(
-                              '${widget.item['fiber'].toStringAsFixed(1)} g'),
+                              '${double.parse(widget.item['fiber']).toStringAsFixed(1)} g'),
                         ),
                         ListTile(
                           title: const Text('Total Sugars'),
@@ -319,13 +319,13 @@ class _ScanPageState extends State<ScanPage> {
                             color: Colors.black,
                           ),
                           trailing: Text(
-                              '${widget.item['total sugars'].toStringAsFixed(1)} g'),
+                              '${double.parse(widget.item['total sugars']).toStringAsFixed(1)} g'),
                         ),
                       ],
                     ),
                     rowInfo(
                       "Protein",
-                      '${widget.item['protein'].toStringAsFixed(1)} g',
+                      '${double.parse(widget.item['protein']).toStringAsFixed(1)} g',
                       Icon(
                         MaterialCommunityIcons.food_steak,
                         size: 30,
