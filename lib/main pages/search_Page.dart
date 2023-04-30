@@ -87,6 +87,7 @@ class _SearchPageState extends State<SearchPage> {
       //add barcode to firebase
       //passes current user email and barcode
       fire.FirebaseCommands().addBarcode(barcodeScanRes);
+      fire.FirebaseCommands().getSimilarProducts(barcodeScanRes);
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
     }

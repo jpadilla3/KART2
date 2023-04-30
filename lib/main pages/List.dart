@@ -47,7 +47,7 @@ class _recoListState extends State<recoList> {
               snapshot.data!.data() as Map<String, dynamic>;
           return version
               ? Text('${data['name']}')
-              : Text('score: ${data['score']}');
+              : Text('score: ${data['grade']}');
         }
         return Text('loading');
       }),

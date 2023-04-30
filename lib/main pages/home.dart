@@ -92,7 +92,8 @@ class _HomePageState extends State<HomePage> {
       //add barcode to firebase
       //passes current user email and barcode
       FirebaseCommands().addBarcode(barcodeScanRes);
-      FirebaseCommands().updateBarcode(barcodeScanRes);
+      FirebaseCommands().getSimilarProducts(barcodeScanRes);
+
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
     }
@@ -294,58 +295,58 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                     ),
                                   ),
-                                  Expanded(
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        FutureBuilder(
-                                            future: GradeCal().gradeCalculate(
-                                                documentSnapshot['Allergens']),
-                                            builder: (BuildContext context,
-                                                snapshot) {
-                                              if (snapshot.connectionState ==
-                                                  ConnectionState.done) {
-                                                if (snapshot.hasError) {
-                                                  return Text(
-                                                      '${snapshot.error} occurred');
-                                                } else {
-                                                  final data =
-                                                      snapshot.data as bool;
+                                  // Expanded(
+                                  //   child: Row(
+                                  //     mainAxisAlignment: MainAxisAlignment.end,
+                                  //     crossAxisAlignment:
+                                  //         CrossAxisAlignment.end,
+                                  //     children: [
+                                  //       FutureBuilder(
+                                  //           future: GradeCal().gradeCalculate(
+                                  //               documentSnapshot['Allergens']),
+                                  //           builder: (BuildContext context,
+                                  //               snapshot) {
+                                  //             if (snapshot.connectionState ==
+                                  //                 ConnectionState.done) {
+                                  //               if (snapshot.hasError) {
+                                  //                 return Text(
+                                  //                     '${snapshot.error} occurred');
+                                  //               } else {
+                                  //                 final data =
+                                  //                     snapshot.data as bool;
 
-                                                  if (data == true) {
-                                                    return const SizedBox(
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                right: 2),
-                                                        child: Icon(
-                                                          Icons.info_outline,
-                                                          color: Colors.red,
-                                                        ),
-                                                      ),
-                                                    );
-                                                  } else {
-                                                    return const Text('');
-                                                  }
-                                                }
-                                              } else {
-                                                return const Text('');
-                                              }
-                                            }),
-                                        const SizedBox(
-                                          child: Padding(
-                                            padding: EdgeInsets.only(right: 10),
-                                            child: Icon(
-                                              Icons.arrow_forward_ios,
-                                              color: Colors.indigo,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                  //                 if (data == true) {
+                                  //                   return const SizedBox(
+                                  //                     child: Padding(
+                                  //                       padding:
+                                  //                           EdgeInsets.only(
+                                  //                               right: 2),
+                                  //                       child: Icon(
+                                  //                         Icons.info_outline,
+                                  //                         color: Colors.red,
+                                  //                       ),
+                                  //                     ),
+                                  //                   );
+                                  //                 } else {
+                                  //                   return const Text('');
+                                  //                 }
+                                  //               }
+                                  //             } else {
+                                  //               return const Text('');
+                                  //             }
+                                  //           }),
+                                  //       const SizedBox(
+                                  //         child: Padding(
+                                  //           padding: EdgeInsets.only(right: 10),
+                                  //           child: Icon(
+                                  //             Icons.arrow_forward_ios,
+                                  //             color: Colors.indigo,
+                                  //           ),
+                                  //         ),
+                                  //       ),
+                                  //     ],
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                             ),

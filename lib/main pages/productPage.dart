@@ -224,48 +224,48 @@ class _productPageState extends State<productPage> {
             ),
           ],
         ),
-        Row(
-          children: [
-            FutureBuilder(
-                future: widget.type
-                    ? _scanned.doc(widget.barcode).get()
-                    : _search.doc(widget.barcode).get(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<DocumentSnapshot> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    Map<String, dynamic> data =
-                        snapshot.data!.data() as Map<String, dynamic>;
-                    return FutureBuilder(
-                        future: GradeCal().gradeCalculateInfo(
-                            data['Allergens'], data['nutrition']['grade']),
-                        builder: ((context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.done) {
-                            if (snapshot.hasError) {
-                              return Text(
-                                '${snapshot.error} occurred',
-                              );
-                            } else {
-                              final data1 = snapshot.data as String;
-                              return Row(
-                                  //mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      width: 35,
-                                    ),
-                                    scoreColors().scoreInfo(data1),
-                                  ]);
-                            }
-                          } else {
-                            return buildTextShimmer();
-                          }
-                        }));
-                  } else {
-                    return buildTextShimmer();
-                  }
-                })
-          ],
-        ),
+        // Row(
+        //   children: [
+        //     FutureBuilder(
+        //         future: widget.type
+        //             ? _scanned.doc(widget.barcode).get()
+        //             : _search.doc(widget.barcode).get(),
+        //         builder: (BuildContext context,
+        //             AsyncSnapshot<DocumentSnapshot> snapshot) {
+        //           if (snapshot.connectionState == ConnectionState.done) {
+        //             Map<String, dynamic> data =
+        //                 snapshot.data!.data() as Map<String, dynamic>;
+        //             return FutureBuilder(
+        //                 future: GradeCal().gradeCalculateInfo(
+        //                     data['Allergens'], data['nutrition']['grade']),
+        //                 builder: ((context, snapshot) {
+        //                   if (snapshot.connectionState ==
+        //                       ConnectionState.done) {
+        //                     if (snapshot.hasError) {
+        //                       return Text(
+        //                         '${snapshot.error} occurred',
+        //                       );
+        //                     } else {
+        //                       final data1 = snapshot.data as String;
+        //                       return Row(
+        //                           //mainAxisAlignment: MainAxisAlignment.center,
+        //                           children: [
+        //                             SizedBox(
+        //                               width: 35,
+        //                             ),
+        //                             scoreColors().scoreInfo(data1),
+        //                           ]);
+        //                     }
+        //                   } else {
+        //                     return buildTextShimmer();
+        //                   }
+        //                 }));
+        //           } else {
+        //             return buildTextShimmer();
+        //           }
+        //         })
+        //   ],
+        // ),
         Container(
           color: Colors.white,
           child: SizedBox(
@@ -303,7 +303,7 @@ class _productPageState extends State<productPage> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  '${data['nutrition']['total fat'].toStringAsFixed(1)} g',
+                                  '${double.parse(data['nutrition']['total fat']).toStringAsFixed(1)} g',
                                 ),
                                 const Icon(Icons.keyboard_arrow_down)
                               ],
@@ -318,13 +318,13 @@ class _productPageState extends State<productPage> {
                                 color: Colors.black,
                               ),
                               trailing: Text(
-                                  '${data['nutrition']['saturated fat'].toStringAsFixed(1)} g'),
+                                  '${double.parse(data['nutrition']['saturated fat']).toStringAsFixed(1)} g'),
                             ),
                           ],
                         ),
                         rowInfo(
                           "Sodium",
-                          '${data['nutrition']['sodium'].toStringAsFixed(1)} g',
+                          '${double.parse(data['nutrition']['sodium']).toStringAsFixed(1)} g',
                           Icon(
                             MaterialCommunityIcons.shaker_outline,
                             size: 30,
@@ -344,7 +344,7 @@ class _productPageState extends State<productPage> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                    '${data['nutrition']['total carbohydrate'].toStringAsFixed(1)} g'),
+                                    '${double.parse(data['nutrition']['total carbohydrate']).toStringAsFixed(1)} g'),
                                 const Icon(Icons.keyboard_arrow_down)
                               ],
                             ),
@@ -358,7 +358,7 @@ class _productPageState extends State<productPage> {
                                 color: Colors.black,
                               ),
                               trailing: Text(
-                                  '${data['nutrition']['fiber'].toStringAsFixed(1)} g'),
+                                  '${double.parse(data['nutrition']['fiber']).toStringAsFixed(1)} g'),
                             ),
                             ListTile(
                               title: const Text('Total Sugars'),
@@ -367,13 +367,13 @@ class _productPageState extends State<productPage> {
                                 color: Colors.black,
                               ),
                               trailing: Text(
-                                  '${data['nutrition']['total sugars'].toStringAsFixed(1)} g'),
+                                  '${double.parse(data['nutrition']['total sugars']).toStringAsFixed(1)} g'),
                             ),
                           ],
                         ),
                         rowInfo(
                           "Protein",
-                          '${data['nutrition']['protein'].toStringAsFixed(1)} g',
+                          '${double.parse(data['nutrition']['protein']).toStringAsFixed(1)} g',
                           Icon(
                             MaterialCommunityIcons.food_steak,
                             size: 30,

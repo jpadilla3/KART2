@@ -1,42 +1,54 @@
 // To parse this JSON data, do
-// final barcodeData = barcodeDataFromJson(jsonString);
+// final searchData = searchDataFromJson(jsonString);
 
-// Model for a bardcode with these fields: '_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces'
-// https://us.openfoodfacts.org/api/v2/product/3017624010701?fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json
+// Model for search with these fields: '_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces'
+//https://us.openfoodfacts.org/api/v2/search?categories_tags_en=dairies&nutrition_grades_tags=a&sort_by=nutriscore_score&fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,code,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json
 
 import 'dart:convert';
 
-BarcodeData barcodeDataFromJson(String str) =>
-    BarcodeData.fromJson(json.decode(str));
+SearchData searchDataFromJson(String str) =>
+    SearchData.fromJson(json.decode(str));
 
-String barcodeDataToJson(BarcodeData data) => json.encode(data.toJson());
+String searchDataToJson(SearchData data) => json.encode(data.toJson());
 
-class BarcodeData {
-  BarcodeData({
-    this.code,
-    this.product,
-    this.status,
-    this.statusVerbose,
+class SearchData {
+  SearchData({
+    this.count,
+    this.page,
+    this.pageCount,
+    this.pageSize,
+    this.products,
+    this.skip,
   });
 
-  String? code;
-  Product? product;
-  int? status;
-  String? statusVerbose;
+  String? count;
+  String? page;
+  String? pageCount;
+  String? pageSize;
+  List<Product>? products;
+  String? skip;
 
-  factory BarcodeData.fromJson(Map<String, dynamic> json) => BarcodeData(
-        code: json["code"]?.toString(),
-        product:
-            json["product"] == null ? null : Product.fromJson(json["product"]),
-        status: json["status"],
-        statusVerbose: json["status_verbose"]?.toString(),
+  factory SearchData.fromJson(Map<String, dynamic> json) => SearchData(
+        count: json["count"]?.toString(),
+        page: json["page"]?.toString(),
+        pageCount: json["page_count"]?.toString(),
+        pageSize: json["page_size"]?.toString(),
+        products: json["products"] == null
+            ? []
+            : List<Product>.from(
+                json["products"]!.map((x) => Product.fromJson(x))),
+        skip: json["skip"]?.toString(),
       );
 
   Map<String, dynamic> toJson() => {
-        "code": code,
-        "product": product?.toJson(),
-        "status": status,
-        "status_verbose": statusVerbose,
+        "count": count,
+        "page": page,
+        "page_count": pageCount,
+        "page_size": pageSize,
+        "products": products == null
+            ? []
+            : List<dynamic>.from(products!.map((x) => x.toJson())),
+        "skip": skip,
       };
 }
 
@@ -48,6 +60,7 @@ class Product {
     this.brands,
     this.categories,
     this.categoriesTagsEn,
+    this.code,
     this.comparedToCategory,
     this.foodGroups,
     this.foodGroupsTagsEn,
@@ -71,6 +84,7 @@ class Product {
   String? brands;
   String? categories;
   List<String>? categoriesTagsEn;
+  String? code;
   String? comparedToCategory;
   String? foodGroups;
   List<String>? foodGroupsTagsEn;
@@ -101,6 +115,7 @@ class Product {
             ? []
             : List<String>.from(json["categories_tags_en"]!.map((x) => x)),
         comparedToCategory: json["compared_to_category"]?.toString(),
+        code: json["code"]?.toString(),
         foodGroups: json["food_groups"]?.toString(),
         foodGroupsTagsEn: json["food_groups_tags_en"] == null
             ? []
