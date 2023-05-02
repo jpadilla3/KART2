@@ -59,30 +59,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               const SizedBox(
-                height: 80,
-              ),
-              InkResponse(
-                borderRadius: BorderRadius.circular(10),
-                highlightShape: BoxShape.rectangle,
-                highlightColor: Colors.indigo,
-                onTap: () {},
-                child: Container(
-                  height: 60,
-                  width: 275,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.indigo, width: 2.0)),
-                  child: Center(
-                    child: Text(
-                      'Recommendations',
-                      style: GoogleFonts.bebasNeue(
-                          fontSize: 20, color: Colors.black),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 30,
+                height: 120,
               ),
               InkResponse(
                 borderRadius: BorderRadius.circular(10),
@@ -108,7 +85,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               const SizedBox(
-                height: 30,
+                height: 50,
               ),
               InkResponse(
                 borderRadius: BorderRadius.circular(10),
