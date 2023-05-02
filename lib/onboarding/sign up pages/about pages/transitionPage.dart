@@ -10,14 +10,14 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:kart2/onboarding/sign up pages/Conditions/Allergies.dart';
 import 'package:kart2/models/firebase_commands.dart';
 
-class aboutPages extends StatefulWidget {
-  const aboutPages({super.key});
+class AboutPages extends StatefulWidget {
+  const AboutPages({super.key});
 
   @override
-  State<aboutPages> createState() => _aboutPagesState();
+  State<AboutPages> createState() => AboutPagesState();
 }
 
-class _aboutPagesState extends State<aboutPages> {
+class AboutPagesState extends State<AboutPages> {
   //keep track of pages
   PageController _controller = PageController();
 
@@ -38,10 +38,10 @@ class _aboutPagesState extends State<aboutPages> {
           },
           controller: _controller,
           children: const [
-            introScreen1(),
-            introScreen2(),
-            introScreen3(),
-            introScreen4()
+            IntroScreen1(),
+            IntroScreen2(),
+            IntroScreen3(),
+            IntroScreen4()
           ],
         ),
         Container(

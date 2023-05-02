@@ -3,19 +3,19 @@ import 'package:flutter/material.dart';
 class ItemList extends StatelessWidget {
   final List<Map<String, String>> items;
 
-  ItemList({required this.items});
+  const ItemList({super.key, required this.items});
 
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
-      child: Container(
+      child: SizedBox(
         height: 550.0,
         child: ListView.builder(
           scrollDirection: Axis.vertical,
           itemCount: items.length,
           itemBuilder: (context, index) {
             return Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -31,11 +31,11 @@ class ItemList extends StatelessWidget {
                       children: <Widget>[
                         Text(
                           items[index]['title']!,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 4.0),
+                        const SizedBox(height: 4.0),
                         Image.network(
                           items[index]['image2']!,
                           height: 65.0,

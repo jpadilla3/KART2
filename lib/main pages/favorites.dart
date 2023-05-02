@@ -15,12 +15,11 @@ class FavPage extends StatefulWidget {
   const FavPage({super.key});
 
   @override
-  State<FavPage> createState() => _FavPageState();
+  State<FavPage> createState() => FavPageState();
 }
 
-class _FavPageState extends State<FavPage> {
-  @override
-  void _handleIndexChange(int i) {
+class FavPageState extends State<FavPage> {
+  void handleIndexChange(int i) {
     setState(() {});
   }
 
@@ -89,20 +88,21 @@ class _FavPageState extends State<FavPage> {
                                 streamSnapshot.data!.docs[index];
 
                             return Slidable(
-                              endActionPane:
-                                  ActionPane(motion: DrawerMotion(), children: [
-                                SlidableAction(
-                                  onPressed: (context) {
-                                    snackMessage(
-                                        true, documentSnapshot['barcode']);
+                              endActionPane: ActionPane(
+                                  motion: const DrawerMotion(),
+                                  children: [
+                                    SlidableAction(
+                                      onPressed: (context) {
+                                        snackMessage(
+                                            true, documentSnapshot['barcode']);
 
-                                    FirebaseCommands().removeFavorite(
-                                        documentSnapshot['barcode']);
-                                  },
-                                  backgroundColor: Colors.indigo,
-                                  icon: Icons.delete,
-                                ),
-                              ]),
+                                        FirebaseCommands().removeFavorite(
+                                            documentSnapshot['barcode']);
+                                      },
+                                      backgroundColor: Colors.indigo,
+                                      icon: Icons.delete,
+                                    ),
+                                  ]),
                               child: InkWell(
                                 highlightColor: Colors.grey[300],
                                 //behavior: HitTestBehavior.translucent,
@@ -111,7 +111,7 @@ class _FavPageState extends State<FavPage> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => productPage(
+                                          builder: (context) => ProductPage(
                                               documentSnapshot['barcode'],
                                               documentSnapshot['ID'],
                                               true)));
@@ -165,7 +165,7 @@ class _FavPageState extends State<FavPage> {
                                               mainAxisAlignment:
                                                   MainAxisAlignment.start,
                                               children: [
-                                                scoreColors().scoreColor(
+                                                ScoreColors().scoreColor(
                                                     documentSnapshot['grade']),
                                                 Padding(
                                                   padding:

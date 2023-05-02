@@ -3,8 +3,8 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class introScreen4 extends StatelessWidget {
-  const introScreen4({super.key});
+class IntroScreen4 extends StatelessWidget {
+  const IntroScreen4({super.key});
 
   @override
   Widget build(BuildContext context) {

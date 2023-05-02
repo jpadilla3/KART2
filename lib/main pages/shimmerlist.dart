@@ -5,10 +5,12 @@ class ShimmerLoader extends StatelessWidget {
   final double width;
   final double height;
   const ShimmerLoader.rectangular({
+    super.key,
     this.width = double.infinity,
     required this.height,
   });
   const ShimmerLoader.circular({
+    super.key,
     required this.width,
     required this.height,
   });

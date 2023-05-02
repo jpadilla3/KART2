@@ -13,17 +13,17 @@ import 'package:kart2/models/scoreColor.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:http/http.dart' as http;
 
-class productPage extends StatefulWidget {
-  String barcode;
-  bool type;
+class ProductPage extends StatefulWidget {
+  final String barcode;
+  final bool type;
   bool fav;
-  productPage(this.barcode, this.type, this.fav);
+  ProductPage(this.barcode, this.type, this.fav, {super.key});
 
   @override
-  State<productPage> createState() => _productPageState();
+  State<ProductPage> createState() => ProductPageState();
 }
 
-class _productPageState extends State<productPage> {
+class ProductPageState extends State<ProductPage> {
   void snackMessage(bool action, String barcode) {
     //true for delete
     //false for favorite
@@ -78,7 +78,7 @@ class _productPageState extends State<productPage> {
           con.add('vegetarian');
         }
         item['grade'] = barcodeData.product?.nutritionGrades ?? 'No Grade';
-        item['name'] = barcodeData.product?.productName! ?? 'Product';
+        item['name'] = barcodeData.product?.productName ?? 'Product';
         item['picture'] = barcodeData
                 .product?.selectedImages?.front?.small?.en ??
             'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg';
@@ -88,7 +88,7 @@ class _productPageState extends State<productPage> {
         item['conditions'] = con;
         return item;
       } else {
-        return AboutDialog();
+        return const AboutDialog();
       }
     }
   }
@@ -310,7 +310,7 @@ class _productPageState extends State<productPage> {
                               SizedBox(
                                   height: 70,
                                   width: 150,
-                                  child: scoreColors()
+                                  child: ScoreColors()
                                       .scorePic(data['nutrition']['grade']))
                             ],
                           );
@@ -354,7 +354,7 @@ class _productPageState extends State<productPage> {
                                         const SizedBox(
                                           width: 35,
                                         ),
-                                        scoreColors().scoreInfo2(data1[0]),
+                                        ScoreColors().scoreInfo2(data1[0]),
                                       ]),
                                   Row(
                                       //vegetarian
@@ -362,7 +362,7 @@ class _productPageState extends State<productPage> {
                                         const SizedBox(
                                           width: 35,
                                         ),
-                                        scoreColors().scoreInfo2(data1[1]),
+                                        ScoreColors().scoreInfo2(data1[1]),
                                       ]),
                                   Row(
                                       //mainAxisAlignment: MainAxisAlignment.center,
@@ -370,7 +370,7 @@ class _productPageState extends State<productPage> {
                                         const SizedBox(
                                           width: 25,
                                         ),
-                                        scoreColors().scoreInfo3(data1[2]),
+                                        ScoreColors().scoreInfo3(data1[2]),
                                       ]),
                                   Row(
                                       //mainAxisAlignment: MainAxisAlignment.center,
@@ -378,7 +378,7 @@ class _productPageState extends State<productPage> {
                                         const SizedBox(
                                           width: 20,
                                         ),
-                                        scoreColors().scoreInfo(data1[3]),
+                                        ScoreColors().scoreInfo(data1[3]),
                                       ]),
                                 ],
                               );

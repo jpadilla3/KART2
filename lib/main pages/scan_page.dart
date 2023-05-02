@@ -31,7 +31,7 @@ class _ScanPageState extends State<ScanPage> {
   }
 
   Widget buildTextShimmer() => Container(
-        child: ShimmerLoader.rectangular(width: 150, height: 16),
+        child: const ShimmerLoader.rectangular(width: 150, height: 16),
       );
 
   rowInfo(String title, String amount, Icon pic) {
@@ -160,7 +160,7 @@ class _ScanPageState extends State<ScanPage> {
                               height: 70,
                               width: 150,
                               child:
-                                  scoreColors().scorePic(widget.item['grade']))
+                                  ScoreColors().scorePic(widget.item['grade']))
                         ],
                       ),
                     )
@@ -191,7 +191,7 @@ class _ScanPageState extends State<ScanPage> {
                                     const SizedBox(
                                       width: 35,
                                     ),
-                                    scoreColors().scoreInfo2(data1[0]),
+                                    ScoreColors().scoreInfo2(data1[0]),
                                   ]),
                               Row(
                                   //vegetarian
@@ -199,7 +199,7 @@ class _ScanPageState extends State<ScanPage> {
                                     const SizedBox(
                                       width: 35,
                                     ),
-                                    scoreColors().scoreInfo2(data1[1]),
+                                    ScoreColors().scoreInfo2(data1[1]),
                                   ]),
                               Row(
                                   //mainAxisAlignment: MainAxisAlignment.center,
@@ -207,7 +207,7 @@ class _ScanPageState extends State<ScanPage> {
                                     const SizedBox(
                                       width: 25,
                                     ),
-                                    scoreColors().scoreInfo3(data1[2]),
+                                    ScoreColors().scoreInfo3(data1[2]),
                                   ]),
                               Row(
                                   //mainAxisAlignment: MainAxisAlignment.center,
@@ -215,7 +215,7 @@ class _ScanPageState extends State<ScanPage> {
                                     const SizedBox(
                                       width: 20,
                                     ),
-                                    scoreColors().scoreInfo(data1[3]),
+                                    ScoreColors().scoreInfo(data1[3]),
                                   ]),
                             ],
                           );

@@ -5,7 +5,7 @@ import 'package:kart2/onboarding/sign%20up%20pages/Conditions/Allergies.dart';
 
 class GradeCal {
   gradeCalculate(
-      List<dynamic> ProductAllergen, List<dynamic> productCondition) async {
+      List<dynamic> productAllergen, List<dynamic> productCondition) async {
     List<String> al = [
       'Gluten',
       'Lupin',
@@ -60,7 +60,7 @@ class GradeCal {
         veg = true;
       } else {
         for (int i = 0; i < allergy.length; i++) {
-          if (ProductAllergen.contains(allergy[i].toLowerCase())) {
+          if (productAllergen.contains(allergy[i].toLowerCase())) {
             aler = true;
             break;
           } else {
@@ -94,7 +94,7 @@ class GradeCal {
   }
 
   gradeCalculateInfo(
-      List<dynamic> ProductAllergen, List<dynamic> productCondition) async {
+      List<dynamic> productAllergen, List<dynamic> productCondition) async {
     List<String> al = [
       'Gluten',
       'Lupin',
@@ -149,7 +149,7 @@ class GradeCal {
         lac = 'false';
       } else {
         for (int i = 0; i < allergy.length; i++) {
-          if (ProductAllergen.contains(allergy[i].toLowerCase())) {
+          if (productAllergen.contains(allergy[i].toLowerCase())) {
             allergic = allergy[i];
             break;
           } else {

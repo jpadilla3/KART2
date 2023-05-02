@@ -8,19 +8,19 @@ import 'package:kart2/main%20pages/recommendations_Page.dart';
 import 'package:kart2/main%20pages/search_page.dart';
 import 'search_page.dart';
 
-class navBar extends StatefulWidget {
-  const navBar({super.key});
+class NavBar extends StatefulWidget {
+  const NavBar({super.key});
 
   @override
-  State<navBar> createState() => _navBarState();
+  State<NavBar> createState() => NavBarState();
 }
 
-class _navBarState extends State<navBar> {
+class NavBarState extends State<NavBar> {
   List pages = [
     //update when pages are created
-    RecommendationsPage(),
-    SearchPage(),
-    ProfilePage(),
+    const RecommendationsPage(),
+    const SearchPage(),
+    const ProfilePage(),
   ];
 
   int currentIndex1 = 0;

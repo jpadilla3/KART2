@@ -10,11 +10,10 @@ class InfoPage extends StatefulWidget {
   const InfoPage({super.key});
 
   @override
-  State<InfoPage> createState() => _InfoPageState();
+  State<InfoPage> createState() => InfoPageState();
 }
 
-class _InfoPageState extends State<InfoPage> {
-  @override
+class InfoPageState extends State<InfoPage> {
   String data = '';
   fetchFileData() async {
     String responseText;
@@ -30,6 +29,7 @@ class _InfoPageState extends State<InfoPage> {
     super.initState();
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomScrollView(
@@ -54,8 +54,8 @@ class _InfoPageState extends State<InfoPage> {
             child: Column(
               children: [
                 Column(
-                  children: <Widget>[
-                    const SizedBox(
+                  children: const <Widget>[
+                    SizedBox(
                       width: double.infinity,
                       child: Text(
                         "  About Us: ",
@@ -74,8 +74,8 @@ class _InfoPageState extends State<InfoPage> {
                   ),
                 ),
                 Column(
-                  children: <Widget>[
-                    const SizedBox(
+                  children: const <Widget>[
+                    SizedBox(
                       width: double.infinity,
                       child: Text(
                         "  Our Sources: ",
