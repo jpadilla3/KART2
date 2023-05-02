@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:kart2/onboarding/authPage.dart';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
-  _SplashScreenState createState() => _SplashScreenState();
+  SplashScreenState createState() => SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
@@ -15,13 +17,13 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   startTime() async {
-    var duration = Duration(seconds: 5);
+    var duration = const Duration(seconds: 5);
     return Timer(duration, navigateToDeviceScreen);
   }
 
   navigateToDeviceScreen() {
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const authPage()));
+        context, MaterialPageRoute(builder: (context) => const AuthPage()));
   }
 
   @override

@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:kart2/main%20pages/nav_bar.dart';
 import 'package:kart2/onboarding/Login_Page.dart';
 
-class authPage extends StatelessWidget {
-  const authPage({super.key});
+class AuthPage extends StatelessWidget {
+  const AuthPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,9 +16,9 @@ class authPage extends StatelessWidget {
         builder: (context, snapshot) {
           //user logged in
           if (snapshot.hasData) {
-            return navBar();
+            return const NavBar();
           } else {
-            return LoginPage();
+            return const LoginPage();
           }
         },
       ),

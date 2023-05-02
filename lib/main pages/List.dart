@@ -5,15 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class recoList extends StatefulWidget {
-  String barcode;
-  recoList(this.barcode);
+class RecoList extends StatefulWidget {
+  final String barcode;
+  const RecoList(this.barcode, {super.key});
 
   @override
-  State<recoList> createState() => _recoListState();
+  State<RecoList> createState() => RecoListState();
 }
 
-class _recoListState extends State<recoList> {
+class RecoListState extends State<RecoList> {
   List<String> docIDs = [];
 
   Future getDocId() async {
@@ -49,7 +49,7 @@ class _recoListState extends State<recoList> {
               ? Text('${data['name']}')
               : Text('score: ${data['score']}');
         }
-        return Text('loading');
+        return const Text('loading');
       }),
     );
   }
@@ -94,15 +94,15 @@ class _recoListState extends State<recoList> {
                         height: 80,
                         color: Colors.indigo[400],
                       ),
-                      visualDensity: VisualDensity(vertical: 4),
+                      visualDensity: const VisualDensity(vertical: 4),
                       title: Padding(
-                        padding: EdgeInsets.only(top: 20),
+                        padding: const EdgeInsets.only(top: 20),
                         child: getName(docIDs[index], true),
                       ),
                       subtitle: getName(docIDs[index], false),
-                      trailing: Padding(
-                        padding: const EdgeInsets.only(top: 15),
-                        child: const Icon(Icons.arrow_forward_ios),
+                      trailing: const Padding(
+                        padding: EdgeInsets.only(top: 15),
+                        child: Icon(Icons.arrow_forward_ios),
                       ),
                     ),
                   );

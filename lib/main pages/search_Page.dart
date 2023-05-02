@@ -353,7 +353,7 @@ class _SearchPageState extends State<SearchPage> {
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (context) => productPage(
+                                              builder: (context) => ProductPage(
                                                   documentSnapshot['barcode'],
                                                   false,
                                                   favo)));
@@ -368,7 +368,7 @@ class _SearchPageState extends State<SearchPage> {
                                             Padding(
                                                 padding:
                                                     const EdgeInsets.all(10.0),
-                                                child: Container(
+                                                child: SizedBox(
                                                   height: 80,
                                                   width: 80,
                                                   child: Image.network(
@@ -413,7 +413,7 @@ class _SearchPageState extends State<SearchPage> {
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.start,
                                                   children: [
-                                                    scoreColors().scoreColor(
+                                                    ScoreColors().scoreColor(
                                                         documentSnapshot[
                                                                 'nutrition']
                                                             ['grade']),
@@ -818,7 +818,7 @@ class MySearchDelegate extends SearchDelegate {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      searchProduct(data[index])));
+                                      SearchProduct(data[index])));
                           Timer(const Duration(seconds: 1), () {
                             data.clear();
                           });
@@ -869,7 +869,7 @@ class MySearchDelegate extends SearchDelegate {
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: [
-                                        scoreColors()
+                                        ScoreColors()
                                             .scoreColor(data[index]['grade']),
                                         Padding(
                                           padding:

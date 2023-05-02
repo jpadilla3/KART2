@@ -156,7 +156,7 @@ class _ConditionsState extends State<Conditions> {
             userData2.updateAll((key, value) => value = false);
 
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => navBar()));
+                context, MaterialPageRoute(builder: (context) => NavBar()));
           },
           style: ButtonStyle(
               minimumSize: MaterialStateProperty.all<Size>(const Size(0, 55))),

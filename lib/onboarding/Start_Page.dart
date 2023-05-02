@@ -40,8 +40,8 @@ class _StartPageState extends State<StartPage> {
         //add username to collection
         FirebaseCommands().addUser();
 
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => aboutPages()));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const AboutPages()));
       } else {
         Navigator.pop(context);
         showDialog(

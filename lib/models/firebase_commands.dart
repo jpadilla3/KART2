@@ -1,9 +1,12 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kart2/models/barcode_data_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:kart2/models/search_data_model.dart';
 
 class FirebaseCommands {
   //add barcode to firebase
@@ -58,7 +61,7 @@ class FirebaseCommands {
           "ID": true,
           'barcode': barcode,
           'brand':
-              barcodeData.product?.brands ?? barcodeData.product?.productName!,
+              barcodeData.product?.brands ?? barcodeData.product?.productName,
           "nutrition": {
             'score': barcodeData.product?.nutriscoreScore ?? 0.toString(),
             'grade': barcodeData.product?.nutritionGrades ?? 'No Grade',
@@ -77,7 +80,7 @@ class FirebaseCommands {
           },
           "Allergens": alerg, //set allergens
           "conditions": con,
-          'name': barcodeData.product?.productName! ?? 'Product',
+          'name': barcodeData.product?.productName ?? 'Product',
           'picture': barcodeData.product?.selectedImages?.front?.small?.en ??
               'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg',
 
@@ -151,16 +154,307 @@ class FirebaseCommands {
     });
   }
 
-  Future updateBarcode(String barcode) async {
-    return FirebaseFirestore.instance
-        .collection('users') //go to users
-        .doc(FirebaseAuth.instance.currentUser!.email
-            .toString()) // go to current user
-        .collection('scanned') // go to scanned
-        .doc(barcode)
-        .collection('recommended')
-        .doc('0001')
-        .set({'barcode': '000001', 'name': 'orange'});
+  Future addRecomendations(barcode, product) async {
+    List<String> alerg = [];
+    List<String> con = [];
+    int count = 0;
+    int count2 = 0;
+
+    final String url =
+        'https://us.openfoodfacts.org/api/v2/product/${product.code}?fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json';
+    final response = await http.get(Uri.parse(url));
+    final barcodeData = barcodeDataFromJson(response.body);
+
+    if (response.statusCode == 200) {
+      if (int.parse(barcode) > 0) {
+        if (barcodeData.product!.allergensTagsEn!.isNotEmpty) {
+          for (int i = 0;
+              i < barcodeData.product!.allergensTagsEn!.length;
+              i++) {
+            alerg.add(barcodeData.product!.allergensTagsEn![i]);
+          }
+        }
+        if (barcodeData.product!.allergensTagsEn!.contains('Milk') ||
+            barcodeData.product!.allergensTagsEn!.contains('Lactic')) {
+          con.add('lactose intolerant');
+        }
+
+        for (final ingredient in barcodeData.product!.ingredients!) {
+          if (ingredient.vegan != 'yes') {
+            count++;
+          }
+          if (ingredient.vegetarian != 'yes') {
+            count2++;
+          }
+        }
+        if (count == 0) {
+          con.add('vegan');
+        }
+        if (count2 == 0) {
+          con.add('vegetarian');
+        }
+        FirebaseFirestore.instance
+            .collection('users') //go to users
+            .doc(FirebaseAuth.instance.currentUser!.email
+                .toString()) // go to current user
+            .collection('scanned') // go to scanned
+            .doc(barcode)
+            .collection('recommended')
+            .doc(product.code)
+            .set({
+          'time': FieldValue.serverTimestamp(),
+          "ID": true,
+          'barcode': product.code,
+          'brand': product.brands ?? product.productName,
+          "nutrition": {
+            'score': product.nutriscoreScore ?? 0,
+            'grade': product.nutritionGrades ?? 'No Grade',
+            'calories': product.nutriments?.energy ?? 0,
+            'total fat': product.nutriments?.fat ?? 0,
+            'saturated fat': product.nutriments?.saturatedFat ?? 0,
+            'sodium': product.nutriments?.sodium ?? 0,
+            'total carbohydrate': product.nutriments?.carbohydrates ?? 0,
+            'total sugars': product.nutriments?.sugars ?? 0,
+            'protein': product.nutriments?.proteins ?? 0,
+            'fiber': product.nutriscoreData?.fiber ?? 0,
+          },
+          "Allergens": alerg, //set allergens
+          "conditions": con,
+          'name': product?.productName ?? 'Product',
+          'picture': product?.selectedImages?.front?.small?.en ??
+              'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg',
+        });
+      }
+    } else {
+      return const AboutDialog();
+    }
+  }
+
+  Future anotherCategory3(barcode, response) async {
+    final data = barcodeDataFromJson(response.body);
+    final categoryList = data.product?.categoriesTagsEn;
+    final categoryString = categoryList?.isNotEmpty == true
+        ? categoryList![categoryList.length - 4]
+        : null;
+    if (categoryString != null) {
+      print(categoryList);
+      print(categoryString);
+      log(Uri.encodeQueryComponent(categoryString));
+      final enCategory = Uri.encodeQueryComponent(categoryString);
+      final similarProductsResponse = await http.get(Uri.parse(
+          'https://us.openfoodfacts.org/api/v2/search?categories_tags_en=$enCategory&nutrition_grades_tags=a&fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,code,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json'));
+
+      if (similarProductsResponse.statusCode == 200) {
+        final similarProductsData =
+            searchDataFromJson(similarProductsResponse.body);
+        final products = similarProductsData.products;
+
+        if (products?.isEmpty ?? true) {
+          throw Exception('No similar products to recommend');
+        } else {
+          int count = 0;
+
+          for (final product in products!) {
+            if (count == 15) {
+              break;
+            }
+            print(product.code);
+            print(product.nutriscoreGrade);
+            print(product.productName);
+            addRecomendations(barcode, product);
+            count++;
+          }
+        }
+      } else {
+        throw Exception('Failed to load similar products with error');
+      }
+    } else {
+      throw Exception('Category not found for barcode ${data.code}');
+    }
+  }
+
+  Future anotherCategory2(barcode, response) async {
+    final data = barcodeDataFromJson(response.body);
+    final categoryList = data.product?.categoriesTagsEn;
+    final categoryString = categoryList?.isNotEmpty == true
+        ? categoryList![categoryList.length - 3]
+        : null;
+    if (categoryString != null) {
+      print(categoryList);
+      print(categoryString);
+      log(Uri.encodeQueryComponent(categoryString));
+      final enCategory = Uri.encodeQueryComponent(categoryString);
+      final similarProductsResponse = await http.get(Uri.parse(
+          'https://us.openfoodfacts.org/api/v2/search?categories_tags_en=$enCategory&nutrition_grades_tags=a&fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,code,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json'));
+
+      if (similarProductsResponse.statusCode == 200) {
+        final similarProductsData =
+            searchDataFromJson(similarProductsResponse.body);
+        final products = similarProductsData.products;
+
+        if (products?.isEmpty ?? true) {
+          anotherCategory3(barcode, response);
+        } else {
+          int count = 0;
+
+          for (final product in products!) {
+            if (count == 15) {
+              break;
+            }
+            print(product.code);
+            print(product.nutriscoreGrade);
+            print(product.productName);
+            addRecomendations(barcode, product);
+            count++;
+          }
+        }
+      } else {
+        throw Exception('Failed to load similar products with error');
+      }
+    } else {
+      throw Exception('Category not found for barcode ${data.code}');
+    }
+  }
+
+  Future anotherCategory(barcode, response) async {
+    final data = barcodeDataFromJson(response.body);
+    final categoryList = data.product?.categoriesTagsEn;
+    final categoryString = categoryList?.isNotEmpty == true
+        ? categoryList![categoryList.length - 2]
+        : null;
+    if (categoryString != null) {
+      print(categoryList);
+      print(categoryString);
+      log(Uri.encodeQueryComponent(categoryString));
+      final enCategory = Uri.encodeQueryComponent(categoryString);
+      final similarProductsResponse = await http.get(Uri.parse(
+          'https://us.openfoodfacts.org/api/v2/search?categories_tags_en=$enCategory&nutrition_grades_tags=a&fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,code,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json'));
+
+      if (similarProductsResponse.statusCode == 200) {
+        final similarProductsData =
+            searchDataFromJson(similarProductsResponse.body);
+        final products = similarProductsData.products;
+
+        if (products?.isEmpty ?? true) {
+          anotherCategory2(barcode, response);
+        } else {
+          int count = 0;
+
+          for (final product in products!) {
+            if (count == 15) {
+              break;
+            }
+            print(product.code);
+            print(product.nutriscoreGrade);
+            print(product.productName);
+            addRecomendations(barcode, product);
+            count++;
+          }
+        }
+      } else {
+        throw Exception('Failed to load similar products with error');
+      }
+    } else {
+      throw Exception('Category not found for barcode ${data.code}');
+    }
+  }
+
+  Future getSimilarProducts(String barcode) async {
+    final response = await http.get(Uri.parse(
+        'https://us.openfoodfacts.org/api/v2/product/$barcode?fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json'));
+
+    if (response.statusCode == 200) {
+      final data = barcodeDataFromJson(response.body);
+      final categoryList = data.product?.categoriesTagsEn;
+      final categoryString =
+          categoryList?.isNotEmpty == true ? categoryList!.last : null;
+      if (categoryString != null) {
+        print(categoryList);
+        print(categoryString);
+        log(Uri.encodeQueryComponent(categoryString));
+        final encodedCategory = Uri.encodeQueryComponent(categoryString);
+        final similarProductsResponse = await http.get(Uri.parse(
+            'https://us.openfoodfacts.org/api/v2/search?categories_tags_en=$encodedCategory&nutrition_grades_tags=a&fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,code,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json'));
+
+        if (similarProductsResponse.statusCode == 200) {
+          final similarProductsData =
+              searchDataFromJson(similarProductsResponse.body);
+          final products = similarProductsData.products;
+
+          if (products?.isEmpty ?? true) {
+            anotherCategory(barcode, response);
+          } else {
+            int count = 0;
+
+            for (final product in products!) {
+              if (count == 15) {
+                break;
+              }
+              print(product.code);
+              print(product.nutriscoreGrade);
+              print(product.productName);
+              addRecomendations(barcode, product);
+              count++;
+            }
+          }
+        } else {
+          throw Exception('Failed to load similar products with error');
+        }
+      } else {
+        throw Exception('Category not found for barcode ${data.code}');
+      }
+    } else {
+      throw Exception(
+          'Failed to load product details with error ${response.statusCode}');
+    }
+  }
+
+  Future getSimilarProducts2(String barcode) async {
+    final response = await http.get(Uri.parse(
+        'https://us.openfoodfacts.org/api/v2/product/$barcode?fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json'));
+
+    if (response.statusCode == 200) {
+      final data = barcodeDataFromJson(response.body);
+      final categoryList = data.product?.categoriesTagsEn;
+
+      if (categoryList != null && categoryList.isNotEmpty) {
+        for (int i = categoryList.length - 1; i >= 0; i--) {
+          int count = 0;
+          final categoryString = categoryList[i];
+
+          final encodedCategory = Uri.encodeQueryComponent(categoryString);
+          final similarProductsResponse = await http.get(Uri.parse(
+              'https://us.openfoodfacts.org/api/v2/search?categories_tags_en=$encodedCategory&nutrition_grades_tags=a&fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,code,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json'));
+
+          if (similarProductsResponse.statusCode == 200) {
+            final similarProductsData =
+                searchDataFromJson(similarProductsResponse.body);
+            final products = similarProductsData.products;
+
+            if (products?.isNotEmpty ?? true) {
+              for (final product in products!) {
+                print(categoryString);
+                print(encodedCategory);
+                print(product.code);
+                print(product.nutriscoreGrade);
+                print(product.productName);
+                addRecomendations(barcode, product);
+                count++;
+                print(count);
+              }
+              if (count == 5) {
+                break;
+              }
+            }
+          }
+        }
+      } else {
+        throw Exception('Categories not found for barcode $barcode');
+      }
+    } else {
+      throw Exception(
+          'Failed to load product details with error ${response.statusCode}');
+    }
   }
 
   Future searchBarcode(String barcode, Map data) async {
@@ -217,7 +511,7 @@ class FirebaseCommands {
           "ID": false,
           "brand": data['brand'],
           'barcode': barcode,
-          'name': barcodeData.product?.productName! ?? 'Product',
+          'name': barcodeData.product?.productName ?? 'Product',
           "nutrition": {
             'score': barcodeData.product?.nutriscoreScore ?? 0.toString(),
             'grade': barcodeData.product?.nutritionGrades ?? 'No Grade',

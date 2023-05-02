@@ -8,15 +8,15 @@ import 'package:kart2/models/firebase_commands.dart';
 import 'package:kart2/models/grade_cal.dart';
 import 'package:kart2/models/scoreColor.dart';
 
-class searchProduct extends StatefulWidget {
-  Map<String, dynamic> data;
-  searchProduct(this.data);
+class SearchProduct extends StatefulWidget {
+  final Map<String, dynamic> data;
+  const SearchProduct(this.data, {super.key});
 
   @override
-  State<searchProduct> createState() => _searchProductState();
+  State<SearchProduct> createState() => SearchProductState();
 }
 
-class _searchProductState extends State<searchProduct> {
+class SearchProductState extends State<SearchProduct> {
   rowInfo(String title, String amount, Icon pic) {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
@@ -183,7 +183,7 @@ class _searchProductState extends State<searchProduct> {
                     SizedBox(
                       height: 50,
                       width: 150,
-                      child: scoreColors().scorePic(widget.data['grade']),
+                      child: ScoreColors().scorePic(widget.data['grade']),
                     )
                   ],
                 )

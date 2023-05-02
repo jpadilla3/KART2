@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class ItemDetailsPage extends StatelessWidget {
   final Map<String, String> item;
 
-  ItemDetailsPage({required this.item});
+  const ItemDetailsPage({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -21,15 +21,15 @@ class ItemDetailsPage extends StatelessWidget {
               width: 120.0,
               fit: BoxFit.cover,
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Text(
               item['title']!,
-              style: TextStyle(
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 24.0,
               ),
             ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Text(
               item['subtitle']!,
               style: TextStyle(

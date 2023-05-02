@@ -7,7 +7,7 @@ import 'package:kart2/onboarding/authPage.dart';
 import 'package:kart2/onboarding/sign up pages/Conditions/Allergies.dart';
 
 class ProfilePage extends StatefulWidget {
-  ProfilePage({super.key});
+  const ProfilePage({super.key});
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
@@ -21,7 +21,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void signUserOut() {
     FirebaseAuth.instance.signOut();
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => authPage()));
+        context, MaterialPageRoute(builder: (context) => const AuthPage()));
   }
 
   int currentIndex1 = 0;

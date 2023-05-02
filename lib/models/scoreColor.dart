@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class scoreColors {
+class ScoreColors {
   scoreColor(String grade) {
     if (grade == 'a') {
       return Container(
@@ -85,7 +85,7 @@ class scoreColors {
 
   scoreInfo(String allergen) {
     if (allergen == 'false' || allergen == '') {
-      return Text('');
+      return const Text('');
     } else {
       return Padding(
         padding: const EdgeInsets.only(top: 10, bottom: 10),
@@ -107,7 +107,7 @@ class scoreColors {
 
   scoreInfo2(String condition) {
     if (condition == 'false' || condition == '') {
-      return Text('');
+      return const Text('');
     } else {
       return Padding(
         padding: const EdgeInsets.only(top: 10, bottom: 10),
@@ -130,7 +130,7 @@ class scoreColors {
 
   scoreInfo3(String condition) {
     if (condition == 'false' || condition == '') {
-      return Text('');
+      return const Text('');
     } else {
       return Padding(
         padding: const EdgeInsets.only(top: 10, bottom: 10),

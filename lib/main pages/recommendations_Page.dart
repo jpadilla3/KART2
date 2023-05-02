@@ -75,7 +75,7 @@ class _RecPageState extends State<RecommendationsPage> {
 
       //passes current user email and barcode
       FirebaseCommands().addBarcode(barcodeScanRes);
-      FirebaseCommands().updateBarcode(barcodeScanRes); //recommendation
+      FirebaseCommands().getSimilarProducts2(barcodeScanRes); //recommendation
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
     }
@@ -149,7 +149,7 @@ class _RecPageState extends State<RecommendationsPage> {
           con.add('vegetarian');
         }
         item['brand'] =
-            barcodeData.product?.brands ?? barcodeData.product?.productName!;
+            barcodeData.product?.brands ?? barcodeData.product?.productName;
         item['score'] = barcodeData.product?.nutriscoreScore ?? 0.toString();
         item['grade'] = barcodeData.product?.nutritionGrades ?? 'No Grade';
         item['calories'] =
@@ -168,7 +168,7 @@ class _RecPageState extends State<RecommendationsPage> {
             barcodeData.product?.nutriments?.proteins ?? 0.toString();
         item['fiber'] =
             barcodeData.product?.nutriscoreData?.fiber ?? 0.toString();
-        item['name'] = barcodeData.product?.productName! ?? 'Product';
+        item['name'] = barcodeData.product?.productName ?? 'Product';
         item['picture'] = barcodeData
                 .product?.selectedImages?.front?.small?.en ??
             'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg';
@@ -176,7 +176,7 @@ class _RecPageState extends State<RecommendationsPage> {
         item['condition'] = con;
         return item;
       } else {
-        return AboutDialog();
+        return const AboutDialog();
       }
     }
   }
@@ -306,7 +306,7 @@ class _RecPageState extends State<RecommendationsPage> {
 
                               return Padding(
                                 padding: const EdgeInsets.only(left: 0),
-                                child: Container(
+                                child: SizedBox(
                                   height: 220,
                                   width: 330,
                                   child: Row(
@@ -319,7 +319,7 @@ class _RecPageState extends State<RecommendationsPage> {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      productPage(
+                                                      ProductPage(
                                                           documentSnapshot[
                                                               'barcode'],
                                                           true,
@@ -354,7 +354,7 @@ class _RecPageState extends State<RecommendationsPage> {
                                                 ),
                                               ),
                                             ),
-                                            Container(
+                                            SizedBox(
                                               width: 120,
                                               height: 30,
                                               child: Row(
@@ -570,8 +570,7 @@ class _RecPageState extends State<RecommendationsPage> {
                                         ),
                                       ),
                                       const Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 10),
+                                        padding: EdgeInsets.only(bottom: 10),
                                         child: SizedBox(
                                           width: 70,
                                           child: Icon(
@@ -587,7 +586,7 @@ class _RecPageState extends State<RecommendationsPage> {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      recoList(documentSnapshot[
+                                                      RecoList(documentSnapshot[
                                                           'barcode'])));
                                         },
                                         child: Column(
@@ -600,7 +599,7 @@ class _RecPageState extends State<RecommendationsPage> {
                                                   width: 120,
                                                   color: Colors.indigo[400],
                                                   alignment: Alignment.center,
-                                                  child: Text('Picture')),
+                                                  child: const Text('Picture')),
                                             ),
                                             Container(
                                                 height: 50,
