@@ -121,32 +121,6 @@ class SearchProductState extends State<SearchProduct> {
               Icons.arrow_back,
               color: Colors.indigo[400],
             )),
-        actions: [
-          IconButton(
-              onPressed: () {
-                setState(() {
-                  fav = !fav;
-                });
-                FirebaseCommands().favoriteBarcode(
-                    widget.data['barcode'],
-                    widget.data['name'],
-                    widget.data['grade'],
-                    false,
-                    widget.data['pic'],
-                    widget.data['allergens'],
-                    widget.data['conditions']);
-                snackMessage(false, widget.data['barcode']);
-              },
-              icon: fav
-                  ? Icon(
-                      Icons.favorite,
-                      color: Colors.indigo[400],
-                    )
-                  : Icon(
-                      Icons.favorite_border_outlined,
-                      color: Colors.indigo[400],
-                    ))
-        ],
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -187,6 +161,64 @@ class SearchProductState extends State<SearchProduct> {
                     )
                   ],
                 )
+              ],
+            ),
+            Row(
+              children: [
+                FutureBuilder(
+                    future: GradeCal().gradeCalculateInfo2(
+                        widget.data['allergens'],
+                        widget.data['conditions']['vegan'],
+                        widget.data['conditions']['vegetarian']),
+                    builder: ((context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        if (snapshot.hasError) {
+                          return Text(
+                            '${snapshot.error} occurred',
+                          );
+                        } else {
+                          final data1 = snapshot.data as List<String>;
+                          return Column(
+                            children: [
+                              Row(
+                                  //vegan
+                                  children: [
+                                    const SizedBox(
+                                      width: 35,
+                                    ),
+                                    ScoreColors().scoreInfo2(data1[0]),
+                                  ]),
+                              Row(
+                                  //vegetarian
+                                  children: [
+                                    const SizedBox(
+                                      width: 35,
+                                    ),
+                                    ScoreColors().scoreInfo2(data1[1]),
+                                  ]),
+                              Row(
+                                  //mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(
+                                      width: 25,
+                                    ),
+                                    ScoreColors().scoreInfo3(data1[2]),
+                                  ]),
+                              Row(
+                                  //mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(
+                                      width: 20,
+                                    ),
+                                    ScoreColors().scoreInfo(data1[3]),
+                                  ]),
+                            ],
+                          );
+                        }
+                      } else {
+                        return const Text('');
+                      }
+                    }))
               ],
             ),
             const SizedBox(
@@ -345,87 +377,6 @@ class SearchProductState extends State<SearchProduct> {
             const SizedBox(
               height: 40,
             ),
-            InkResponse(
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(10)),
-              highlightColor: Colors.indigo,
-              highlightShape: BoxShape.rectangle,
-              onTap: () {
-                FirebaseCommands().favoriteBarcode(
-                    widget.data['barcode'],
-                    widget.data['name'],
-                    widget.data['grade'],
-                    false,
-                    widget.data['pic'],
-                    widget.data['allergens'],
-                    widget.data['conditions']);
-                snackMessage(false, widget.data['barcode']);
-              },
-              child: Container(
-                height: 60,
-                width: 350,
-                decoration: BoxDecoration(
-                    borderRadius:
-                        const BorderRadius.vertical(top: Radius.circular(10)),
-                    border: Border.all(color: Colors.indigo, width: 2.0)),
-                child: Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Favorite',
-                        style: GoogleFonts.bebasNeue(
-                            fontSize: 20, color: Colors.black),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      const Icon(Icons.favorite_border_outlined,
-                          color: Colors.black)
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            InkResponse(
-              borderRadius:
-                  const BorderRadius.vertical(bottom: Radius.circular(10)),
-              highlightColor: Colors.indigo,
-              highlightShape: BoxShape.rectangle,
-              onTap: () {
-                FirebaseCommands()
-                    .destroyBarcode(widget.data['barcode'], false);
-                FirebaseCommands().removeFavorite(widget.data['barcode']);
-                snackMessage(true, widget.data['barcode']);
-              },
-              child: Container(
-                height: 60,
-                width: 350,
-                decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.vertical(
-                        bottom: Radius.circular(10)),
-                    border: Border.all(color: Colors.indigo, width: 2.0)),
-                child: Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Delete',
-                        style: GoogleFonts.bebasNeue(
-                            fontSize: 20, color: Colors.black),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      const Icon(Ionicons.trash_outline, color: Colors.black)
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 70,
-            )
           ],
         ),
       ),

@@ -739,7 +739,7 @@ class MySearchDelegate extends SearchDelegate {
         "allergens": result.products?[i].allergens?.names ?? "Not avaliable",
       });
 
-      print("${data[i]['name']} : ${data[i]['barcode']}");
+      print("${data[i]['name']} : ${data[i]['conditions']['vegan']}");
     }
   }
 
@@ -889,8 +889,160 @@ class MySearchDelegate extends SearchDelegate {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 crossAxisAlignment: CrossAxisAlignment.end,
-                                children: const [
-                                  SizedBox(
+                                children: [
+                                  //vegan
+                                  FutureBuilder(
+                                      future: GradeCal().gradeCalculate2(
+                                          data[index]['allergens'],
+                                          data[index]['conditions']['vegan'],
+                                          data[index]['conditions']
+                                              ['vegetarian']),
+                                      builder:
+                                          (BuildContext context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.done) {
+                                          if (snapshot.hasError) {
+                                            return Text(
+                                                '${snapshot.error} occurred');
+                                          } else {
+                                            final data =
+                                                snapshot.data as List<bool>;
+
+                                            if (data[0] == false) {
+                                              return const SizedBox(
+                                                child: Padding(
+                                                  padding:
+                                                      EdgeInsets.only(right: 2),
+                                                  child: Icon(
+                                                    Icons.energy_savings_leaf,
+                                                    color: Colors.green,
+                                                  ),
+                                                ),
+                                              );
+                                            } else {
+                                              return const Text('');
+                                            }
+                                          }
+                                        } else {
+                                          return const Text('');
+                                        }
+                                      }),
+
+                                  //vegetarian
+                                  FutureBuilder(
+                                      future: GradeCal().gradeCalculate2(
+                                          data[index]['allergens'],
+                                          data[index]['conditions']['vegan'],
+                                          data[index]['conditions']
+                                              ['vegetarian']),
+                                      builder:
+                                          (BuildContext context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.done) {
+                                          if (snapshot.hasError) {
+                                            return Text(
+                                                '${snapshot.error} occurred');
+                                          } else {
+                                            final data =
+                                                snapshot.data as List<bool>;
+
+                                            if (data[1] == false) {
+                                              return const SizedBox(
+                                                child: Padding(
+                                                  padding:
+                                                      EdgeInsets.only(right: 2),
+                                                  child: Icon(
+                                                    Icons.eco_outlined,
+                                                    color: Colors.green,
+                                                  ),
+                                                ),
+                                              );
+                                            } else {
+                                              return const Text('');
+                                            }
+                                          }
+                                        } else {
+                                          return const Text('');
+                                        }
+                                      }),
+
+                                  //lactose intolerant
+                                  FutureBuilder(
+                                      future: GradeCal().gradeCalculate2(
+                                          data[index]['allergens'],
+                                          data[index]['conditions']['vegan'],
+                                          data[index]['conditions']
+                                              ['vegetarian']),
+                                      builder:
+                                          (BuildContext context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.done) {
+                                          if (snapshot.hasError) {
+                                            return Text(
+                                                '${snapshot.error} occurred');
+                                          } else {
+                                            final data =
+                                                snapshot.data as List<bool>;
+
+                                            if (data[2] == true) {
+                                              return SizedBox(
+                                                child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            right: 2),
+                                                    child: Image.asset(
+                                                      'assets/images/milk.png',
+                                                      width: 30,
+                                                      height: 30,
+                                                    )),
+                                              );
+                                            } else {
+                                              return const Text('');
+                                            }
+                                          }
+                                        } else {
+                                          return const Text('');
+                                        }
+                                      }),
+
+                                  //allergy
+                                  FutureBuilder(
+                                      future: GradeCal().gradeCalculate2(
+                                          data[index]['allergens'],
+                                          data[index]['conditions']['vegan'],
+                                          data[index]['conditions']
+                                              ['vegetarian']),
+                                      builder:
+                                          (BuildContext context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.done) {
+                                          if (snapshot.hasError) {
+                                            return Text(
+                                                '${snapshot.error} occurred');
+                                          } else {
+                                            final data =
+                                                snapshot.data as List<bool>;
+
+                                            if (data[3] == true) {
+                                              return const SizedBox(
+                                                child: Padding(
+                                                  padding:
+                                                      EdgeInsets.only(right: 2),
+                                                  child: Icon(
+                                                    Icons.info_outline,
+                                                    color: Colors.red,
+                                                  ),
+                                                ),
+                                              );
+                                            } else {
+                                              return const Text('');
+                                            }
+                                          }
+                                        } else {
+                                          return const Text('');
+                                        }
+                                      }),
+                                  const SizedBox(
                                     child: Padding(
                                       padding: EdgeInsets.only(right: 10),
                                       child: Icon(

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:kart2/models/barcode_data_model.dart';
 import 'package:http/http.dart' as http;
@@ -536,6 +537,24 @@ class FirebaseCommands {
         }); //input searched barcodes
       }
     }
+  }
+
+  Future favBar(Map item) async {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.email.toString())
+        .collection('favorites')
+        .doc(item['barcode'])
+        .set({
+      'time': FieldValue.serverTimestamp(),
+      'barcode': item['barcode'],
+      'name': item['name'],
+      'grade': item['grade'],
+      'ID': false,
+      'picture': item['pic'],
+      "Allergens": item['allergens'],
+      "conditions": item['conditions']
+    });
   }
 
   Future favoriteBarcode(String barcode, String name, String grade, bool ID,
