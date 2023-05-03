@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import 'package:kart2/main%20pages/nav_bar.dart';
 import 'package:kart2/onboarding/sign%20up%20pages/about%20pages/intro_screen1.dart';
 import 'package:kart2/onboarding/sign%20up%20pages/about%20pages/intro_screen2.dart';
 import 'package:kart2/onboarding/sign%20up%20pages/about%20pages/intro_screen3.dart';
 import 'package:kart2/onboarding/sign%20up%20pages/about%20pages/intro_screen4.dart';
+import 'package:kart2/onboarding/sign%20up%20pages/about%20pages/intro_screen5.dart';
+import 'package:kart2/onboarding/sign%20up%20pages/about%20pages/intro_screen6.dart';
+
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:kart2/onboarding/sign up pages/Conditions/Allergies.dart';
 import 'package:kart2/models/firebase_commands.dart';
@@ -14,10 +16,10 @@ class AboutPages extends StatefulWidget {
   const AboutPages({super.key});
 
   @override
-  State<AboutPages> createState() => AboutPagesState();
+  State<AboutPages> createState() => _AboutPagesState();
 }
 
-class AboutPagesState extends State<AboutPages> {
+class _AboutPagesState extends State<AboutPages> {
   //keep track of pages
   PageController _controller = PageController();
 
@@ -32,16 +34,18 @@ class AboutPagesState extends State<AboutPages> {
         PageView(
           onPageChanged: (value) {
             setState(() {
-              onLastPage = (value == 3);
+              onLastPage = (value == 5);
               onFirstPage = (value == 0);
             });
           },
           controller: _controller,
           children: const [
-            IntroScreen1(),
-            IntroScreen2(),
-            IntroScreen3(),
-            IntroScreen4()
+            introScreen1(),
+            introScreen2(),
+            introScreen3(),
+            introScreen4(),
+            introScreen5(),
+            introScreen6(),
           ],
         ),
         Container(
@@ -58,7 +62,7 @@ class AboutPagesState extends State<AboutPages> {
                           style: GoogleFonts.bebasNeue(fontSize: 25),
                         ),
                         onTap: () {
-                          _controller.jumpToPage(3);
+                          _controller.jumpToPage(5);
                         },
                       )
                     : GestureDetector(
@@ -74,7 +78,7 @@ class AboutPagesState extends State<AboutPages> {
                       ),
                 SmoothPageIndicator(
                   controller: _controller,
-                  count: 4,
+                  count: 6,
                 ),
 
                 //continue button

@@ -3,8 +3,8 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class introScreen4 extends StatelessWidget {
-  const introScreen4({super.key});
+class introScreen6 extends StatelessWidget {
+  const introScreen6({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,18 +15,20 @@ class introScreen4 extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: EdgeInsets.only(right: 35),
-              child: Image.asset('assets/images/Searching.gif'),
+              padding: EdgeInsets.only(right: 50),
+              child: Image.asset('assets/images/KART.gif'),
             ),
             Text(
-              'Search for your favorite',
+              "You're All Set!",
               style: GoogleFonts.oswald(fontSize: 40),
-              textAlign: TextAlign.center,
             ),
             Text(
-              'food products',
-              style: GoogleFonts.oswald(fontSize: 40),
-              textAlign: TextAlign.center,
+              "Previous pages will be on information page",
+              style: GoogleFonts.oswald(fontSize: 22),
+            ),
+            Text(
+              "on top right corner button on main page",
+              style: GoogleFonts.oswald(fontSize: 22),
             ),
             const SizedBox(
               height: 80,
