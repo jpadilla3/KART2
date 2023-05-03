@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:url_launcher/url_launcher.dart';
 
+import '../onboarding/sign up pages/about_pages2/IconLegend.dart';
+
 final Uri _url = Uri.parse('https://us.openfoodfacts.org/');
 final Uri _url2 = Uri.parse('https://world.openfoodfacts.org/nutriscore');
 
@@ -53,6 +55,52 @@ class InfoPageState extends State<InfoPage> {
           SliverToBoxAdapter(
             child: Column(
               children: [
+                Column(
+                  children: const <Widget>[
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        "  Getting Started: ",
+                        style: TextStyle(
+                            fontSize: 30, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                  ],
+                ),
+                Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Card(
+                      color: Colors.white,
+                      margin: const EdgeInsets.all(20),
+                      clipBehavior: Clip.hardEdge,
+                      child: InkWell(
+                        splashColor: Colors.grey,
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => iconLegend()));
+                        },
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            ListTile(
+                              leading: Image.asset(
+                                "assets/images/logo.png",
+                                height: 70,
+                                width: 70,
+                              ),
+                              title: const Text('Icons Legend'),
+                              subtitle: const Text(
+                                'View what each icon symbolizes',
+                                style: TextStyle(fontSize: 10),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )),
                 Column(
                   children: const <Widget>[
                     SizedBox(
