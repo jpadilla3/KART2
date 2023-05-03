@@ -214,7 +214,7 @@ class _RecPageState extends State<RecommendationsPage> {
                   )),
               expandedHeight: 147,
               title: Text(
-                'history',
+                'Recommendations',
                 style: GoogleFonts.bebasNeue(color: Colors.black, fontSize: 45),
               ),
               actions: [
@@ -289,7 +289,7 @@ class _RecPageState extends State<RecommendationsPage> {
                                         ConnectionState.done) {
                                       Map<String, dynamic> data = snapshot.data!
                                           .data() as Map<String, dynamic>;
-                                      return Expanded(
+                                      return SizedBox(
                                         child: Text(
                                           '${data['name']}',
                                           textAlign: TextAlign.center,
@@ -340,18 +340,25 @@ class _RecPageState extends State<RecommendationsPage> {
                                               ),
                                             ),
                                             Container(
-                                              height: 50,
+                                              height: 45,
                                               width: 120,
                                               alignment: Alignment.center,
-                                              child: Expanded(
-                                                child: Text(
-                                                  '${documentSnapshot['name']}',
-                                                  textAlign: TextAlign.center,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  softWrap: false,
-                                                  maxLines: 2,
-                                                ),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Flexible(
+                                                    child: Text(
+                                                      '${documentSnapshot['name']}',
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      softWrap: false,
+                                                      maxLines: 2,
+                                                    ),
+                                                  )
+                                                ],
                                               ),
                                             ),
                                             SizedBox(
@@ -368,7 +375,10 @@ class _RecPageState extends State<RecommendationsPage> {
                                                               documentSnapshot[
                                                                   'Allergens'],
                                                               documentSnapshot[
-                                                                  'conditions']),
+                                                                  'conditions'])
+                                                          .catchError((error) =>
+                                                              throw Exception(
+                                                                  'Failed to calculate Allergens and Conditions: $error')),
                                                       builder:
                                                           (BuildContext context,
                                                               snapshot) {
@@ -418,7 +428,10 @@ class _RecPageState extends State<RecommendationsPage> {
                                                               documentSnapshot[
                                                                   'Allergens'],
                                                               documentSnapshot[
-                                                                  'conditions']),
+                                                                  'conditions'])
+                                                          .catchError((error) =>
+                                                              throw Exception(
+                                                                  'Failed to calculate Allergens and Conditions: $error')),
                                                       builder:
                                                           (BuildContext context,
                                                               snapshot) {
@@ -469,7 +482,10 @@ class _RecPageState extends State<RecommendationsPage> {
                                                               documentSnapshot[
                                                                   'Allergens'],
                                                               documentSnapshot[
-                                                                  'conditions']),
+                                                                  'conditions'])
+                                                          .catchError((error) =>
+                                                              throw Exception(
+                                                                  'Failed to calculate Allergens and Conditions: $error')),
                                                       builder:
                                                           (BuildContext context,
                                                               snapshot) {
@@ -520,7 +536,10 @@ class _RecPageState extends State<RecommendationsPage> {
                                                               documentSnapshot[
                                                                   'Allergens'],
                                                               documentSnapshot[
-                                                                  'conditions']),
+                                                                  'conditions'])
+                                                          .catchError((error) =>
+                                                              throw Exception(
+                                                                  'Failed to calculate Allergens and Conditions: $error')),
                                                       builder:
                                                           (BuildContext context,
                                                               snapshot) {
@@ -663,7 +682,7 @@ class _RecPageState extends State<RecommendationsPage> {
 
   Widget buildRowShimmer() => Padding(
         padding: const EdgeInsets.only(left: 0),
-        child: Container(
+        child: SizedBox(
           height: 200,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -685,11 +704,12 @@ class _RecPageState extends State<RecommendationsPage> {
                     height: 50,
                     width: 120,
                     alignment: Alignment.center,
-                    child: ShimmerLoader.rectangular(width: 50, height: 16),
+                    child:
+                        const ShimmerLoader.rectangular(width: 50, height: 16),
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 width: 70,
                 child: Icon(Icons.change_circle_outlined),
               ),
