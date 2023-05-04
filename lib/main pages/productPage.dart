@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -24,12 +26,14 @@ class ProductPage extends StatefulWidget {
 }
 
 class ProductPageState extends State<ProductPage> {
+  Future<void>? _processedDataFuture;
   bool _loading = true;
   Map<String, dynamic>? appBarTitleData;
   Map<String, dynamic>? productInfoData;
   Map<String, dynamic>? productImageData;
-  List? productGradeInfoData;
+  late List? productGradeInfoData;
   Map<String, dynamic>? productNutritionInfoData;
+  late StreamSubscription<DocumentSnapshot<Object?>> _streamSubscription;
 
   // Future<void> fetchData() async {
   //   final collectionRef =
@@ -56,33 +60,65 @@ class ProductPageState extends State<ProductPage> {
   //   }
   // }
 
+  Stream<DocumentSnapshot<Object?>> fetchData() {
+    final userDocId = FirebaseAuth.instance.currentUser!.email.toString();
+    final collectionRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(userDocId)
+        .collection(widget.type ? 'scanned' : 'search');
+
+    return collectionRef.doc(widget.barcode).snapshots();
+  }
+
+  @override
   @override
   void initState() {
     super.initState();
-    //fetchData();
+    _streamSubscription =
+        getCollectionReference(widget.type ? 'scanned' : 'search')
+            .listen((documentSnapshot) {
+      if (documentSnapshot.exists) {
+        _processedDataFuture =
+            processData(documentSnapshot.data() as Map<String, dynamic>);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _streamSubscription.cancel();
+    super.dispose();
   }
 
   // Returns Stream<DocumentSnapshot>
-  Stream<DocumentSnapshot> getCollectionReference(
-      String collectionName) async* {
+  Stream<DocumentSnapshot<Object?>> getCollectionReference(
+      String collectionName) {
     final userDocId = FirebaseAuth.instance.currentUser!.email.toString();
     final collectionRef = FirebaseFirestore.instance
         .collection('users')
         .doc(userDocId)
         .collection(collectionName);
-    yield* collectionRef.doc(widget.barcode).snapshots();
+    return collectionRef.doc(widget.barcode).snapshots();
   }
 
   // Processes the fetched data
-  void processData(Map<String, dynamic> data) {
-    final gradeData =
-        GradeCal().gradeCalculateInfo(data['Allergens'], data['conditions']);
+  Future<void> processData(Map<String, dynamic> data) async {
+    print('Processing data: $data');
+    final gradeData = await GradeCal()
+        .gradeCalculateInfo3(data['Allergens'], data['conditions']);
+    print('Processed gradeData: $gradeData');
     setState(() {
-      appBarTitleData = data;
-      productInfoData = data;
-      productImageData = data;
-      productGradeInfoData = gradeData;
-      productNutritionInfoData = data;
+      if (appBarTitleData != data ||
+          productInfoData != data ||
+          productImageData != data ||
+          productGradeInfoData != gradeData ||
+          productNutritionInfoData != data) {
+        appBarTitleData = data;
+        productInfoData = data;
+        productImageData = data;
+        productGradeInfoData = gradeData;
+        productNutritionInfoData = data;
+      }
       _loading = false;
     });
   }
@@ -312,10 +348,61 @@ class ProductPageState extends State<ProductPage> {
     }
   }
 
+  Widget _fetchRecommendedData() {
+    return const SizedBox(
+      height: 20,
+    );
+    SizedBox(
+      height: 50,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 20),
+            child: Text(
+              "Recommendations",
+              style: GoogleFonts.bebasNeue(fontSize: 35),
+            ),
+          ),
+        ],
+      ),
+    );
+    const SizedBox(
+      height: 10,
+    );
+    SizedBox(
+        height: 210,
+        child: ListView.builder(
+            physics: const ClampingScrollPhysics(),
+            shrinkWrap: true,
+            scrollDirection: Axis.horizontal,
+            itemCount: 8,
+            itemBuilder: (BuildContext context, int index) => Card(
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 160,
+                        width: 200,
+                        color: Colors.indigo[400],
+                        child: const Center(
+                          child: Text('picture'),
+                        ),
+                      ),
+                      const Center(
+                        child: Text('title'),
+                      )
+                    ],
+                  ),
+                )));
+    const SizedBox(
+      height: 70,
+    );
+  }
+
   Future favoriteItem(String barcode) async {
     Map<String, dynamic> item = {};
-    List<String> con = [];
-    List<String> alerg = [];
+    late List<String> con = [];
+    late List<String> alerg = [];
     int count = 0;
     int count2 = 0;
     final String url =
@@ -494,41 +581,52 @@ class ProductPageState extends State<ProductPage> {
       //new Builder(builder: (BuildContext context) {}),
       body: StreamBuilder<DocumentSnapshot>(
         stream: getCollectionReference(widget.type ? 'scanned' : 'search'),
-        builder:
-            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        builder: (BuildContext context,
+            AsyncSnapshot<DocumentSnapshot<Object?>> snapshot) {
           if (snapshot.hasError) {
+            print('Snapshot error: ${snapshot.error}');
             return Center(child: Text('Error: ${snapshot.error}'));
           }
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasData && snapshot.data!.exists) {
-            processData(snapshot.data!.data() as Map<String, dynamic>);
-            return SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                children: [
-                  _fetchProductImageData(),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  _fetchProductInfoData(),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  _fetchProductGradeInfoData(),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  _fetchProductNutritionInfoData(),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                ],
-              ),
+            print('Snapshot data: ${snapshot.data!.data()}');
+
+            return FutureBuilder(
+              future: _processedDataFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else {
+                  return SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      children: [
+                        _fetchProductImageData(),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        _fetchProductInfoData(),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        _fetchProductGradeInfoData(),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        _fetchProductNutritionInfoData(),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              },
             );
           } else {
-            return Center(child: Text('No data found'));
+            return const Center(child: Text('No data found'));
           }
         },
       ),

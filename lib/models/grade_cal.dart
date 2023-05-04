@@ -423,4 +423,96 @@ class GradeCal {
       return [vegan, vegetarian, lac, allergic];
     }
   }
+
+  Future<List<dynamic>> gradeCalculateInfo3(
+      List<dynamic>? productAllergen, List<dynamic>? productCondition) async {
+    List<String> al = [
+      'Gluten',
+      'Lupin',
+      'Celery',
+      'Fish',
+      'Crustaceans',
+      'Sesame-Seeds',
+      'Molluscs',
+      'Peanuts',
+      'Nuts',
+      'Soybeans',
+      'Mustard',
+      'Eggs'
+    ];
+    List<String> con = ['Vegan', 'Vegetarian', 'Lactose Intolerant'];
+
+    List<String> allergy = [];
+    List<String> condition = [];
+
+    var col = FirebaseFirestore.instance.collection('users');
+    var docSnapshot = await col
+        .doc(FirebaseAuth.instance.currentUser?.email.toString())
+        .get();
+    int count = 0;
+    int count2 = 0;
+
+    String allergic = '';
+    String vegan = '';
+    String vegetarian = '';
+    String lac = '';
+
+    if (docSnapshot.exists) {
+      Map<String, dynamic> data = docSnapshot.data()!;
+      for (int i = 0; i < 12; i++) {
+        if (data["Allergies"][al[i]] == true) {
+          allergy.add(al[i]);
+        } else {
+          count++;
+        }
+      }
+      for (int j = 0; j < 3; j++) {
+        if (data['Conditions'][con[j]] == true) {
+          condition.add(con[j]);
+        } else {
+          count2++;
+        }
+      }
+
+      if (count == 12 && count2 == 3) {
+        allergic = 'false';
+        vegan = 'false';
+        vegetarian = 'false';
+        lac = 'false';
+      } else {
+        if (productAllergen != null) {
+          for (int i = 0; i < allergy.length; i++) {
+            if (productAllergen.contains(allergy[i].toLowerCase())) {
+              allergic = allergy[i];
+              break;
+            } else {
+              allergic = 'false';
+            }
+          }
+        } else {
+          allergic = 'false';
+        }
+
+        if (productCondition != null) {
+          if (condition.contains('Vegetarian') &&
+              productCondition.contains('vegetarian')) {
+            vegetarian = 'Vegetarian';
+          }
+          if (condition.contains("Vegan") &&
+              productCondition.contains('vegan')) {
+            vegan = 'Vegan';
+          }
+          if (condition.contains('Lactose Intolerant') &&
+              productCondition.contains('lactose intolerant')) {
+            lac = 'Lactose Intolerant';
+          }
+        } else {
+          vegan = 'false';
+          vegetarian = 'false';
+          lac = 'false';
+        }
+      }
+    }
+    return [vegan, vegetarian, lac, allergic];
+  }
 }
