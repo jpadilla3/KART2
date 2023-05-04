@@ -24,6 +24,69 @@ class ProductPage extends StatefulWidget {
 }
 
 class ProductPageState extends State<ProductPage> {
+  bool _loading = true;
+  Map<String, dynamic>? appBarTitleData;
+  Map<String, dynamic>? productInfoData;
+  Map<String, dynamic>? productImageData;
+  List? productGradeInfoData;
+  Map<String, dynamic>? productNutritionInfoData;
+
+  // Future<void> fetchData() async {
+  //   final collectionRef =
+  //       await getCollectionReference(widget.type ? 'scanned' : 'search');
+  //   final documentSnapshot = await collectionRef.doc(widget.barcode).get();
+
+  //   if (documentSnapshot.exists) {
+  //     final data = documentSnapshot.data() as Map<String, dynamic>;
+  //     final gradeData = await GradeCal()
+  //         .gradeCalculateInfo(data['Allergens'], data['conditions']);
+  //     if (mounted) {
+  //       setState(() {
+  //         appBarTitleData = data;
+  //         productInfoData = data;
+  //         productImageData = data;
+  //         productGradeInfoData = gradeData;
+  //         productNutritionInfoData = data;
+  //         _loading = false;
+  //       });
+  //     }
+  //     print('Data fetched successfully'); // Add this print statement
+  //   } else {
+  //     print('Data not found'); // Add this print statement
+  //   }
+  // }
+
+  @override
+  void initState() {
+    super.initState();
+    //fetchData();
+  }
+
+  // Returns Stream<DocumentSnapshot>
+  Stream<DocumentSnapshot> getCollectionReference(
+      String collectionName) async* {
+    final userDocId = FirebaseAuth.instance.currentUser!.email.toString();
+    final collectionRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(userDocId)
+        .collection(collectionName);
+    yield* collectionRef.doc(widget.barcode).snapshots();
+  }
+
+  // Processes the fetched data
+  void processData(Map<String, dynamic> data) {
+    final gradeData =
+        GradeCal().gradeCalculateInfo(data['Allergens'], data['conditions']);
+    setState(() {
+      appBarTitleData = data;
+      productInfoData = data;
+      productImageData = data;
+      productGradeInfoData = gradeData;
+      productNutritionInfoData = data;
+      _loading = false;
+    });
+  }
+
   void snackMessage(bool action, String barcode) {
     //true for delete
     //false for favorite
@@ -35,6 +98,217 @@ class ProductPageState extends State<ProductPage> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Added $barcode to favorites"),
       ));
+    }
+  }
+
+  Widget _fetchAppBarTitleData() {
+    if (appBarTitleData != null) {
+      return Text(
+        '${appBarTitleData?['brand']}',
+        textAlign: TextAlign.center,
+        overflow: TextOverflow.ellipsis,
+        maxLines: 2,
+        softWrap: false,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      );
+    } else {
+      return const CircularProgressIndicator(); // Return a loading indicator when data is not available
+    }
+  }
+
+  Widget _fetchProductInfoData() {
+    if (productInfoData != null) {
+      return Column(
+        children: [
+          const SizedBox(
+            height: 10,
+          ),
+          Text(
+            productInfoData?['name'] ?? 'Unknown Name',
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+            softWrap: false,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          SizedBox(
+            height: 70,
+            width: 150,
+            child:
+                ScoreColors().scorePic(productInfoData?['nutrition']['grade']),
+          ),
+        ],
+      );
+    } else {
+      return const CircularProgressIndicator();
+    }
+  }
+
+  Widget _fetchProductImageData() {
+    if (productImageData != null) {
+      return Image.network('${productImageData?['picture']}');
+    } else {
+      return const CircularProgressIndicator();
+    }
+  }
+
+  Widget _fetchProductGradeInfoData() {
+    if (productGradeInfoData != null) {
+      return Column(
+        children: [
+          Row(
+            //vegan
+            children: [
+              const SizedBox(
+                width: 35,
+              ),
+              ScoreColors().scoreInfo2(productGradeInfoData?[0]),
+            ],
+          ),
+          Row(
+            //vegetarian
+            children: [
+              const SizedBox(
+                width: 35,
+              ),
+              ScoreColors().scoreInfo2(productGradeInfoData?[1]),
+            ],
+          ),
+          Row(
+            //mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(
+                width: 25,
+              ),
+              ScoreColors().scoreInfo3(productGradeInfoData?[2]),
+            ],
+          ),
+          Row(
+            //mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(
+                width: 20,
+              ),
+              ScoreColors().scoreInfo(productGradeInfoData?[3]),
+            ],
+          ),
+        ],
+      );
+    } else {
+      return const CircularProgressIndicator();
+    }
+  }
+
+  Widget _fetchProductNutritionInfoData() {
+    if (productNutritionInfoData != null) {
+      return Column(
+        children: [
+          rowInfo(
+            "Calories",
+            '${double.parse(productNutritionInfoData?['nutrition']['calories']).toStringAsFixed(0)} kcals',
+            Icon(
+              Ionicons.flame_outline,
+              size: 30,
+              color: Colors.grey[600],
+            ),
+          ),
+          ExpansionTile(
+            title: const Text("Total Fat"),
+            leading: const Icon(
+              Icons.cookie_outlined,
+              size: 30,
+            ),
+            trailing: SizedBox(
+              height: 60,
+              width: 75,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    '${double.parse(productNutritionInfoData?['nutrition']['total fat']).toStringAsFixed(1)} g',
+                  ),
+                  const Icon(Icons.keyboard_arrow_down)
+                ],
+              ),
+            ),
+            childrenPadding: const EdgeInsets.only(left: 60),
+            children: [
+              ListTile(
+                title: const Text('Saturated Fat'),
+                leading: const Icon(
+                  Ionicons.water_outline,
+                  color: Colors.black,
+                ),
+                trailing: Text(
+                    '${double.parse(productNutritionInfoData?['nutrition']['saturated fat']).toStringAsFixed(1)} g'),
+              ),
+            ],
+          ),
+          rowInfo(
+            "Sodium",
+            '${double.parse(productNutritionInfoData?['nutrition']['sodium']).toStringAsFixed(1)} g',
+            Icon(
+              MaterialCommunityIcons.shaker_outline,
+              size: 30,
+              color: Colors.grey[600],
+            ),
+          ),
+          ExpansionTile(
+            title: const Text("Total Carbohydrate"),
+            leading: const Icon(
+              Ionicons.water_outline,
+              size: 30,
+            ),
+            trailing: SizedBox(
+              height: 60,
+              width: 75,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                      '${double.parse(productNutritionInfoData?['nutrition']['total carbohydrate']).toStringAsFixed(1)} g'),
+                  const Icon(Icons.keyboard_arrow_down)
+                ],
+              ),
+            ),
+            childrenPadding: const EdgeInsets.only(left: 60),
+            children: [
+              ListTile(
+                title: const Text('Dietary Fiber'),
+                leading: const Icon(
+                  MaterialIcons.accessibility_new,
+                  color: Colors.black,
+                ),
+                trailing: Text(
+                    '${double.parse(productNutritionInfoData?['nutrition']['fiber']).toStringAsFixed(1)} g'),
+              ),
+              ListTile(
+                title: const Text('Total Sugars'),
+                leading: const Icon(
+                  Ionicons.cube_outline,
+                  color: Colors.black,
+                ),
+                trailing: Text(
+                    '${double.parse(productNutritionInfoData?['nutrition']['total sugars']).toStringAsFixed(1)} g'),
+              ),
+            ],
+          ),
+          rowInfo(
+            "Protein",
+            '${double.parse(productNutritionInfoData?['nutrition']['protein']).toStringAsFixed(1)} g',
+            Icon(
+              MaterialCommunityIcons.food_steak,
+              size: 30,
+              color: Colors.grey[600],
+            ),
+          ),
+        ],
+      );
+    } else {
+      return const CircularProgressIndicator();
     }
   }
 
@@ -160,44 +434,11 @@ class ProductPageState extends State<ProductPage> {
 
   @override
   Widget build(BuildContext context) {
-    final CollectionReference _scanned = FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.email.toString())
-        .collection('scanned');
-
-    final CollectionReference _search = FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.email.toString())
-        .collection('search');
-
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 80,
         centerTitle: true,
-        title: FutureBuilder(
-          future: widget.type
-              ? _scanned.doc(widget.barcode).get()
-              : _search.doc(widget.barcode).get(),
-          builder:
-              (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              Map<String, dynamic> data =
-                  snapshot.data!.data() as Map<String, dynamic>;
-              return Text(
-                '${data['brand']}',
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 2,
-                softWrap: false,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              );
-            } else if (snapshot.hasError) {
-              return const Text('Something went wrong');
-            } else {
-              return buildTextShimmer();
-            }
-          },
-        ),
+        title: _fetchAppBarTitleData(),
         leading: IconButton(
             onPressed: () {
               Navigator.pop(context);
@@ -224,7 +465,9 @@ class ProductPageState extends State<ProductPage> {
                         item['conditions'])
                     : FirebaseCommands().removeFavorite(widget.barcode);
 
-                widget.fav ? snackMessage(false, widget.barcode) : Text('');
+                widget.fav
+                    ? snackMessage(false, widget.barcode)
+                    : const Text('');
               },
               icon: widget.fav
                   ? Icon(
@@ -249,325 +492,46 @@ class ProductPageState extends State<ProductPage> {
         ],
       ),
       //new Builder(builder: (BuildContext context) {}),
-      body: SingleChildScrollView(
-          child: Column(children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Column(
-              children: [
-                SizedBox.square(
-                    dimension: 180,
-                    child: FutureBuilder<DocumentSnapshot>(
-                        future: widget.type
-                            ? _scanned.doc(widget.barcode).get()
-                            : _search.doc(widget.barcode).get(),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<DocumentSnapshot> snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.done) {
-                            Map<String, dynamic> data =
-                                snapshot.data!.data() as Map<String, dynamic>;
-                            return Image.network('${data['picture']}');
-                          } else {
-                            return buildPicShimmer();
-                          }
-                        }))
-              ],
-            ),
-            Column(
-              children: [
-                Container(
-                  height: 150,
-                  width: 180,
-                  alignment: Alignment.center,
-                  child: FutureBuilder(
-                      future: widget.type
-                          ? _scanned.doc(widget.barcode).get()
-                          : _search.doc(widget.barcode).get(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<DocumentSnapshot> snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          Map<String, dynamic> data =
-                              snapshot.data!.data() as Map<String, dynamic>;
-                          return Column(
-                            children: [
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                data['name'],
-                                textAlign: TextAlign.center,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                                softWrap: false,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 15),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              SizedBox(
-                                  height: 70,
-                                  width: 150,
-                                  child: ScoreColors()
-                                      .scorePic(data['nutrition']['grade']))
-                            ],
-                          );
-                        } else {
-                          return buildTextShimmer();
-                        }
-                      }),
-                ),
-              ],
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            FutureBuilder(
-                future: widget.type
-                    ? _scanned.doc(widget.barcode).get()
-                    : _search.doc(widget.barcode).get(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<DocumentSnapshot> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    Map<String, dynamic> data =
-                        snapshot.data!.data() as Map<String, dynamic>;
-                    return FutureBuilder(
-                        future: GradeCal().gradeCalculateInfo(
-                            data['Allergens'], data['conditions']),
-                        builder: ((context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.done) {
-                            if (snapshot.hasError) {
-                              return Text(
-                                '${snapshot.error} occurred',
-                              );
-                            } else {
-                              final data1 = snapshot.data as List<String>;
-                              return Column(
-                                children: [
-                                  Row(
-                                      //vegan
-                                      children: [
-                                        const SizedBox(
-                                          width: 35,
-                                        ),
-                                        ScoreColors().scoreInfo2(data1[0]),
-                                      ]),
-                                  Row(
-                                      //vegetarian
-                                      children: [
-                                        const SizedBox(
-                                          width: 35,
-                                        ),
-                                        ScoreColors().scoreInfo2(data1[1]),
-                                      ]),
-                                  Row(
-                                      //mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        const SizedBox(
-                                          width: 25,
-                                        ),
-                                        ScoreColors().scoreInfo3(data1[2]),
-                                      ]),
-                                  Row(
-                                      //mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        const SizedBox(
-                                          width: 20,
-                                        ),
-                                        ScoreColors().scoreInfo(data1[3]),
-                                      ]),
-                                ],
-                              );
-                            }
-                          } else {
-                            return buildTextShimmer();
-                          }
-                        }));
-                  } else {
-                    return buildTextShimmer();
-                  }
-                })
-          ],
-        ),
-        Container(
-          color: Colors.white,
-          child: SizedBox(
-              width: 380,
-              child: FutureBuilder<DocumentSnapshot>(
-                future: widget.type
-                    ? _scanned.doc(widget.barcode).get()
-                    : _search.doc(widget.barcode).get(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<DocumentSnapshot> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    Map<String, dynamic> data =
-                        snapshot.data!.data() as Map<String, dynamic>;
-                    return Column(
-                      children: [
-                        rowInfo(
-                          "Calories",
-                          '${double.parse(data['nutrition']['calories']).toStringAsFixed(0)} kcals',
-                          Icon(
-                            Ionicons.flame_outline,
-                            size: 30,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                        ExpansionTile(
-                          title: const Text("Total Fat"),
-                          leading: const Icon(
-                            Icons.cookie_outlined,
-                            size: 30,
-                          ),
-                          trailing: SizedBox(
-                            height: 60,
-                            width: 75,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(
-                                  '${double.parse(data['nutrition']['total fat']).toStringAsFixed(1)} g',
-                                ),
-                                const Icon(Icons.keyboard_arrow_down)
-                              ],
-                            ),
-                          ),
-                          childrenPadding: const EdgeInsets.only(left: 60),
-                          children: [
-                            ListTile(
-                              title: const Text('Saturated Fat'),
-                              leading: const Icon(
-                                Ionicons.water_outline,
-                                color: Colors.black,
-                              ),
-                              trailing: Text(
-                                  '${double.parse(data['nutrition']['saturated fat']).toStringAsFixed(1)} g'),
-                            ),
-                          ],
-                        ),
-                        rowInfo(
-                          "Sodium",
-                          '${double.parse(data['nutrition']['sodium']).toStringAsFixed(1)} g',
-                          Icon(
-                            MaterialCommunityIcons.shaker_outline,
-                            size: 30,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                        ExpansionTile(
-                          title: const Text("Total Carbohydrate"),
-                          leading: const Icon(
-                            Ionicons.water_outline,
-                            size: 30,
-                          ),
-                          trailing: SizedBox(
-                            height: 60,
-                            width: 75,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(
-                                    '${double.parse(data['nutrition']['total carbohydrate']).toStringAsFixed(1)} g'),
-                                const Icon(Icons.keyboard_arrow_down)
-                              ],
-                            ),
-                          ),
-                          childrenPadding: const EdgeInsets.only(left: 60),
-                          children: [
-                            ListTile(
-                              title: const Text('Dietary Fiber'),
-                              leading: const Icon(
-                                MaterialIcons.accessibility_new,
-                                color: Colors.black,
-                              ),
-                              trailing: Text(
-                                  '${double.parse(data['nutrition']['fiber']).toStringAsFixed(1)} g'),
-                            ),
-                            ListTile(
-                              title: const Text('Total Sugars'),
-                              leading: const Icon(
-                                Ionicons.cube_outline,
-                                color: Colors.black,
-                              ),
-                              trailing: Text(
-                                  '${double.parse(data['nutrition']['total sugars']).toStringAsFixed(1)} g'),
-                            ),
-                          ],
-                        ),
-                        rowInfo(
-                          "Protein",
-                          '${double.parse(data['nutrition']['protein']).toStringAsFixed(1)} g',
-                          Icon(
-                            MaterialCommunityIcons.food_steak,
-                            size: 30,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    );
-                  } else if (snapshot.hasError) {
-                    return const Text('Something went wrong');
-                  } else if (snapshot.hasData && !snapshot.data!.exists) {
-                    return const Text("Document does not exist");
-                  } else {
-                    return buildNutShimmer();
-                  }
-                },
-              )),
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        SizedBox(
-          height: 50,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 20),
-                child: Text(
-                  "Recommendations",
-                  style: GoogleFonts.bebasNeue(fontSize: 35),
-                ),
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: getCollectionReference(widget.type ? 'scanned' : 'search'),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasData && snapshot.data!.exists) {
+            processData(snapshot.data!.data() as Map<String, dynamic>);
+            return SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                children: [
+                  _fetchProductImageData(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  _fetchProductInfoData(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  _fetchProductGradeInfoData(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  _fetchProductNutritionInfoData(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        SizedBox(
-            height: 210,
-            child: ListView.builder(
-                physics: const ClampingScrollPhysics(),
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                itemCount: 8,
-                itemBuilder: (BuildContext context, int index) => Card(
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 160,
-                            width: 200,
-                            color: Colors.indigo[400],
-                            child: const Center(
-                              child: Text('picture'),
-                            ),
-                          ),
-                          const Center(
-                            child: Text('title'),
-                          )
-                        ],
-                      ),
-                    ))),
-        const SizedBox(
-          height: 70,
-        ),
-      ])),
+            );
+          } else {
+            return Center(child: Text('No data found'));
+          }
+        },
+      ),
     );
   }
 
