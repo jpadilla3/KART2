@@ -29,6 +29,8 @@ class RecommendationsPage extends StatefulWidget {
 class _RecPageState extends State<RecommendationsPage> {
   bool isLoading = false;
   String _scanBarcode = '';
+  String? _lastScannedBarcode;
+
   bool type = false;
   bool favo = false;
   final CollectionReference _barcodes = FirebaseFirestore.instance
@@ -63,21 +65,18 @@ class _RecPageState extends State<RecommendationsPage> {
     }
   }
 
-  Future<void> scanBarcodeNormal() async {
+  Future<void> scanAndProcessBarcode() async {
     String barcodeScanRes;
-    List<String> con = [];
 
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       barcodeScanRes =
           await BarcodeScanner.scanBarcode('#ff6666', 'Cancel', true);
-      //add barcode to firebase
-
-      //passes current user email and barcode
+      // Adds barcode to firebase and get recommendations
       FirebaseCommands().addBarcode(barcodeScanRes);
-      FirebaseCommands().getSimilarProducts2(barcodeScanRes); //recommendation
-    } on PlatformException {
-      barcodeScanRes = 'Failed to get platform version.';
+      FirebaseCommands().getSimilarProducts2(barcodeScanRes);
+    } on PlatformException catch (e) {
+      barcodeScanRes = 'Failed to scan barcode: $e';
     }
 
     // If the widget was removed from the tree while the asynchronous platform
@@ -89,7 +88,39 @@ class _RecPageState extends State<RecommendationsPage> {
       _scanBarcode = barcodeScanRes;
       isLoading = false;
       type = true;
+      _lastScannedBarcode = barcodeScanRes;
     });
+  }
+
+  Future<List<String>> getRecommendedDocIds(
+      DocumentSnapshot documentSnapshot) async {
+    List<String> docIDs = [];
+
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.email.toString())
+        .collection('scanned')
+        .doc(documentSnapshot['barcode'])
+        .collection('recommended')
+        .get()
+        .then((snapshot) => snapshot.docs.forEach((document) {
+              docIDs.add(document.reference.id);
+            }));
+
+    return docIDs;
+  }
+
+  Future<String> getRecommendedProductName(
+      String barcode, String barcode2) async {
+    DocumentSnapshot snapshot = await _barcodes
+        .doc(barcode)
+        .collection('recommended')
+        .doc(barcode2)
+        .get();
+
+    Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+
+    return data['name'];
   }
 
   Future favs(barcode) async {
@@ -186,10 +217,14 @@ class _RecPageState extends State<RecommendationsPage> {
     return Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            await scanBarcodeNormal(); //adds barcode to firebase
-            Map items = await itemScan(_scanBarcode);
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => ScanPage(items)));
+            await scanAndProcessBarcode(); //adds barcode to firebase
+            if (_lastScannedBarcode != null) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ProductPage(_lastScannedBarcode!, true, favo)));
+            }
           },
           backgroundColor: Colors.indigo[400],
           child: const Icon(
@@ -258,6 +293,38 @@ class _RecPageState extends State<RecommendationsPage> {
                             itemBuilder: (context, index) {
                               final DocumentSnapshot documentSnapshot =
                                   streamSnapshot.data!.docs[index];
+
+                              FutureBuilder<List<String>>(
+                                future: getRecommendedDocIds(documentSnapshot),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.done) {
+                                    String barcode2 = snapshot.data![0];
+                                    return FutureBuilder<String>(
+                                      future: getRecommendedProductName(
+                                          documentSnapshot['barcode'],
+                                          barcode2),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.done) {
+                                          return SizedBox(
+                                            child: Text(
+                                              '${snapshot.data}',
+                                              textAlign: TextAlign.center,
+                                              overflow: TextOverflow.ellipsis,
+                                              softWrap: false,
+                                              maxLines: 2,
+                                            ),
+                                          );
+                                        }
+                                        return const Text('loading');
+                                      },
+                                    );
+                                  } else {
+                                    return const Text('loading');
+                                  }
+                                },
+                              );
 
                               List<String> docIDs = [];
 

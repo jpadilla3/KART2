@@ -204,10 +204,10 @@ class FirebaseCommands {
         final allergyConflict = result[0];
         final conditionConflict = result[1];
 
-        print("Product Allergies: $alerg");
-        print("Product Conditions: $con");
-        print("Allergies Conflict?: $allergyConflict");
-        print("Conditions Conflict?: $conditionConflict");
+        // print("Product Allergies: $alerg");
+        // print("Product Conditions: $con");
+        // print("Allergies Conflict?: $allergyConflict");
+        // print("Conditions Conflict?: $conditionConflict");
 
         // If there are allergy or condition conflicts, product will not be added to firebase
         if (allergyConflict == false && conditionConflict == false) {
@@ -283,14 +283,14 @@ class FirebaseCommands {
 
             if (hasProducts) {
               for (final product in products) {
-                print(categoryString);
-                print(encodedCategory);
-                print(product.code);
-                print(product.nutriscoreGrade);
-                print(product.productName);
+                // print(categoryString);
+                // print(encodedCategory);
+                // print(product.code);
+                // print(product.nutriscoreGrade);
+                // print(product.productName);
                 addRecomendations(barcode, product);
                 count++;
-                print(count);
+                // print(count);
                 if (count == 50) {
                   break;
                 }
