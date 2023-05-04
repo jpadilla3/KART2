@@ -369,8 +369,8 @@ class _SearchPageState extends State<SearchPage> {
                                                 padding:
                                                     const EdgeInsets.all(10.0),
                                                 child: SizedBox(
-                                                  height: 80,
-                                                  width: 80,
+                                                  height: 70,
+                                                  width: 70,
                                                   child: Image.network(
                                                       '${documentSnapshot['picture']}'),
                                                 )),
@@ -378,7 +378,7 @@ class _SearchPageState extends State<SearchPage> {
                                         ),
                                         SizedBox(
                                           height: 100,
-                                          width: 200,
+                                          width: 155,
                                           child: Center(
                                             child: Column(
                                               mainAxisAlignment:
@@ -832,8 +832,8 @@ class MySearchDelegate extends SearchDelegate {
                                 Padding(
                                     padding: const EdgeInsets.all(10.0),
                                     child: Container(
-                                      height: 80,
-                                      width: 80,
+                                      height: 70,
+                                      width: 70,
                                       child: Image.network(
                                           '${data[index]['pic']}'),
                                     )),
@@ -841,7 +841,7 @@ class MySearchDelegate extends SearchDelegate {
                             ),
                             SizedBox(
                               height: 100,
-                              width: 200,
+                              width: 155,
                               child: Center(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
