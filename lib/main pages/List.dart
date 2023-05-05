@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kart2/main%20pages/productPage.dart';
+import 'package:kart2/main%20pages/shimmerlist.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../models/firebase_commands.dart';
 import '../models/scoreColor.dart';
@@ -48,7 +50,13 @@ class RecoListState extends State<RecoList> {
             if (snapshot.connectionState == ConnectionState.active) {
               List<DocumentSnapshot> docs = snapshot.data!;
               if (docs.isNotEmpty) {
-                return ListView.builder(
+                return ListView.separated(
+                    separatorBuilder: (BuildContext context, int index) =>
+                        const Divider(
+                          height: 4,
+                          indent: 12,
+                          endIndent: 12,
+                        ),
                     physics: const ClampingScrollPhysics(),
                     shrinkWrap: true,
                     scrollDirection: Axis.vertical,
@@ -62,70 +70,138 @@ class RecoListState extends State<RecoList> {
                       String grade = doc['nutrition']['grade'] ?? '';
 
                       return InkWell(
-                        onTap: () async {
-                          FirebaseCommands().addBarcode(barcode);
-                          FirebaseCommands().getSimilarProducts2(barcode);
-                          bool isFavorite = await FirebaseCommands()
-                              .isProductFavorite(
-                                  barcode); // Add this line to fetch the favorite status
+                          onTap: () async {
+                            FirebaseCommands().addBarcode(barcode);
+                            FirebaseCommands().getSimilarProducts2(barcode);
+                            bool isFavorite = await FirebaseCommands()
+                                .isProductFavorite(
+                                    barcode); // Add this line to fetch the favorite status
 
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      ProductPage(barcode, true, isFavorite)));
-                        },
-                        child: Card(
-                          margin: EdgeInsets.all(
-                              5.0), // Adjust the margin around each Card
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ProductPage(
+                                        barcode, true, isFavorite)));
+                          },
                           child: Padding(
-                            padding: EdgeInsets.all(
-                                5.0), // Adjust the padding inside each Card
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment
-                                  .spaceEvenly, // Distribute the space evenly between child widgets
-                              crossAxisAlignment: CrossAxisAlignment
-                                  .center, // Center child widgets horizontally
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
                               children: [
-                                Container(
-                                  height:
-                                      120, // Adjust the height of the container
-                                  width:
-                                      150, // Adjust the width of the container
-                                  color: Colors.indigo[400],
-                                  child: imageUrl.isNotEmpty
-                                      ? Image.network(imageUrl,
-                                          fit: BoxFit
-                                              .cover) // Add fit: BoxFit.cover to fill the container with the image
-                                      : const Center(child: Text('No picture')),
+                                Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Container(
+                                        height: 70,
+                                        width: 70,
+                                        child: imageUrl.isNotEmpty
+                                            ? Image.network(
+                                                imageUrl,
+                                              )
+                                            : const Text('no image'))
+                                  ],
                                 ),
-                                const SizedBox(
-                                    height:
-                                        5), // Add some space between the image and the title
-                                Center(
-                                  child: Text(title),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        title,
+                                        textAlign: TextAlign.start,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 2,
+                                        softWrap: false,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 3.0),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          ScoreColors().scoreColor(grade),
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(left: 5),
+                                            child: Text(
+                                              'Grade: ${grade.toUpperCase()}',
+                                              textAlign: TextAlign.start,
+                                            ),
+                                          )
+                                        ],
+                                      )
+                                    ],
+                                  ),
                                 ),
-                                const SizedBox(
-                                    height:
-                                        5), // Add some space between the title and the grade widget
-                                SizedBox(
-                                  height: 70,
-                                  width: 150,
-                                  child: ScoreColors().scorePic(grade),
-                                ),
+                                Icon(Icons.arrow_forward_ios_rounded,
+                                    size: 25, color: Colors.indigo[400]),
                               ],
                             ),
-                          ),
-                        ),
-                      );
+                          ));
                     });
               } else {
                 return const Center(child: Text('No recommended items found.'));
               }
             } else {
-              return const Center(child: CircularProgressIndicator());
+              return ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: 10,
+                itemBuilder: (context, index) {
+                  return buildRowShimmer();
+                },
+              );
             }
           },
         ));
   }
 }
+
+Widget buildRowShimmer() => Row(
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        Column(
+          children: [
+            Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Shimmer.fromColors(
+                  baseColor: Colors.grey,
+                  highlightColor: Colors.grey[100]!,
+                  child: Container(
+                    height: 80,
+                    width: 80,
+                    color: Colors.grey,
+                  ),
+                )),
+          ],
+        ),
+        SizedBox(
+          width: 230,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: ShimmerLoader.rectangular(
+                  width: 200,
+                  height: 16,
+                ),
+              ),
+              const SizedBox(
+                height: 6,
+              ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: ShimmerLoader.rectangular(
+                  width: 100,
+                  height: 16,
+                ),
+              ),
+            ],
+          ),
+        )
+      ],
+    );
