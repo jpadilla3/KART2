@@ -257,31 +257,16 @@ class RecPageState extends State<RecommendationsPage> {
                                         }));
                               }
 
-                              getName(String barcode2) {
-                                return FutureBuilder<DocumentSnapshot>(
-                                  future: _barcodes
-                                      .doc(documentSnapshot['barcode'])
-                                      .collection('recommended')
-                                      .doc(barcode2)
-                                      .get(),
-                                  builder: ((context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.done) {
-                                      Map<String, dynamic> data = snapshot.data!
-                                          .data() as Map<String, dynamic>;
-                                      return SizedBox(
-                                        child: Text(
-                                          '${data['name']}',
-                                          textAlign: TextAlign.center,
-                                          overflow: TextOverflow.ellipsis,
-                                          softWrap: false,
-                                          maxLines: 2,
-                                        ),
-                                      );
-                                    }
-                                    return const Text('loading');
-                                  }),
-                                );
+                              Future<Map<String, dynamic>> getNameAndPicture(
+                                  String barcode2) async {
+                                DocumentSnapshot snapshot = await _barcodes
+                                    .doc(documentSnapshot['barcode'])
+                                    .collection('recommended')
+                                    .doc(barcode2)
+                                    .get();
+                                Map<String, dynamic> data =
+                                    snapshot.data()! as Map<String, dynamic>;
+                                return data;
                               }
 
                               return Padding(
@@ -301,17 +286,16 @@ class RecPageState extends State<RecommendationsPage> {
                                                   .isProductFavorite(
                                                       documentSnapshot[
                                                           'barcode']);
-                                          if (_lastScannedBarcode != null) {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ProductPage(
-                                                            documentSnapshot[
-                                                                'barcode'],
-                                                            true,
-                                                            isFavorite)));
-                                          }
+
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ProductPage(
+                                                          documentSnapshot[
+                                                              'barcode'],
+                                                          true,
+                                                          isFavorite)));
                                         },
                                         child: Column(
                                           children: [
@@ -598,35 +582,103 @@ class RecPageState extends State<RecommendationsPage> {
                                         },
                                         child: Column(
                                           children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 15),
-                                              child: Container(
-                                                  height: 120,
-                                                  width: 120,
-                                                  color: Colors.indigo[400],
-                                                  alignment: Alignment.center,
-                                                  child: const Text('Picture')),
-                                            ),
                                             Container(
-                                                height: 50,
-                                                width: 120,
-                                                alignment: Alignment.center,
-                                                child: StreamBuilder(
-                                                    stream: getDocId(),
-                                                    builder:
-                                                        (context, snapshot) {
-                                                      if (snapshot
-                                                              .connectionState ==
-                                                          ConnectionState
-                                                              .done) {
-                                                        return getName(
-                                                            docIDs[0]);
-                                                      } else {
-                                                        return const Text(
-                                                            'loading');
-                                                      }
-                                                    }))
+                                              height: 180,
+                                              width: 120,
+                                              alignment: Alignment.center,
+                                              child: StreamBuilder(
+                                                stream: getDocId(),
+                                                builder: (context, snapshot) {
+                                                  if (snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.done) {
+                                                    return FutureBuilder<
+                                                        Map<String, dynamic>>(
+                                                      future: getNameAndPicture(
+                                                          docIDs[0]),
+                                                      builder: (BuildContext
+                                                              context,
+                                                          AsyncSnapshot<
+                                                                  Map<String,
+                                                                      dynamic>>
+                                                              snapshot) {
+                                                        if (snapshot
+                                                                .connectionState ==
+                                                            ConnectionState
+                                                                .done) {
+                                                          if (snapshot
+                                                              .hasError) {
+                                                            return Text(
+                                                                'Error: ${snapshot.error}');
+                                                          }
+                                                          String picture =
+                                                              snapshot.data![
+                                                                  'picture'];
+                                                          String name = snapshot
+                                                              .data!['name'];
+                                                          return SingleChildScrollView(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .stretch,
+                                                              children: [
+                                                                Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .only(
+                                                                      top: 15),
+                                                                  child:
+                                                                      Container(
+                                                                    height: 120,
+                                                                    width: 120,
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .center,
+                                                                    color: Colors
+                                                                        .transparent,
+                                                                    child: picture ==
+                                                                            ''
+                                                                        ? const Text(
+                                                                            'loading')
+                                                                        : Image
+                                                                            .network(
+                                                                            picture,
+                                                                          ),
+                                                                  ),
+                                                                ),
+                                                                Container(
+                                                                  height: 45,
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .center,
+                                                                  child: Text(
+                                                                    name,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    softWrap:
+                                                                        false,
+                                                                    maxLines: 2,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          );
+                                                        } else {
+                                                          return const Text(
+                                                              'loading');
+                                                        }
+                                                      },
+                                                    );
+                                                  } else {
+                                                    return const Text(
+                                                        'loading');
+                                                  }
+                                                },
+                                              ),
+                                            )
                                           ],
                                         ),
                                       )

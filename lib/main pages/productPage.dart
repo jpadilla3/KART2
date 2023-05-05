@@ -679,7 +679,8 @@ class ProductPageState extends State<ProductPage> {
                                             width: 200,
                                             color: Colors.indigo[400],
                                             child: imageUrl.isNotEmpty
-                                                ? Image.network(imageUrl)
+                                                ? Image.network(imageUrl,
+                                                    fit: BoxFit.cover)
                                                 : const Center(
                                                     child: Text('No picture')),
                                           ),
