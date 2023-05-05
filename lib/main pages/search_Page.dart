@@ -696,7 +696,7 @@ class MySearchDelegate extends SearchDelegate {
       data.add({
         "brand": result.products?[i].brands ?? result.products?[i].productName,
         "name": result.products?[i].productName ?? "null",
-        "grade": result.products?[i].nutriscore ?? "Not Avaliable",
+        "grade": result.products?[i].nutriscore ?? "No Grade",
         "barcode": result.products?[i].barcode ?? 'null',
         "pic": result.products?[i].imageFrontUrl ??
             'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg',
