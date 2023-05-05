@@ -1,13 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kart2/main%20pages/productPage.dart';
+
+import '../models/firebase_commands.dart';
+import '../models/scoreColor.dart';
 
 class RecoList extends StatefulWidget {
   final String barcode;
-  const RecoList(this.barcode, {super.key});
+  const RecoList(this.barcode, {Key? key}) : super(key: key);
 
   @override
   State<RecoList> createState() => RecoListState();
@@ -16,42 +18,15 @@ class RecoList extends StatefulWidget {
 class RecoListState extends State<RecoList> {
   List<String> docIDs = [];
 
-  Future getDocId() async {
-    await FirebaseFirestore.instance
+  Stream<List<DocumentSnapshot>> getDocs() {
+    return FirebaseFirestore.instance
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.email.toString())
         .collection('scanned')
         .doc(widget.barcode)
         .collection('recommended')
-        .get()
-        .then((snapshot) => snapshot.docs.forEach((document) {
-              docIDs.add(document.reference.id);
-            }));
-  }
-
-  CollectionReference items = FirebaseFirestore.instance
-      .collection('users')
-      .doc(FirebaseAuth.instance.currentUser!.email.toString())
-      .collection('scanned');
-
-  getName(String barcode2, bool version) {
-    return FutureBuilder<DocumentSnapshot>(
-      future: items
-          .doc(widget.barcode)
-          .collection('recommended')
-          .doc(barcode2)
-          .get(),
-      builder: ((context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          Map<String, dynamic> data =
-              snapshot.data!.data() as Map<String, dynamic>;
-          return version
-              ? Text('${data['name']}')
-              : Text('score: ${data['score']}');
-        }
-        return const Text('loading');
-      }),
-    );
+        .snapshots()
+        .map((snapshot) => snapshot.docs);
   }
 
   @override
@@ -63,50 +38,93 @@ class RecoListState extends State<RecoList> {
           backgroundColor: Colors.grey[300],
           centerTitle: true,
           title: Text(
-            'Recommended Items',
-            style: GoogleFonts.bebasNeue(fontSize: 20, color: Colors.black),
+            'Recommended Products',
+            style: GoogleFonts.bebasNeue(fontSize: 25, color: Colors.black),
           ),
         ),
-        body: FutureBuilder(
-          future: getDocId(),
+        body: StreamBuilder<List<DocumentSnapshot>>(
+          stream: getDocs(),
           builder: (context, snapshot) {
-            return ListView.separated(
-                separatorBuilder: (BuildContext context, int index) =>
-                    const Divider(
-                      height: 3,
-                      indent: 12,
-                      endIndent: 12,
-                    ),
-                itemCount: docIDs.length,
-                itemBuilder: (context, index) {
-                  return Slidable(
-                    endActionPane:
-                        ActionPane(motion: const DrawerMotion(), children: [
-                      SlidableAction(
-                        onPressed: (context) {},
-                        backgroundColor: Colors.red,
-                        icon: Icons.favorite,
-                      ),
-                    ]),
-                    child: ListTile(
-                      leading: Container(
-                        width: 80,
-                        height: 80,
-                        color: Colors.indigo[400],
-                      ),
-                      visualDensity: const VisualDensity(vertical: 4),
-                      title: Padding(
-                        padding: const EdgeInsets.only(top: 20),
-                        child: getName(docIDs[index], true),
-                      ),
-                      subtitle: getName(docIDs[index], false),
-                      trailing: const Padding(
-                        padding: EdgeInsets.only(top: 15),
-                        child: Icon(Icons.arrow_forward_ios),
-                      ),
-                    ),
-                  );
-                });
+            if (snapshot.connectionState == ConnectionState.active) {
+              List<DocumentSnapshot> docs = snapshot.data!;
+              if (docs.isNotEmpty) {
+                return ListView.builder(
+                    physics: const ClampingScrollPhysics(),
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    itemCount: docs.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      DocumentSnapshot doc = docs[index];
+
+                      String imageUrl = doc['picture'] ?? '';
+                      String title = doc['name'] ?? '';
+                      String barcode = doc['barcode'] ?? '';
+                      String grade = doc['nutrition']['grade'] ?? '';
+
+                      return InkWell(
+                        onTap: () async {
+                          FirebaseCommands().addBarcode(barcode);
+                          FirebaseCommands().getSimilarProducts2(barcode);
+                          bool isFavorite = await FirebaseCommands()
+                              .isProductFavorite(
+                                  barcode); // Add this line to fetch the favorite status
+
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      ProductPage(barcode, true, isFavorite)));
+                        },
+                        child: Card(
+                          margin: EdgeInsets.all(
+                              5.0), // Adjust the margin around each Card
+                          child: Padding(
+                            padding: EdgeInsets.all(
+                                5.0), // Adjust the padding inside each Card
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment
+                                  .spaceEvenly, // Distribute the space evenly between child widgets
+                              crossAxisAlignment: CrossAxisAlignment
+                                  .center, // Center child widgets horizontally
+                              children: [
+                                Container(
+                                  height:
+                                      120, // Adjust the height of the container
+                                  width:
+                                      150, // Adjust the width of the container
+                                  color: Colors.indigo[400],
+                                  child: imageUrl.isNotEmpty
+                                      ? Image.network(imageUrl,
+                                          fit: BoxFit
+                                              .cover) // Add fit: BoxFit.cover to fill the container with the image
+                                      : const Center(child: Text('No picture')),
+                                ),
+                                const SizedBox(
+                                    height:
+                                        5), // Add some space between the image and the title
+                                Center(
+                                  child: Text(title),
+                                ),
+                                const SizedBox(
+                                    height:
+                                        5), // Add some space between the title and the grade widget
+                                SizedBox(
+                                  height: 70,
+                                  width: 150,
+                                  child: ScoreColors().scorePic(grade),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    });
+              } else {
+                return const Center(child: Text('No recommended items found.'));
+              }
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
           },
         ));
   }

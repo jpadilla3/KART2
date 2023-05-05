@@ -251,8 +251,7 @@ class FavPageState extends State<FavPage> {
                                                               EdgeInsets.only(
                                                                   right: 2),
                                                           child: Icon(
-                                                            Icons
-                                                                .energy_savings_leaf,
+                                                            Icons.eco_outlined,
                                                             color: Colors.green,
                                                           ),
                                                         ),
