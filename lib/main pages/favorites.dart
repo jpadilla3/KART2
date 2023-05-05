@@ -123,7 +123,7 @@ class FavPageState extends State<FavPage> {
                                       children: [
                                         Padding(
                                             padding: const EdgeInsets.all(10.0),
-                                            child: Container(
+                                            child: SizedBox(
                                               height: 80,
                                               width: 80,
                                               child: Image.network(
