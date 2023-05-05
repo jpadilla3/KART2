@@ -23,16 +23,16 @@ class RecommendationsPage extends StatefulWidget {
   const RecommendationsPage({super.key});
 
   @override
-  State<RecommendationsPage> createState() => _RecPageState();
+  State<RecommendationsPage> createState() => RecPageState();
 }
 
-class _RecPageState extends State<RecommendationsPage> {
+class RecPageState extends State<RecommendationsPage> {
   bool isLoading = false;
   String _scanBarcode = '';
   String? _lastScannedBarcode;
 
   bool type = false;
-  bool favo = false;
+  bool fav = false;
   final CollectionReference _barcodes = FirebaseFirestore.instance
       .collection('users')
       .doc(FirebaseAuth.instance.currentUser!.email.toString())
@@ -123,107 +123,20 @@ class _RecPageState extends State<RecommendationsPage> {
     return data['name'];
   }
 
-  Future favs(barcode) async {
-    bool fav;
-    final favDoc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.email.toString())
-        .collection('favorties')
-        .doc(barcode)
-        .get();
-
-    if (favDoc.exists) {
-      fav = true;
-    } else {
-      fav = false;
-    }
-    return fav;
-  }
-
-  Future itemScan(String barcode) async {
-    Map<String, dynamic> item = {};
-    List<String> alerg = [];
-    List<String> con = [];
-    int count = 0;
-    int count2 = 0;
-    final String url =
-        'https://us.openfoodfacts.org/api/v2/product/$barcode?fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json';
-    final response = await http.get(Uri.parse(url));
-    final barcodeData = barcodeDataFromJson(response.body);
-
-    if (response.statusCode == 200) {
-      if (int.parse(barcode) > 0) {
-        if (barcodeData.product!.allergensTagsEn!.isNotEmpty) {
-          for (int i = 0;
-              i < barcodeData.product!.allergensTagsEn!.length;
-              i++) {
-            alerg.add(barcodeData.product!.allergensTagsEn![i].substring(3));
-          }
-        }
-        if (barcodeData.product!.allergensTagsEn!.contains('en:milk') ||
-            barcodeData.product!.allergensTagsEn!.contains('en:lactic')) {
-          con.add('lactose intolerant');
-        }
-
-        for (final ingredient in barcodeData.product!.ingredients!) {
-          if (ingredient.vegan != 'yes') {
-            count++;
-          }
-          if (ingredient.vegetarian != 'yes') {
-            count2++;
-          }
-        }
-        if (count == 0) {
-          con.add('vegan');
-        }
-        if (count2 == 0) {
-          con.add('vegetarian');
-        }
-        item['brand'] =
-            barcodeData.product?.brands ?? barcodeData.product?.productName;
-        item['score'] = barcodeData.product?.nutriscoreScore ?? 0.toString();
-        item['grade'] = barcodeData.product?.nutritionGrades ?? 'No Grade';
-        item['calories'] =
-            barcodeData.product?.nutriments?.energy ?? 0.toString();
-        item['total fat'] =
-            barcodeData.product?.nutriments?.fat ?? 0.toString();
-        item['saturated fat'] =
-            barcodeData.product?.nutriments?.saturatedFat ?? 0.toString();
-        item['sodium'] =
-            barcodeData.product?.nutriments?.sodium ?? 0.toString();
-        item['total carbohydrate'] =
-            barcodeData.product?.nutriments?.carbohydrates ?? 0.toString();
-        item['total sugars'] =
-            barcodeData.product?.nutriments?.sugars ?? 0.toString();
-        item['protein'] =
-            barcodeData.product?.nutriments?.proteins ?? 0.toString();
-        item['fiber'] =
-            barcodeData.product?.nutriscoreData?.fiber ?? 0.toString();
-        item['name'] = barcodeData.product?.productName ?? 'Product';
-        item['picture'] = barcodeData
-                .product?.selectedImages?.front?.small?.en ??
-            'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg';
-        item['allergy'] = alerg;
-        item['condition'] = con;
-        return item;
-      } else {
-        return const AboutDialog();
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
             await scanAndProcessBarcode(); //adds barcode to firebase
+            bool isFavorite = await FirebaseCommands()
+                .isProductFavorite(_lastScannedBarcode!);
             if (_lastScannedBarcode != null) {
               Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          ProductPage(_lastScannedBarcode!, true, favo)));
+                          ProductPage(_lastScannedBarcode!, true, isFavorite)));
             }
           },
           backgroundColor: Colors.indigo[400],
@@ -381,16 +294,24 @@ class _RecPageState extends State<RecommendationsPage> {
                                     children: [
                                       //scanned item
                                       GestureDetector(
-                                        onTap: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      ProductPage(
-                                                          documentSnapshot[
-                                                              'barcode'],
-                                                          true,
-                                                          favo)));
+                                        onTap: () async {
+                                          //adds barcode to firebase
+                                          bool isFavorite =
+                                              await FirebaseCommands()
+                                                  .isProductFavorite(
+                                                      documentSnapshot[
+                                                          'barcode']);
+                                          if (_lastScannedBarcode != null) {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ProductPage(
+                                                            documentSnapshot[
+                                                                'barcode'],
+                                                            true,
+                                                            isFavorite)));
+                                          }
                                         },
                                         child: Column(
                                           children: [

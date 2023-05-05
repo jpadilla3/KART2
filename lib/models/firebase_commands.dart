@@ -10,6 +10,8 @@ import 'package:http/http.dart' as http;
 import 'package:kart2/models/search_data_model.dart';
 
 class FirebaseCommands {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   //add barcode to firebase
   Future addBarcode(String barcode) async {
     List<String> alerg = [];
@@ -392,6 +394,27 @@ class FirebaseCommands {
           'conditions': con,
         }); //input searched barcodes
       }
+    }
+  }
+
+  Future<bool> isProductFavorite(String barcode) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return false;
+    }
+
+    try {
+      final favoriteDoc = await _firestore
+          .collection('users')
+          .doc(user.uid)
+          .collection('favorites')
+          .doc(barcode)
+          .get();
+
+      return favoriteDoc.exists;
+    } catch (e) {
+      print('Error checking favorite status: $e');
+      return false;
     }
   }
 

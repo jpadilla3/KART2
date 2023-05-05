@@ -18,8 +18,8 @@ import 'package:http/http.dart' as http;
 class ProductPage extends StatefulWidget {
   final String barcode;
   final bool type;
-  bool fav;
-  ProductPage(this.barcode, this.type, this.fav, {super.key});
+  bool isFavorite;
+  ProductPage(this.barcode, this.type, this.isFavorite, {super.key});
 
   @override
   State<ProductPage> createState() => ProductPageState();
@@ -520,10 +520,10 @@ class ProductPageState extends State<ProductPage> {
           IconButton(
               onPressed: () async {
                 setState(() {
-                  widget.fav = !widget.fav;
+                  widget.isFavorite = !widget.isFavorite;
                 });
                 Map item = await favoriteItem(widget.barcode);
-                widget.fav
+                widget.isFavorite
                     ? FirebaseCommands().favoriteBarcode(
                         item['barcode'],
                         item['name'],
@@ -534,11 +534,11 @@ class ProductPageState extends State<ProductPage> {
                         item['conditions'])
                     : FirebaseCommands().removeFavorite(widget.barcode);
 
-                widget.fav
+                widget.isFavorite
                     ? snackMessage(false, widget.barcode)
                     : const Text('');
               },
-              icon: widget.fav
+              icon: widget.isFavorite
                   ? Icon(
                       Icons.favorite,
                       color: Colors.indigo[400],
@@ -639,7 +639,7 @@ class ProductPageState extends State<ProductPage> {
                                     child: CircularProgressIndicator());
                               }
                               print(
-                                  'Recommended products: ${snapshot.data!.docs}'); // Add this line
+                                  'Recommended products: ${snapshot.data!.docs}');
 
                               return ListView.builder(
                                 physics: const ClampingScrollPhysics(),
@@ -653,23 +653,41 @@ class ProductPageState extends State<ProductPage> {
                                       'picture'); // Replace with your image URL field name
                                   String title = doc.get(
                                       'name'); // Replace with your title field name
+                                  String barcode = doc.get(
+                                      'barcode'); // Replace with your barcode field name
 
-                                  return Card(
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          height: 160,
-                                          width: 200,
-                                          color: Colors.indigo[400],
-                                          child: imageUrl.isNotEmpty
-                                              ? Image.network(imageUrl)
-                                              : const Center(
-                                                  child: Text('No picture')),
-                                        ),
-                                        Center(
-                                          child: Text(title),
-                                        )
-                                      ],
+                                  return InkWell(
+                                    onTap: () async {
+                                      FirebaseCommands().addBarcode(barcode);
+                                      FirebaseCommands()
+                                          .getSimilarProducts2(barcode);
+                                      bool isFavorite = await FirebaseCommands()
+                                          .isProductFavorite(
+                                              barcode); // Add this line to fetch the favorite status
+
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => ProductPage(
+                                                  barcode, true, isFavorite)));
+                                    },
+                                    child: Card(
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            height: 160,
+                                            width: 200,
+                                            color: Colors.indigo[400],
+                                            child: imageUrl.isNotEmpty
+                                                ? Image.network(imageUrl)
+                                                : const Center(
+                                                    child: Text('No picture')),
+                                          ),
+                                          Center(
+                                            child: Text(title),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   );
                                 },
