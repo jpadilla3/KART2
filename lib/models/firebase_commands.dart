@@ -204,10 +204,10 @@ class FirebaseCommands {
         final allergyConflict = result[0];
         final conditionConflict = result[1];
 
-        // print("Product Allergies: $alerg");
-        // print("Product Conditions: $con");
-        // print("Allergies Conflict?: $allergyConflict");
-        // print("Conditions Conflict?: $conditionConflict");
+        print("Product Allergies: $alerg");
+        print("Product Conditions: $con");
+        print("Allergies Conflict?: $allergyConflict");
+        print("Conditions Conflict?: $conditionConflict");
 
         // If there are allergy or condition conflicts, product will not be added to firebase
         if (allergyConflict == false && conditionConflict == false) {
@@ -264,7 +264,7 @@ class FirebaseCommands {
     if (response.statusCode == 200) {
       final data = barcodeDataFromJson(response.body);
       final categoryList = data.product?.categoriesTagsEn;
-      print(categoryList);
+      print('Category List $categoryList');
 
       if (categoryList != null && categoryList.isNotEmpty) {
         int count = 0;
@@ -272,6 +272,7 @@ class FirebaseCommands {
           final categoryString = categoryList[i];
 
           final encodedCategory = Uri.encodeQueryComponent(categoryString);
+          print('encodedCategory $encodedCategory');
           final similarProductsResponse = await http.get(Uri.parse(
               'https://us.openfoodfacts.org/api/v2/search?categories_tags_en=$encodedCategory&nutrition_grades_tags=a&fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,code,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json'));
 
@@ -279,18 +280,18 @@ class FirebaseCommands {
             final similarProductsData =
                 searchDataFromJson(similarProductsResponse.body);
             final products = similarProductsData.products;
-            bool hasProducts = products != null;
+            bool hasProducts = products != null && products != [];
 
             if (hasProducts) {
               for (final product in products) {
-                // print(categoryString);
-                // print(encodedCategory);
-                // print(product.code);
-                // print(product.nutriscoreGrade);
-                // print(product.productName);
+                print(categoryString);
+                print(encodedCategory);
+                print(product.code);
+                print(product.nutriscoreGrade);
+                print(product.productName);
                 addRecomendations(barcode, product);
                 count++;
-                // print(count);
+                print(count);
                 if (count == 50) {
                   break;
                 }

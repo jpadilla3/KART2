@@ -60,17 +60,16 @@ class ProductPageState extends State<ProductPage> {
   //   }
   // }
 
-  Stream<DocumentSnapshot<Object?>> fetchData() {
-    final userDocId = FirebaseAuth.instance.currentUser!.email.toString();
-    final collectionRef = FirebaseFirestore.instance
-        .collection('users')
-        .doc(userDocId)
-        .collection(widget.type ? 'scanned' : 'search');
+  // Stream<DocumentSnapshot<Object?>> fetchData() {
+  //   final userDocId = FirebaseAuth.instance.currentUser!.email.toString();
+  //   final collectionRef = FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(userDocId)
+  //       .collection(widget.type ? 'scanned' : 'search');
 
-    return collectionRef.doc(widget.barcode).snapshots();
-  }
+  //   return collectionRef.doc(widget.barcode).snapshots();
+  // }
 
-  @override
   @override
   void initState() {
     super.initState();
@@ -100,6 +99,32 @@ class ProductPageState extends State<ProductPage> {
         .collection(collectionName);
     return collectionRef.doc(widget.barcode).snapshots();
   }
+
+  Stream<QuerySnapshot> _fetchRecommendedProducts(
+      String collectionName, String barcode) {
+    final userDocId = FirebaseAuth.instance.currentUser!.email.toString();
+
+    final collectionRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(userDocId)
+        .collection(collectionName)
+        .doc(barcode)
+        .collection('recommended')
+        .snapshots();
+
+    return collectionRef;
+  }
+
+  // Stream<DocumentSnapshot<Object?>> getRecommendedCollectionReference(
+  //     String collectionName) {
+  //   final userDocId = FirebaseAuth.instance.currentUser!.email.toString();
+  //   final collectionRef = FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(userDocId) //Emails
+  //       .collection(collectionName) //Scanned or Search
+  //       .doc(widget.barcode); // Product Barcode
+  //   return collectionRef.collection('recommended').snapshots();
+  // }
 
   // Processes the fetched data
   Future<void> processData(Map<String, dynamic> data) async {
@@ -348,56 +373,13 @@ class ProductPageState extends State<ProductPage> {
     }
   }
 
-  Widget _fetchRecommendedData() {
-    return const SizedBox(
-      height: 20,
-    );
-    SizedBox(
-      height: 50,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 20),
-            child: Text(
-              "Recommendations",
-              style: GoogleFonts.bebasNeue(fontSize: 35),
-            ),
-          ),
-        ],
-      ),
-    );
-    const SizedBox(
-      height: 10,
-    );
-    SizedBox(
-        height: 210,
-        child: ListView.builder(
-            physics: const ClampingScrollPhysics(),
-            shrinkWrap: true,
-            scrollDirection: Axis.horizontal,
-            itemCount: 8,
-            itemBuilder: (BuildContext context, int index) => Card(
-                  child: Column(
-                    children: [
-                      Container(
-                        height: 160,
-                        width: 200,
-                        color: Colors.indigo[400],
-                        child: const Center(
-                          child: Text('picture'),
-                        ),
-                      ),
-                      const Center(
-                        child: Text('title'),
-                      )
-                    ],
-                  ),
-                )));
-    const SizedBox(
-      height: 70,
-    );
-  }
+  // Widget _fetchRecommendedProductImageData() {
+  //   if (recommendedProductImageData != null) {
+  //     return Image.network('${productImageData?['picture']}');
+  //   } else {
+  //     return const CircularProgressIndicator();
+  //   }
+  // }
 
   Future favoriteItem(String barcode) async {
     Map<String, dynamic> item = {};
@@ -619,6 +601,82 @@ class ProductPageState extends State<ProductPage> {
                         const SizedBox(
                           height: 20,
                         ),
+                        SizedBox(
+                          height: 50,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left: 20),
+                                child: Text(
+                                  "Recommendations",
+                                  style: GoogleFonts.bebasNeue(fontSize: 35),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        SizedBox(
+                          height: 210,
+                          child: StreamBuilder<QuerySnapshot>(
+                            stream: _fetchRecommendedProducts(
+                                widget.type ? 'scanned' : 'search',
+                                widget.barcode),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<QuerySnapshot> snapshot) {
+                              if (snapshot.hasError) {
+                                return Center(
+                                    child: Text('Error: ${snapshot.error}'));
+                              }
+                              if (snapshot.data!.docs.isEmpty) {}
+
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                    child: CircularProgressIndicator());
+                              }
+                              print(
+                                  'Recommended products: ${snapshot.data!.docs}'); // Add this line
+
+                              return ListView.builder(
+                                physics: const ClampingScrollPhysics(),
+                                shrinkWrap: true,
+                                scrollDirection: Axis.horizontal,
+                                itemCount: snapshot.data!.docs.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  DocumentSnapshot doc =
+                                      snapshot.data!.docs[index];
+                                  String imageUrl = doc.get(
+                                      'picture'); // Replace with your image URL field name
+                                  String title = doc.get(
+                                      'name'); // Replace with your title field name
+
+                                  return Card(
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          height: 160,
+                                          width: 200,
+                                          color: Colors.indigo[400],
+                                          child: imageUrl.isNotEmpty
+                                              ? Image.network(imageUrl)
+                                              : const Center(
+                                                  child: Text('No picture')),
+                                        ),
+                                        Center(
+                                          child: Text(title),
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
                       ],
                     ),
                   );
@@ -626,7 +684,7 @@ class ProductPageState extends State<ProductPage> {
               },
             );
           } else {
-            return const Center(child: Text('No data found'));
+            return const Center(child: Text(''));
           }
         },
       ),
