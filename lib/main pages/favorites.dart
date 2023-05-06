@@ -169,16 +169,12 @@ class FavPageState extends State<FavPage> {
                                               mainAxisAlignment:
                                                   MainAxisAlignment.start,
                                               children: [
-                                                ScoreColors().scoreColor(
-                                                    documentSnapshot['grade']),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 5),
-                                                  child: Text(
-                                                    'Grade: ${documentSnapshot['grade'].toString().toUpperCase()}',
-                                                    textAlign: TextAlign.start,
-                                                  ),
+                                                SizedBox(
+                                                  height: 50,
+                                                  width: 75,
+                                                  child: ScoreColors().scorePic(
+                                                      documentSnapshot[
+                                                          'grade']),
                                                 ),
                                               ],
                                             ),

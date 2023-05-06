@@ -28,12 +28,10 @@ class RecommendationsPage extends StatefulWidget {
 
 class RecPageState extends State<RecommendationsPage> {
   bool isLoading = false;
-  String _scanBarcode = '';
-  String? _lastScannedBarcode;
-  //late bool addBarcodeSucess;
+  late String _lastScannedBarcode;
 
-  bool type = false;
-  bool fav = false;
+  bool type = true;
+  late bool isFavorite;
   final CollectionReference _barcodes = FirebaseFirestore.instance
       .collection('users')
       .doc(FirebaseAuth.instance.currentUser!.email.toString())
@@ -55,15 +53,15 @@ class RecPageState extends State<RecommendationsPage> {
         margin: const EdgeInsets.only(bottom: 50),
       ));
     }
-    void initState() {
-      isLoading = true;
-      Future.delayed(const Duration(seconds: 2), () {
-        setState(() {
-          isLoading = false;
-        });
-      });
-      super.initState();
-    }
+    // void initState() {
+    //   isLoading = true;
+    //   Future.delayed(const Duration(seconds: 2), () {
+    //     setState(() {
+    //       isLoading = false;
+    //     });
+    //   });
+    //   super.initState();
+    // }
   }
 
   Future<void> scanAndProcessBarcode() async {
@@ -106,7 +104,6 @@ class RecPageState extends State<RecommendationsPage> {
     if (!mounted) return;
 
     setState(() {
-      _scanBarcode = barcodeScanRes;
       //addBarcodeSucess = success;
       //print('addBarcodeSuccess1: $addBarcodeSucess');
       isLoading = false;
@@ -340,14 +337,17 @@ class RecPageState extends State<RecommendationsPage> {
                                                 children: [
                                                   Flexible(
                                                     child: Text(
-                                                      '${documentSnapshot['name']}',
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      softWrap: false,
-                                                      maxLines: 2,
-                                                    ),
+                                                        '${documentSnapshot['name']}',
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        softWrap: false,
+                                                        maxLines: 2,
+                                                        style: const TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold)),
                                                   )
                                                 ],
                                               ),
@@ -669,18 +669,20 @@ class RecPageState extends State<RecommendationsPage> {
                                                                   alignment:
                                                                       Alignment
                                                                           .center,
-                                                                  child: Text(
-                                                                    name,
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .center,
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                    softWrap:
-                                                                        false,
-                                                                    maxLines: 2,
-                                                                  ),
+                                                                  child: Text(name,
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                      softWrap:
+                                                                          false,
+                                                                      maxLines:
+                                                                          2,
+                                                                      style: const TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.bold)),
                                                                 ),
                                                               ],
                                                             ),
