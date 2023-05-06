@@ -25,7 +25,6 @@ class ProductPage extends StatefulWidget {
   ProductPage(this.barcode, this.success, this.type, this.isFavorite,
       {super.key, required this.onFail});
 
-
   @override
   State<ProductPage> createState() => ProductPageState();
 }
@@ -141,22 +140,23 @@ class ProductPageState extends State<ProductPage> {
     if (productInfoData != null) {
       return Column(
         children: [
-          const SizedBox(
-            height: 10,
-          ),
-          Text(
-            productInfoData?['name'] ?? 'Unknown Name',
-            textAlign: TextAlign.center,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-            softWrap: false,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          Container(
+            height: 50,
+            width: 180,
+            child: Text(
+              productInfoData?['name'] ?? 'Unknown Name',
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              softWrap: false,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+            ),
           ),
           const SizedBox(
             height: 20,
           ),
           SizedBox(
-            height: 70,
+            height: 50,
             width: 150,
             child:
                 ScoreColors().scorePic(productInfoData?['nutrition']['grade']),
@@ -170,7 +170,13 @@ class ProductPageState extends State<ProductPage> {
 
   Widget _fetchProductImageData() {
     if (productImageData != null) {
-      return Image.network('${productImageData?['picture']}');
+      return Column(
+        children: [
+          SizedBox.square(
+              dimension: 180,
+              child: Image.network('${productImageData?['picture']}')),
+        ],
+      );
     } else {
       return const CircularProgressIndicator();
     }
@@ -469,6 +475,7 @@ class ProductPageState extends State<ProductPage> {
     }
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.white,
         toolbarHeight: 80,
         centerTitle: true,
         title: _fetchAppBarTitleData(),
@@ -549,13 +556,18 @@ class ProductPageState extends State<ProductPage> {
                     physics: const BouncingScrollPhysics(),
                     child: Column(
                       children: [
-                        _fetchProductImageData(),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        _fetchProductInfoData(),
-                        const SizedBox(
-                          height: 20,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _fetchProductImageData(),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            _fetchProductInfoData(),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                          ],
                         ),
                         _fetchProductGradeInfoData(),
                         const SizedBox(
@@ -622,10 +634,8 @@ class ProductPageState extends State<ProductPage> {
 
                                   return InkWell(
                                     onTap: () async {
-
                                       await FirebaseCommands()
                                           .addBarcode(barcode);
-
 
                                       bool isFavorite = await FirebaseCommands()
                                           .isProductFavorite(
@@ -643,23 +653,45 @@ class ProductPageState extends State<ProductPage> {
                                                       Navigator.of(context)
                                                           .pop())));
                                     },
-                                    child: Card(
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            height: 160,
-                                            width: 200,
-                                            color: Colors.indigo[400],
-                                            child: imageUrl.isNotEmpty
-                                                ? Image.network(imageUrl,
-                                                    fit: BoxFit.cover)
-                                                : const Center(
-                                                    child: Text('No picture')),
-                                          ),
-                                          Center(
-                                            child: Text(title),
-                                          )
-                                        ],
+                                    child: Container(
+                                      height: 225,
+                                      width: 210,
+                                      child: Card(
+                                        color: Colors.white,
+                                        child: Column(
+                                          children: [
+                                            Container(
+                                              height: 160,
+                                              width: 200,
+                                              color: Colors.transparent,
+                                              child: imageUrl.isNotEmpty
+                                                  ? Image.network(imageUrl,
+                                                      fit: BoxFit.contain)
+                                                  : const Center(
+                                                      child:
+                                                          Text('No picture')),
+                                            ),
+                                            Column(
+                                              children: [
+                                                Center(
+                                                  child: Text(
+                                                    title,
+                                                    style:
+                                                        GoogleFonts.montserrat(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 2,
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   );
