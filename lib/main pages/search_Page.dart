@@ -72,7 +72,6 @@ class _SearchPageState extends State<SearchPage> {
       barcodeScanRes =
           await BarcodeScanner.scanBarcode('#ff6666', 'Cancel', true);
       success = await FirebaseCommands().addBarcode(barcodeScanRes);
-      //FirebaseCommands().getSimilarProducts2(barcodeScanRes);
       print('success: $success');
     } on PlatformException catch (e) {
       barcodeScanRes = 'Failed to scan barcode: $e';
