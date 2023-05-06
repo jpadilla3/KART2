@@ -374,8 +374,8 @@ class _SearchPageState extends State<SearchPage> {
                                                 padding:
                                                     const EdgeInsets.all(10.0),
                                                 child: SizedBox(
-                                                  height: 80,
-                                                  width: 80,
+                                                  height: 70,
+                                                  width: 70,
                                                   child: Image.network(
                                                       '${documentSnapshot['picture']}'),
                                                 )),
@@ -383,7 +383,7 @@ class _SearchPageState extends State<SearchPage> {
                                         ),
                                         SizedBox(
                                           height: 100,
-                                          width: 200,
+                                          width: 155,
                                           child: Center(
                                             child: Column(
                                               mainAxisAlignment:
@@ -701,7 +701,7 @@ class MySearchDelegate extends SearchDelegate {
       data.add({
         "brand": result.products?[i].brands ?? result.products?[i].productName,
         "name": result.products?[i].productName ?? "null",
-        "grade": result.products?[i].nutriscore ?? "Not Avaliable",
+        "grade": result.products?[i].nutriscore ?? "No Grade",
         "barcode": result.products?[i].barcode ?? 'null',
         "pic": result.products?[i].imageFrontUrl ??
             'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg',
@@ -837,8 +837,8 @@ class MySearchDelegate extends SearchDelegate {
                                 Padding(
                                     padding: const EdgeInsets.all(10.0),
                                     child: Container(
-                                      height: 80,
-                                      width: 80,
+                                      height: 70,
+                                      width: 70,
                                       child: Image.network(
                                           '${data[index]['pic']}'),
                                     )),
@@ -846,7 +846,7 @@ class MySearchDelegate extends SearchDelegate {
                             ),
                             SizedBox(
                               height: 100,
-                              width: 200,
+                              width: 155,
                               child: Center(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
