@@ -107,14 +107,18 @@ class FavPageState extends State<FavPage> {
                                 highlightColor: Colors.grey[300],
                                 //behavior: HitTestBehavior.translucent,
                                 onTap: () {
-                                  // add your logic here
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => ProductPage(
-                                              documentSnapshot['barcode'],
-                                              documentSnapshot['ID'],
-                                              true)));
+                                              documentSnapshot[
+                                                  'barcode'], //barcode
+                                              true, //success
+                                              documentSnapshot['ID'], //type
+                                              true, //isFavorite
+                                              onFail: () =>
+                                                  Navigator.of(context)
+                                                      .pop())));
                                 },
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,

@@ -16,10 +16,15 @@ import 'package:shimmer/shimmer.dart';
 import 'package:http/http.dart' as http;
 
 class ProductPage extends StatefulWidget {
-  final String barcode;
+  String barcode;
+  bool success;
   final bool type;
   bool isFavorite;
-  ProductPage(this.barcode, this.type, this.isFavorite, {super.key});
+  final Function() onFail;
+
+  ProductPage(this.barcode, this.success, this.type, this.isFavorite,
+      {super.key, required this.onFail});
+
 
   @override
   State<ProductPage> createState() => ProductPageState();
@@ -34,41 +39,7 @@ class ProductPageState extends State<ProductPage> {
   late List? productGradeInfoData;
   Map<String, dynamic>? productNutritionInfoData;
   late StreamSubscription<DocumentSnapshot<Object?>> _streamSubscription;
-
-  // Future<void> fetchData() async {
-  //   final collectionRef =
-  //       await getCollectionReference(widget.type ? 'scanned' : 'search');
-  //   final documentSnapshot = await collectionRef.doc(widget.barcode).get();
-
-  //   if (documentSnapshot.exists) {
-  //     final data = documentSnapshot.data() as Map<String, dynamic>;
-  //     final gradeData = await GradeCal()
-  //         .gradeCalculateInfo(data['Allergens'], data['conditions']);
-  //     if (mounted) {
-  //       setState(() {
-  //         appBarTitleData = data;
-  //         productInfoData = data;
-  //         productImageData = data;
-  //         productGradeInfoData = gradeData;
-  //         productNutritionInfoData = data;
-  //         _loading = false;
-  //       });
-  //     }
-  //     print('Data fetched successfully'); // Add this print statement
-  //   } else {
-  //     print('Data not found'); // Add this print statement
-  //   }
-  // }
-
-  // Stream<DocumentSnapshot<Object?>> fetchData() {
-  //   final userDocId = FirebaseAuth.instance.currentUser!.email.toString();
-  //   final collectionRef = FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(userDocId)
-  //       .collection(widget.type ? 'scanned' : 'search');
-
-  //   return collectionRef.doc(widget.barcode).snapshots();
-  // }
+  //bool get success => ProductPageState().success;
 
   @override
   void initState() {
@@ -114,17 +85,6 @@ class ProductPageState extends State<ProductPage> {
 
     return collectionRef;
   }
-
-  // Stream<DocumentSnapshot<Object?>> getRecommendedCollectionReference(
-  //     String collectionName) {
-  //   final userDocId = FirebaseAuth.instance.currentUser!.email.toString();
-  //   final collectionRef = FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(userDocId) //Emails
-  //       .collection(collectionName) //Scanned or Search
-  //       .doc(widget.barcode); // Product Barcode
-  //   return collectionRef.collection('recommended').snapshots();
-  // }
 
   // Processes the fetched data
   Future<void> processData(Map<String, dynamic> data) async {
@@ -373,14 +333,6 @@ class ProductPageState extends State<ProductPage> {
     }
   }
 
-  // Widget _fetchRecommendedProductImageData() {
-  //   if (recommendedProductImageData != null) {
-  //     return Image.network('${productImageData?['picture']}');
-  //   } else {
-  //     return const CircularProgressIndicator();
-  //   }
-  // }
-
   Future favoriteItem(String barcode) async {
     Map<String, dynamic> item = {};
     late List<String> con = [];
@@ -503,6 +455,18 @@ class ProductPageState extends State<ProductPage> {
 
   @override
   Widget build(BuildContext context) {
+    //print('success: ${widget.success}');
+    if (widget.success == false) {
+      Future.delayed(Duration.zero, () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content:
+                  Text('An error occurred while loading the product details.')),
+        );
+        //Call the callback function to pop the ProductPage
+        widget.onFail();
+      });
+    }
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 80,
@@ -658,9 +622,11 @@ class ProductPageState extends State<ProductPage> {
 
                                   return InkWell(
                                     onTap: () async {
-                                      FirebaseCommands().addBarcode(barcode);
-                                      FirebaseCommands()
-                                          .getSimilarProducts2(barcode);
+
+                                      await FirebaseCommands()
+                                          .addBarcode(barcode);
+
+
                                       bool isFavorite = await FirebaseCommands()
                                           .isProductFavorite(
                                               barcode); // Add this line to fetch the favorite status
@@ -669,7 +635,13 @@ class ProductPageState extends State<ProductPage> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) => ProductPage(
-                                                  barcode, true, isFavorite)));
+                                                  barcode, //barcode
+                                                  true, //success
+                                                  true, //type
+                                                  isFavorite, //isFavorite
+                                                  onFail: () =>
+                                                      Navigator.of(context)
+                                                          .pop())));
                                     },
                                     child: Card(
                                       child: Column(

@@ -6,6 +6,7 @@ import 'package:kart2/main%20pages/productPage.dart';
 import 'package:kart2/main%20pages/shimmerlist.dart';
 import 'package:shimmer/shimmer.dart';
 
+
 import '../models/firebase_commands.dart';
 import '../models/scoreColor.dart';
 
@@ -50,6 +51,7 @@ class RecoListState extends State<RecoList> {
             if (snapshot.connectionState == ConnectionState.active) {
               List<DocumentSnapshot> docs = snapshot.data!;
               if (docs.isNotEmpty) {
+
                 return ListView.separated(
                     separatorBuilder: (BuildContext context, int index) =>
                         const Divider(
@@ -71,18 +73,20 @@ class RecoListState extends State<RecoList> {
 
                       return InkWell(
                           onTap: () async {
-                            FirebaseCommands().addBarcode(barcode);
-                            FirebaseCommands().getSimilarProducts2(barcode);
-                            bool isFavorite = await FirebaseCommands()
-                                .isProductFavorite(
-                                    barcode); // Add this line to fetch the favorite status
+                          FirebaseCommands().addBarcode(barcode);
 
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ProductPage(
-                                        barcode, true, isFavorite)));
-                          },
+                          bool isFavorite = await FirebaseCommands()
+                              .isProductFavorite(
+                                  barcode); // Add this line to fetch the favorite status
+
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ProductPage(
+                                      barcode, true, true, isFavorite,
+                                      onFail: () =>
+                                          Navigator.of(context).pop())));
+                        },
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Row(

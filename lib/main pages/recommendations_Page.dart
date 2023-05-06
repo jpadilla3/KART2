@@ -30,6 +30,7 @@ class RecPageState extends State<RecommendationsPage> {
   bool isLoading = false;
   String _scanBarcode = '';
   String? _lastScannedBarcode;
+  //late bool addBarcodeSucess;
 
   bool type = false;
   bool fav = false;
@@ -67,18 +68,38 @@ class RecPageState extends State<RecommendationsPage> {
 
   Future<void> scanAndProcessBarcode() async {
     String barcodeScanRes;
-
+    bool success;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       barcodeScanRes =
           await BarcodeScanner.scanBarcode('#ff6666', 'Cancel', true);
-      // Adds barcode to firebase and get recommendations
-      FirebaseCommands().addBarcode(barcodeScanRes);
-      FirebaseCommands().getSimilarProducts2(barcodeScanRes);
+      success = await FirebaseCommands().addBarcode(barcodeScanRes);
+      //FirebaseCommands().getSimilarProducts2(barcodeScanRes);
+      print('success: $success');
     } on PlatformException catch (e) {
       barcodeScanRes = 'Failed to scan barcode: $e';
+      success = false;
     }
+    bool isFavorite =
+        await FirebaseCommands().isProductFavorite(barcodeScanRes);
 
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ProductPage(
+            barcodeScanRes, success, true, isFavorite,
+            onFail: () => Navigator.of(context).pop()),
+      ),
+    ).then((result) {
+      if (result is bool && !result) {
+        // Show an error message, e.g., using a SnackBar
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content:
+                  Text('An error occurred while loading the product details.')),
+        );
+      }
+    });
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
@@ -86,6 +107,8 @@ class RecPageState extends State<RecommendationsPage> {
 
     setState(() {
       _scanBarcode = barcodeScanRes;
+      //addBarcodeSucess = success;
+      //print('addBarcodeSuccess1: $addBarcodeSucess');
       isLoading = false;
       type = true;
       _lastScannedBarcode = barcodeScanRes;
@@ -128,16 +151,7 @@ class RecPageState extends State<RecommendationsPage> {
     return Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            await scanAndProcessBarcode(); //adds barcode to firebase
-            bool isFavorite = await FirebaseCommands()
-                .isProductFavorite(_lastScannedBarcode!);
-            if (_lastScannedBarcode != null) {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ProductPage(_lastScannedBarcode!, true, isFavorite)));
-            }
+            await scanAndProcessBarcode(); //adds barcode product, adds recommendations and brings up product page to
           },
           backgroundColor: Colors.indigo[400],
           child: const Icon(
@@ -293,9 +307,14 @@ class RecPageState extends State<RecommendationsPage> {
                                                   builder: (context) =>
                                                       ProductPage(
                                                           documentSnapshot[
-                                                              'barcode'],
-                                                          true,
-                                                          isFavorite)));
+                                                              'barcode'], //barcode
+                                                          true, //success
+                                                          true, //type
+                                                          isFavorite, //isFavorite
+                                                          onFail: () =>
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop())));
                                         },
                                         child: Column(
                                           children: [

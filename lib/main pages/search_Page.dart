@@ -354,9 +354,14 @@ class _SearchPageState extends State<SearchPage> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) => ProductPage(
-                                                  documentSnapshot['barcode'],
-                                                  false,
-                                                  favo)));
+                                                  documentSnapshot[
+                                                      'barcode'], //barcode
+                                                  true, //success
+                                                  false, //type
+                                                  favo, //isFavorite
+                                                  onFail: () =>
+                                                      Navigator.of(context)
+                                                          .pop())));
                                     },
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
