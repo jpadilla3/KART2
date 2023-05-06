@@ -21,6 +21,7 @@ import 'package:kart2/models/scoreColor.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../models/firebase_commands.dart';
 import 'shimmerlist.dart';
 
 List<String> prevSearch = [];
@@ -33,9 +34,16 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  String _scanBarcode = '';
-  late Future<BarcodeData> futureBarcodeData;
-  bool fav = false;
+  //String _scanBarcode = '';
+  //late Future<BarcodeData> futureBarcodeData;
+  bool isFavorite = false;
+  bool type = false;
+  //String? _lastScannedBarcode;
+  final CollectionReference _barcodes = FirebaseFirestore.instance
+      .collection('users')
+      .doc(fires.FirebaseAuth.instance.currentUser!.email.toString())
+      .collection('search');
+
   Future favs(barcode) async {
     final favDoc = await FirebaseFirestore.instance
         .collection('users')
@@ -45,35 +53,64 @@ class _SearchPageState extends State<SearchPage> {
         .get();
 
     if (favDoc.exists) {
-      return fav = true;
+      return isFavorite = true;
     } else {
-      return fav = false;
-    }
-  }
-
-  Future getSuggestion(String word) async {
-    ProductSearchQueryConfiguration config = ProductSearchQueryConfiguration(
-        language: OpenFoodFactsLanguage.ENGLISH,
-        parametersList: <Parameter>[
-          SearchTerms(terms: [word]),
-          const SortBy(
-            option: SortOption.NUTRISCORE,
-          ),
-        ],
-        version: ProductQueryVersion.v3);
-
-    SearchResult result = await OpenFoodAPIClient.searchProducts(
-        User(userId: 'jpadilla3', password: 'abc123!'), config);
-
-    for (int i = 0; i < 5; i++) {
-      print(
-          "${result.products?[i].productName} : ${result.products?[i].barcode}");
+      return isFavorite = false;
     }
   }
 
   @override
   void initState() {
     super.initState();
+  }
+
+  Future<void> scanAndProcessBarcode() async {
+    String barcodeScanRes;
+    bool success;
+    // try/catch PlatformException in case platform fails
+    try {
+      barcodeScanRes =
+          await BarcodeScanner.scanBarcode('#ff6666', 'Cancel', true);
+      success = await FirebaseCommands().addBarcode(barcodeScanRes);
+      //FirebaseCommands().getSimilarProducts2(barcodeScanRes);
+      print('success: $success');
+    } on PlatformException catch (e) {
+      barcodeScanRes = 'Failed to scan barcode: $e';
+      success = false;
+    }
+    bool isFavorite =
+        await FirebaseCommands().isProductFavorite(barcodeScanRes);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ProductPage(
+            barcodeScanRes, success, true, isFavorite,
+            onFail: () => Navigator.of(context).pop()),
+      ),
+    ).then((result) {
+      if (result is bool && !result) {
+        // Show an error message, e.g., using a SnackBar
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content:
+                  Text('An error occurred while loading the product details.')),
+        );
+      }
+    });
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    setState(() {
+      //_scanBarcode = barcodeScanRes;
+      //addBarcodeSucess = success;
+      //print('addBarcodeSuccess1: $addBarcodeSucess');
+      //isLoading = false;
+      type = true;
+      //_lastScannedBarcode = barcodeScanRes;
+    });
   }
 
   void snackMessage(bool action, String barcode) {
@@ -166,37 +203,6 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> scanBarcodeNormal() async {
-    String barcodeScanRes;
-    List<String> con = [];
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      barcodeScanRes =
-          await BarcodeScanner.scanBarcode('#ff6666', 'Cancel', true);
-
-      //add barcode to firebase
-      //passes current user email and barcode
-      fire.FirebaseCommands().addBarcode(barcodeScanRes);
-    } on PlatformException {
-      barcodeScanRes = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _scanBarcode = barcodeScanRes;
-    });
-  }
-
-  final CollectionReference _barcodes = FirebaseFirestore.instance
-      .collection('users')
-      .doc(fires.FirebaseAuth.instance.currentUser!.email.toString())
-      .collection('search');
-
   //fetchBarcodeData function gets the data with certian fields from barcode and parses it.
 
   @override
@@ -260,12 +266,7 @@ class _SearchPageState extends State<SearchPage> {
                           bottomRight: Radius.circular(10))),
                   child: IconButton(
                       onPressed: () async {
-                        await scanBarcodeNormal(); //adds barcode to firebase
-                        Map items = await itemScan(_scanBarcode);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ScanPage(items)));
+                        await scanAndProcessBarcode(); //adds barcode to firebase
                       },
                       icon: const Icon(
                         Icons.photo_camera_rounded,
@@ -348,7 +349,9 @@ class _SearchPageState extends State<SearchPage> {
                                   child: InkWell(
                                     highlightColor: Colors.grey[300],
                                     onTap: () async {
-                                      bool favo = await favs(
+                                      await FirebaseCommands().addBarcode(
+                                          documentSnapshot['barcode']);
+                                      isFavorite = await favs(
                                           documentSnapshot['barcode']);
                                       Navigator.push(
                                           context,
@@ -358,7 +361,7 @@ class _SearchPageState extends State<SearchPage> {
                                                       'barcode'], //barcode
                                                   true, //success
                                                   false, //type
-                                                  favo, //isFavorite
+                                                  isFavorite, //isFavorite
                                                   onFail: () =>
                                                       Navigator.of(context)
                                                           .pop())));
@@ -418,19 +421,14 @@ class _SearchPageState extends State<SearchPage> {
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.start,
                                                   children: [
-                                                    ScoreColors().scoreColor(
-                                                        documentSnapshot[
-                                                                'nutrition']
-                                                            ['grade']),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 5),
-                                                      child: Text(
-                                                        'Grade: ${documentSnapshot['nutrition']['grade'].toUpperCase()}',
-                                                        textAlign:
-                                                            TextAlign.start,
-                                                      ),
+                                                    SizedBox(
+                                                      height: 50,
+                                                      width: 75,
+                                                      child: ScoreColors()
+                                                          .scorePic(
+                                                              documentSnapshot[
+                                                                      'nutrition']
+                                                                  ['grade']),
                                                     )
                                                   ],
                                                 )
@@ -642,7 +640,7 @@ class _SearchPageState extends State<SearchPage> {
                               const SizedBox(
                                 height: 200,
                               ),
-                              Container(
+                              SizedBox(
                                 height: 200,
                                 width: 200,
                                 child: Image.asset("assets/images/Search.png"),
@@ -874,15 +872,11 @@ class MySearchDelegate extends SearchDelegate {
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: [
-                                        ScoreColors()
-                                            .scoreColor(data[index]['grade']),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 5),
-                                          child: Text(
-                                            'Grade: ${data[index]['grade'].toUpperCase()}',
-                                            textAlign: TextAlign.start,
-                                          ),
+                                        SizedBox(
+                                          height: 50,
+                                          width: 75,
+                                          child: ScoreColors()
+                                              .scorePic(data[index]['grade']),
                                         )
                                       ],
                                     )
