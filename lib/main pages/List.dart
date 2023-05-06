@@ -6,7 +6,6 @@ import 'package:kart2/main%20pages/productPage.dart';
 import 'package:kart2/main%20pages/shimmerlist.dart';
 import 'package:shimmer/shimmer.dart';
 
-
 import '../models/firebase_commands.dart';
 import '../models/scoreColor.dart';
 
@@ -51,7 +50,6 @@ class RecoListState extends State<RecoList> {
             if (snapshot.connectionState == ConnectionState.active) {
               List<DocumentSnapshot> docs = snapshot.data!;
               if (docs.isNotEmpty) {
-
                 return ListView.separated(
                     separatorBuilder: (BuildContext context, int index) =>
                         const Divider(
@@ -73,20 +71,20 @@ class RecoListState extends State<RecoList> {
 
                       return InkWell(
                           onTap: () async {
-                          FirebaseCommands().addBarcode(barcode);
+                            FirebaseCommands().addBarcode(barcode);
 
-                          bool isFavorite = await FirebaseCommands()
-                              .isProductFavorite(
-                                  barcode); // Add this line to fetch the favorite status
+                            bool isFavorite = await FirebaseCommands()
+                                .isProductFavorite(
+                                    barcode); // Add this line to fetch the favorite status
 
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ProductPage(
-                                      barcode, true, true, isFavorite,
-                                      onFail: () =>
-                                          Navigator.of(context).pop())));
-                        },
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ProductPage(
+                                        barcode, true, true, isFavorite,
+                                        onFail: () =>
+                                            Navigator.of(context).pop())));
+                          },
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Row(
@@ -126,15 +124,11 @@ class RecoListState extends State<RecoList> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
                                         children: [
-                                          ScoreColors().scoreColor(grade),
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(left: 5),
-                                            child: Text(
-                                              'Grade: ${grade.toUpperCase()}',
-                                              textAlign: TextAlign.start,
-                                            ),
-                                          )
+                                          SizedBox(
+                                              height: 50,
+                                              width: 75,
+                                              child:
+                                                  ScoreColors().scorePic(grade))
                                         ],
                                       )
                                     ],
