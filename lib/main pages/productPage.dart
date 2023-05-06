@@ -25,6 +25,7 @@ class ProductPage extends StatefulWidget {
   ProductPage(this.barcode, this.success, this.type, this.isFavorite,
       {super.key, required this.onFail});
 
+
   @override
   State<ProductPage> createState() => ProductPageState();
 }
@@ -621,8 +622,10 @@ class ProductPageState extends State<ProductPage> {
 
                                   return InkWell(
                                     onTap: () async {
+
                                       await FirebaseCommands()
                                           .addBarcode(barcode);
+
 
                                       bool isFavorite = await FirebaseCommands()
                                           .isProductFavorite(
