@@ -64,7 +64,7 @@ class RecoListState extends State<RecoList> {
                       return InkWell(
                         onTap: () async {
                           FirebaseCommands().addBarcode(barcode);
-                          FirebaseCommands().getSimilarProducts2(barcode);
+
                           bool isFavorite = await FirebaseCommands()
                               .isProductFavorite(
                                   barcode); // Add this line to fetch the favorite status
@@ -72,8 +72,10 @@ class RecoListState extends State<RecoList> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      ProductPage(barcode, true, isFavorite)));
+                                  builder: (context) => ProductPage(
+                                      barcode, true, true, isFavorite,
+                                      onFail: () =>
+                                          Navigator.of(context).pop())));
                         },
                         child: Card(
                           margin: EdgeInsets.all(
