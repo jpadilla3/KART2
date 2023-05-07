@@ -590,18 +590,18 @@ class RecPageState extends State<RecommendationsPage> {
                                                         documentSnapshot[
                                                             'barcode']),
                                                 builder: (context, snapshot) {
-                                                  print(
-                                                      'StreamBuilder connectionState: ${snapshot.connectionState}');
+                                                  // print(
+                                                  //     'StreamBuilder connectionState: ${snapshot.connectionState}');
                                                   if (snapshot.hasData) {
                                                     List<String> docIDs =
                                                         snapshot.data ?? [];
 
-                                                    print(
-                                                        'StreamBuilder received data: $docIDs');
+                                                    // print(
+                                                    //     'StreamBuilder received data: $docIDs');
 
                                                     if (docIDs.isEmpty) {
-                                                      return Text(
-                                                          'No recommendations found');
+                                                      return Image.asset(
+                                                          'assets/images/NRPF.png');
                                                     } else {
                                                       return FutureBuilder<
                                                           Map<String, dynamic>>(
@@ -616,8 +616,8 @@ class RecPageState extends State<RecommendationsPage> {
                                                                     Map<String,
                                                                         dynamic>>
                                                                 snapshot) {
-                                                          print(
-                                                              'FutureBuilder connectionState: ${snapshot.connectionState}');
+                                                          // print(
+                                                          //     'FutureBuilder connectionState: ${snapshot.connectionState}');
                                                           if (snapshot
                                                                   .connectionState ==
                                                               ConnectionState
@@ -713,7 +713,7 @@ class RecPageState extends State<RecommendationsPage> {
                                                         snapshot.data ?? [];
                                                     if (docIDs.isEmpty) {
                                                       return Text(
-                                                          'No recommendations found');
+                                                          'No Recommendations Found');
                                                     } else {
                                                       return FutureBuilder<
                                                               Map<String,
