@@ -13,7 +13,7 @@ class FirebaseCommands {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   //add barcode to firebase
-  Future addBarcode(String productBarcode, bool type,) async {
+  Future addBarcode(String productBarcode, bool type) async {
     print('addBarcodeProductBarcode: $productBarcode');
     print('addBarcodeType: $type');
     List<String> alerg = [];
@@ -306,7 +306,7 @@ class FirebaseCommands {
       } else {
         print(
             'Categories not found for barcode ${product.code}. Not added to firestore.');
-        //return false;
+        // return false;
       }
     } else {
       print(
