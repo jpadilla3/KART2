@@ -86,7 +86,16 @@ class RecPageState extends State<RecommendationsPage> {
             barcodeScanRes, success, true, isFavorite,
             onFail: () => Navigator.of(context).pop()),
       ),
-    );
+    ).then((result) {
+      if (result is bool && !result) {
+        // Show an error message, e.g., using a SnackBar
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content:
+                  Text('An error occurred while loading the product details.')),
+        );
+      }
+    });
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
@@ -151,6 +160,16 @@ class RecPageState extends State<RecommendationsPage> {
     return data;
   }
 
+  Future<List<dynamic>> getInfo(String barcode, String barcode2) async {
+    DocumentSnapshot snapshot = await _barcodes
+        .doc(barcode)
+        .collection('recommended')
+        .doc(barcode2)
+        .get();
+    List<dynamic> data = snapshot.data()! as List<dynamic>;
+    return data;
+  }
+
   // Future<String> getRecommendedProductName(
   //     String barcode, String barcode2) async {
   //   DocumentSnapshot snapshot = await _barcodes
@@ -194,7 +213,7 @@ class RecPageState extends State<RecommendationsPage> {
                   )),
               expandedHeight: 147,
               title: Text(
-                'Recommendations',
+                'Kart',
                 style: GoogleFonts.bebasNeue(color: Colors.black, fontSize: 45),
               ),
               actions: [
@@ -571,14 +590,14 @@ class RecPageState extends State<RecommendationsPage> {
                                                         documentSnapshot[
                                                             'barcode']),
                                                 builder: (context, snapshot) {
-                                                  //print(
-                                                  //'StreamBuilder connectionState: ${snapshot.connectionState}');
+                                                  print(
+                                                      'StreamBuilder connectionState: ${snapshot.connectionState}');
                                                   if (snapshot.hasData) {
                                                     List<String> docIDs =
                                                         snapshot.data ?? [];
 
-                                                    // print(
-                                                    //     'StreamBuilder received data: $docIDs');
+                                                    print(
+                                                        'StreamBuilder received data: $docIDs');
 
                                                     if (docIDs.isEmpty) {
                                                       return Text(
@@ -597,8 +616,8 @@ class RecPageState extends State<RecommendationsPage> {
                                                                     Map<String,
                                                                         dynamic>>
                                                                 snapshot) {
-                                                          // print(
-                                                          //     'FutureBuilder connectionState: ${snapshot.connectionState}');
+                                                          print(
+                                                              'FutureBuilder connectionState: ${snapshot.connectionState}');
                                                           if (snapshot
                                                                   .connectionState ==
                                                               ConnectionState
@@ -614,6 +633,7 @@ class RecPageState extends State<RecommendationsPage> {
                                                             String name =
                                                                 snapshot.data![
                                                                     'name'];
+
                                                             return SingleChildScrollView(
                                                               child: Column(
                                                                 crossAxisAlignment:
@@ -681,10 +701,193 @@ class RecPageState extends State<RecommendationsPage> {
                                                   }
                                                 },
                                               ),
-                                            )
+                                            ),
+                                            StreamBuilder(
+                                                stream:
+                                                    getRecommendedDocIdsStream(
+                                                        documentSnapshot[
+                                                            'barcode']),
+                                                builder: ((context, snapshot) {
+                                                  if (snapshot.hasData) {
+                                                    List<String> docIDs =
+                                                        snapshot.data ?? [];
+                                                    if (docIDs.isEmpty) {
+                                                      return Text(
+                                                          'No recommendations found');
+                                                    } else {
+                                                      return FutureBuilder<
+                                                              Map<String,
+                                                                  dynamic>>(
+                                                          future: getNameAndPicture(
+                                                              documentSnapshot[
+                                                                  'barcode'],
+                                                              docIDs[0]),
+                                                          builder: (BuildContext
+                                                                  context,
+                                                              AsyncSnapshot<
+                                                                      Map<String,
+                                                                          dynamic>>
+                                                                  snapshot) {
+                                                            if (snapshot
+                                                                    .connectionState ==
+                                                                ConnectionState
+                                                                    .done) {
+                                                              if (snapshot
+                                                                  .hasError) {
+                                                                return Text(
+                                                                    'Error: ${snapshot.error}');
+                                                              } else {
+                                                                Map<String,
+                                                                        dynamic>
+                                                                    data =
+                                                                    snapshot
+                                                                        .data!;
+
+                                                                return SizedBox(
+                                                                  height: 30,
+                                                                  width: 120,
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      //vegan
+                                                                      FutureBuilder(
+                                                                          future: GradeCal().gradeCalculate(
+                                                                              data['Allergens'],
+                                                                              data['conditions']),
+                                                                          builder: (context, snapshot) {
+                                                                            if (snapshot.connectionState ==
+                                                                                ConnectionState.done) {
+                                                                              if (snapshot.hasError) {
+                                                                                return Text('${snapshot.error} occurred');
+                                                                              } else {
+                                                                                final data = snapshot.data as List<bool>;
+                                                                                if (data[1] == false) {
+                                                                                  return const SizedBox(
+                                                                                    child: Padding(
+                                                                                      padding: EdgeInsets.only(right: 2),
+                                                                                      child: Icon(
+                                                                                        Icons.eco_outlined,
+                                                                                        color: Colors.green,
+                                                                                      ),
+                                                                                    ),
+                                                                                  );
+                                                                                } else {
+                                                                                  return const Text('');
+                                                                                }
+                                                                              }
+                                                                            } else {
+                                                                              return const CircularProgressIndicator();
+                                                                            }
+                                                                          }),
+                                                                      //vegetarian
+                                                                      FutureBuilder(
+                                                                          future: GradeCal().gradeCalculate(
+                                                                              data['Allergens'],
+                                                                              data['conditions']),
+                                                                          builder: (context, snapshot) {
+                                                                            if (snapshot.connectionState ==
+                                                                                ConnectionState.done) {
+                                                                              if (snapshot.hasError) {
+                                                                                return Text('${snapshot.error} occurred');
+                                                                              } else {
+                                                                                final data = snapshot.data as List<bool>;
+                                                                                if (data[1] == false) {
+                                                                                  return const SizedBox(
+                                                                                    child: Padding(
+                                                                                      padding: EdgeInsets.only(right: 2),
+                                                                                      child: Icon(
+                                                                                        Icons.eco_outlined,
+                                                                                        color: Colors.green,
+                                                                                      ),
+                                                                                    ),
+                                                                                  );
+                                                                                } else {
+                                                                                  return const Text('');
+                                                                                }
+                                                                              }
+                                                                            } else {
+                                                                              return const CircularProgressIndicator();
+                                                                            }
+                                                                          }),
+
+                                                                      //lactose
+                                                                      FutureBuilder(
+                                                                          future: GradeCal().gradeCalculate(
+                                                                              data['Allergens'],
+                                                                              data['conditions']),
+                                                                          builder: (context, snapshot) {
+                                                                            if (snapshot.connectionState ==
+                                                                                ConnectionState.done) {
+                                                                              if (snapshot.hasError) {
+                                                                                return Text('${snapshot.error} occurred');
+                                                                              } else {
+                                                                                final data = snapshot.data as List<bool>;
+                                                                                if (data[2] == true) {
+                                                                                  return SizedBox(
+                                                                                    child: Padding(
+                                                                                        padding: const EdgeInsets.only(right: 2),
+                                                                                        child: Image.asset(
+                                                                                          'assets/images/milk.png',
+                                                                                          width: 30,
+                                                                                          height: 30,
+                                                                                        )),
+                                                                                  );
+                                                                                } else {
+                                                                                  return const Text('');
+                                                                                }
+                                                                              }
+                                                                            } else {
+                                                                              return const CircularProgressIndicator();
+                                                                            }
+                                                                          }),
+                                                                      //allergy
+                                                                      FutureBuilder(
+                                                                          future: GradeCal().gradeCalculate(
+                                                                              data['Allergens'],
+                                                                              data['conditions']),
+                                                                          builder: (context, snapshot) {
+                                                                            if (snapshot.connectionState ==
+                                                                                ConnectionState.done) {
+                                                                              if (snapshot.hasError) {
+                                                                                return Text('${snapshot.error} occurred');
+                                                                              } else {
+                                                                                final data = snapshot.data as List<bool>;
+                                                                                if (data[3] == true) {
+                                                                                  return const SizedBox(
+                                                                                    child: Padding(
+                                                                                      padding: EdgeInsets.only(right: 2),
+                                                                                      child: Icon(
+                                                                                        Icons.info_outline,
+                                                                                        color: Colors.red,
+                                                                                      ),
+                                                                                    ),
+                                                                                  );
+                                                                                } else {
+                                                                                  return const Text('');
+                                                                                }
+                                                                              }
+                                                                            } else {
+                                                                              return const CircularProgressIndicator();
+                                                                            }
+                                                                          })
+                                                                    ],
+                                                                  ),
+                                                                );
+                                                              }
+                                                            } else {
+                                                              return const CircularProgressIndicator();
+                                                            }
+                                                          });
+                                                    }
+                                                  } else {
+                                                    return const CircularProgressIndicator();
+                                                  }
+                                                })),
                                           ],
                                         ),
-                                      )
+                                      ),
                                     ],
                                   ),
                                 ),
