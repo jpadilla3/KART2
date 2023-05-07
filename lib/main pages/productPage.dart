@@ -529,8 +529,7 @@ class ProductPageState extends State<ProductPage> {
                     )),
           IconButton(
               onPressed: () async {
-                await FirebaseCommands()
-
+                FirebaseCommands()
                     .destroyRecommendations(widget.barcode, widget.type);
                 FirebaseCommands().destroyBarcode(widget.barcode, widget.type);
                 FirebaseCommands().removeFavorite(widget.barcode);

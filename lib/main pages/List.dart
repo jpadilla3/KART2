@@ -63,25 +63,40 @@ class RecoListState extends State<RecoList> {
                     itemCount: docs.length,
                     itemBuilder: (BuildContext context, int index) {
                       DocumentSnapshot doc = docs[index];
+                      Map<String, dynamic>? docData =
+                          doc.data() as Map<String, dynamic>?;
+                      String imageUrl = '';
+                      String title = '';
+                      String barcode = '';
+                      String grade = '';
+                      bool type = true;
 
-                      String imageUrl = doc['picture'] ?? '';
-                      String title = doc['name'] ?? '';
-                      String barcode = doc['barcode'] ?? '';
-                      String grade = doc['nutrition']['grade'] ?? '';
-                      bool type = doc['id'];
+                      if (docData != null) {
+                        imageUrl = docData['picture'] ?? '';
+                        title = docData['name'] ?? '';
+                        barcode = docData['barcode'] ?? '';
+                        if (docData['nutrition'] is Map<String, dynamic>) {
+                          grade =
+                              (docData['nutrition']['grade'] as String?) ?? '';
+                        }
+                        type = docData['id'] as bool? ?? true;
+                      }
 
                       return InkWell(
                           onTap: () async {
-                            FirebaseCommands().addBarcode(barcode, type);
+                            print(
+                                "docData?['barcode']: ${docData?['barcode']}");
+                            FirebaseCommands()
+                                .addBarcode(docData?['barcode'], type);
                             bool isFavorite = await FirebaseCommands()
-                                .isProductFavorite(
-                                    barcode); // Add this line to fetch the favorite status
+                                .isProductFavorite(docData?[
+                                    'barcode']); // Add this line to fetch the favorite status
 
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => ProductPage(
-                                        barcode,
+                                        docData?['barcode'],
                                         true,
                                         true,
                                         isFavorite,
@@ -144,7 +159,8 @@ class RecoListState extends State<RecoList> {
                           ));
                     });
               } else {
-                return const Center(child: Text('No recommended items found.'));
+                return const Center(
+                    child: Text('No Recommended Products Found.'));
               }
             } else {
               return ListView.builder(

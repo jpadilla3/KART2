@@ -338,7 +338,8 @@ class SearchPageState extends State<SearchPage> {
                                           onPressed: (context) async {
                                             snackMessage(true,
                                                 documentSnapshot['barcode']);
-                                            await FirebaseCommands()
+                                            
+                                            FirebaseCommands()
                                                 .destroyRecommendations(
                                                     documentSnapshot['barcode'],
                                                     type);
