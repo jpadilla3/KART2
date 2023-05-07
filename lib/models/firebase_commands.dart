@@ -13,35 +13,38 @@ class FirebaseCommands {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   //add barcode to firebase
-  Future addBarcode(String barcode) async {
-    print('addBarcode: $barcode');
+  Future addBarcode(String productBarcode, bool type,) async {
+    print('addBarcodeProductBarcode: $productBarcode');
+    print('addBarcodeType: $type');
     List<String> alerg = [];
     List<String> con = [];
     int count = 0;
     int count2 = 0;
+    String collectionName = type ? "scanned" : "search";
+    print('addBarcodeCollectionName: $collectionName');
 
     final response = await http.get(Uri.parse(
-        'https://us.openfoodfacts.org/api/v2/product/$barcode?fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json'));
+        'https://us.openfoodfacts.org/api/v2/product/$productBarcode?fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json'));
 
     if (response.statusCode == 200) {
-      final barcodeData = barcodeDataFromJson(response.body);
-      final categoryList = barcodeData.product?.categoriesTagsEn;
+      final productBarcodeData = barcodeDataFromJson(response.body);
+      final categoryList = productBarcodeData.product?.categoriesTagsEn;
       print('addBarcodecategoryList: $categoryList');
       // If product has no categories, it will not be added to firebase
       if (categoryList!.isNotEmpty) {
-        if (barcodeData.product!.allergensTagsEn!.isNotEmpty) {
+        if (productBarcodeData.product!.allergensTagsEn!.isNotEmpty) {
           for (int i = 0;
-              i < barcodeData.product!.allergensTagsEn!.length;
+              i < productBarcodeData.product!.allergensTagsEn!.length;
               i++) {
-            alerg.add(barcodeData.product!.allergensTagsEn![i]);
+            alerg.add(productBarcodeData.product!.allergensTagsEn![i]);
           }
         }
-        if (barcodeData.product!.allergensTagsEn!.contains('Milk') ||
-            barcodeData.product!.allergensTagsEn!.contains('Lactic')) {
+        if (productBarcodeData.product!.allergensTagsEn!.contains('Milk') ||
+            productBarcodeData.product!.allergensTagsEn!.contains('Lactic')) {
           con.add('lactose intolerant');
         }
 
-        for (final ingredient in barcodeData.product!.ingredients!) {
+        for (final ingredient in productBarcodeData.product!.ingredients!) {
           if (ingredient.vegan != 'yes') {
             count++;
           }
@@ -60,68 +63,85 @@ class FirebaseCommands {
             .collection('users') //go to users
             .doc(FirebaseAuth.instance.currentUser!.email
                 .toString()) // go to current user
-            .collection('scanned') // go to scanned
-            .doc(barcode) // create barcode
+            .collection(collectionName) // go to scanned or search
+            .doc(productBarcode) // create barcode
             .set({
           'time': FieldValue.serverTimestamp(),
-          "ID": true,
-          'barcode': barcode,
-          'brand':
-              barcodeData.product?.brands ?? barcodeData.product?.productName,
-          'categories': barcodeData.product?.categoriesTagsEn,
+          "ID": type,
+          'barcode': productBarcode,
+          'brand': productBarcodeData.product?.brands ??
+              productBarcodeData.product?.productName,
+          'categories': productBarcodeData.product?.categoriesTagsEn,
           "nutrition": {
-            'score': barcodeData.product?.nutriscoreScore ?? 0.toString(),
-            'grade': barcodeData.product?.nutritionGrades ?? 'No Grade',
-            'calories': barcodeData.product?.nutriments?.energyPerServing ??
-                0.toString(),
+            'score':
+                productBarcodeData.product?.nutriscoreScore ?? 0.toString(),
+            'grade': productBarcodeData.product?.nutritionGrades ?? 'No Grade',
+            'calories':
+                productBarcodeData.product?.nutriments?.energyPerServing ??
+                    0.toString(),
             'total fat':
-                barcodeData.product?.nutriments?.fatPerServing ?? 0.toString(),
-            'saturated fat':
-                barcodeData.product?.nutriments?.saturatedFatPerServing ??
+                productBarcodeData.product?.nutriments?.fatPerServing ??
                     0.toString(),
-            'trans fat': barcodeData.product?.nutriments?.transFatPerServing ??
+            'saturated fat': productBarcodeData
+                    .product?.nutriments?.saturatedFatPerServing ??
                 0.toString(),
-            'sodium': barcodeData.product?.nutriments?.sodiumPerServing ??
-                0.toString(),
-            'total carbohydrate':
-                barcodeData.product?.nutriments?.carbohydratesPerServing ??
+            'trans fat':
+                productBarcodeData.product?.nutriments?.transFatPerServing ??
                     0.toString(),
-            'total sugars': barcodeData.product?.nutriments?.sugarsPerServing ??
+            'sodium':
+                productBarcodeData.product?.nutriments?.sodiumPerServing ??
+                    0.toString(),
+            'total carbohydrate': productBarcodeData
+                    .product?.nutriments?.carbohydratesPerServing ??
                 0.toString(),
-            'protein': barcodeData.product?.nutriments?.proteinsPerServing ??
-                0.toString(),
-            'fiber': barcodeData.product?.nutriments?.fiberPerServing ??
+            'total sugars':
+                productBarcodeData.product?.nutriments?.sugarsPerServing ??
+                    0.toString(),
+            'protein':
+                productBarcodeData.product?.nutriments?.proteinsPerServing ??
+                    0.toString(),
+            'fiber': productBarcodeData.product?.nutriments?.fiberPerServing ??
                 0.toString(),
           },
           "Allergens": alerg, //set allergens
           "conditions": con, //set conditions
-          'name': barcodeData.product?.productName ?? 'Product',
-          'picture': barcodeData.product?.selectedImages?.front?.small?.en ??
+          'name': productBarcodeData.product?.productName ?? 'Product',
+          'picture': productBarcodeData
+                  .product?.selectedImages?.front?.small?.en ??
+              productBarcodeData.product?.imageFrontThumbUrl ??
               'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg',
         });
         //Gets similar products for the barcode
-        getSimilarProducts(barcode, barcodeData, categoryList);
+        getSimilarProducts(productBarcode, categoryList, type, collectionName);
         return true;
       } else {
         //CHANGE SO IT GOES BACK TO EITHER RECOMMENDATIONS PAGE OR SEARCH PAGE DEPENDING WHERE IT CAME FROM
-        print('Categories not found for barcode $barcode');
+        print('Categories not found for barcode $productBarcode');
         return false;
       }
     } else {
       //CHANGE SO IT GOES BACK TO EITHER RECOMMENDATIONS PAGE OR SEARCH PAGE DEPENDING WHERE IT CAME FROM
       print(
-          'Failed to load product details for barcode $barcode due to a server error with status code ${response.statusCode}');
+          'Failed to load product details for barcode $productBarcode due to a server error with status code ${response.statusCode}');
       return false;
     }
   }
 
-  Future getSimilarProducts(barcode, barcodeData, categoryList) async {
-    print('getSimilarProductsBarcode: $barcode');
-    print('getSimilarProductsbarcodeData: $barcodeData');
-    print('getSimilarProductsCategoryList: $categoryList');
-    int count = 0;
+  Future getSimilarProducts(String productBarcode, List categoryList, bool type,
+      String collectionName) async {
+    print('getSimilarProductsType: $type');
+    // print('getSimilarProductsBarcode: $barcode');
+    // print('getSimilarProductsbarcodeData: $barcodeData');
+    // print('getSimilarProductsCategoryList: $categoryList');
+    print('getSimilarProductsCollectionName: $collectionName');
+    int recommendationsAdded = 0;
 
     for (int i = categoryList.length - 1; i >= 0; i--) {
+      //If the number of recommendations added reaches 20, breaks out of the loop
+      if (recommendationsAdded >= 20) {
+        break;
+      }
+
       final categoryString = categoryList[i];
 
       final encodedCategory = Uri.encodeQueryComponent(categoryString);
@@ -141,14 +161,18 @@ class FirebaseCommands {
 
           if (hasProducts) {
             for (final product in products) {
-              print(categoryString);
-              print(encodedCategory);
-              print(product.code);
-              print(product.nutriscoreGrade);
-              print(product.productName);
-              addRecomendations(barcode, product);
-              count++;
-              print(count);
+              print('recommendationsAdded: $recommendationsAdded');
+              //If the number of recommendations added reaches 20, break out of the loop
+              if (recommendationsAdded >= 20) {
+                break;
+              }
+              print('categoryString: $categoryString');
+              print('encodedCategory: $encodedCategory');
+              print('product.code: ${product.code}');
+              print('product.nutriscoreGrade: ${product.nutriscoreGrade}');
+              print('product.productName: ${product.productName}');
+              // recommendationFutures.add(addRecomendations(
+              //productBarcode, product, type, collectionName));
             }
           } else {
             throw Exception(
@@ -165,7 +189,11 @@ class FirebaseCommands {
     }
   }
 
-  Future addRecomendations(barcode, product) async {
+  Future<bool> addRecomendations(
+      String productBarcode, product, bool type, String collectionName) async {
+    print('addRecommendationsType: $type');
+    print('addRecomendationsCollectionName: $collectionName');
+
     List<String> alerg = [];
     List<String> con = [];
     int count1 = 0;
@@ -224,14 +252,14 @@ class FirebaseCommands {
               .collection('users') //go to users
               .doc(FirebaseAuth.instance.currentUser!.email
                   .toString()) // go to current user
-              .collection('scanned') // go to scanned
-              .doc(barcode)
+              .collection(collectionName) // go to scanned or search
+              .doc(productBarcode)
               .collection('recommended')
               .doc(product.code)
               .set({
             'time': FieldValue.serverTimestamp(),
-            "ID": true,
-            'barcode': barcode,
+            "ID": type,
+            'barcode': product.code,
             'brand':
                 barcodeData.product?.brands ?? barcodeData.product?.productName,
             'categories': barcodeData.product?.categoriesTagsEn,
@@ -265,20 +293,27 @@ class FirebaseCommands {
             "conditions": con, //set conditions
             'name': product?.productName ?? 'Product',
             'picture': product?.selectedImages?.front?.small?.en ??
+                product?.imageFrontThumbUrl ??
                 'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg',
           });
+          // Returns true if the recommendation was added
+          return true;
         } else {
-          throw Exception(
+          print(
               'Allergens/Conditions conflict found with product ${product.code}. Not added to firestore.');
+          //return false;
         }
       } else {
-        throw Exception(
+        print(
             'Categories not found for barcode ${product.code}. Not added to firestore.');
+        //return false;
       }
     } else {
-      throw Exception(
+      print(
           'Failed to load product details for barcode ${product.code} due to a server error with status code ${response.statusCode}. Not added to firestore.');
+      //return false;
     }
+    return false;
   }
 
   // Future getSimilarProducts2(barcode, barcodeData, categoryList) async {
@@ -553,5 +588,26 @@ class FirebaseCommands {
             .collection('search')
             .doc(barcode)
             .delete();
+  }
+
+  //deletes recommendations from firebase
+  Future<void> destroyRecommendations(String barcode, bool type) async {
+    // Determine the parent collection name based on the input boolean 'type'
+    final choice = type ? 'scanned' : 'search';
+    // Get the current user's email
+    String userEmail = FirebaseAuth.instance.currentUser!.email.toString();
+    // Get the reference to the 'recommended' subcollection
+    CollectionReference collection = FirebaseFirestore.instance
+        .collection('users')
+        .doc(userEmail)
+        .collection(choice)
+        .doc(barcode)
+        .collection('recommended');
+
+    // Retrieve and delete documents in the collection
+    QuerySnapshot querySnapshot = await collection.get();
+    for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+      await collection.doc(doc.id).delete();
+    }
   }
 }

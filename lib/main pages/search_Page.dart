@@ -30,10 +30,10 @@ class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
 
   @override
-  State<SearchPage> createState() => _SearchPageState();
+  State<SearchPage> createState() => SearchPageState();
 }
 
-class _SearchPageState extends State<SearchPage> {
+class SearchPageState extends State<SearchPage> {
   //String _scanBarcode = '';
   //late Future<BarcodeData> futureBarcodeData;
   bool isFavorite = false;
@@ -71,7 +71,7 @@ class _SearchPageState extends State<SearchPage> {
     try {
       barcodeScanRes =
           await BarcodeScanner.scanBarcode('#ff6666', 'Cancel', true);
-      success = await FirebaseCommands().addBarcode(barcodeScanRes);
+      success = await FirebaseCommands().addBarcode(barcodeScanRes, true);
       print('success: $success');
     } on PlatformException catch (e) {
       barcodeScanRes = 'Failed to scan barcode: $e';
@@ -107,7 +107,7 @@ class _SearchPageState extends State<SearchPage> {
       //addBarcodeSucess = success;
       //print('addBarcodeSuccess1: $addBarcodeSucess');
       //isLoading = false;
-      type = true;
+      //type = true;
       //_lastScannedBarcode = barcodeScanRes;
     });
   }
@@ -130,82 +130,83 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-  Future itemScan(String barcode) async {
-    Map<String, dynamic> item = {};
-    List<String> alerg = [];
-    List<String> con = [];
-    int count = 0;
-    int count2 = 0;
-    final String url =
-        'https://us.openfoodfacts.org/api/v2/product/$barcode?fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json';
-    final response = await http.get(Uri.parse(url));
-    final barcodeData = barcodeDataFromJson(response.body);
+  // Future itemScan(String barcode) async {
+  //   Map<String, dynamic> item = {};
+  //   List<String> alerg = [];
+  //   List<String> con = [];
+  //   int count = 0;
+  //   int count2 = 0;
+  //   final String url =
+  //       'https://us.openfoodfacts.org/api/v2/product/$barcode?fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json';
+  //   final response = await http.get(Uri.parse(url));
+  //   final barcodeData = barcodeDataFromJson(response.body);
 
-    if (response.statusCode == 200) {
-      if (int.parse(barcode) > 0) {
-        if (barcodeData.product!.allergensTagsEn!.isNotEmpty) {
-          for (int i = 0;
-              i < barcodeData.product!.allergensTagsEn!.length;
-              i++) {
-            alerg.add(barcodeData.product!.allergensTagsEn![i].substring(3));
-          }
-        }
-        if (barcodeData.product!.allergensTagsEn!.contains('en:milk') ||
-            barcodeData.product!.allergensTagsEn!.contains('en:lactic')) {
-          con.add('lactose intolerant');
-        }
+  //   if (response.statusCode == 200) {
+  //     if (int.parse(barcode) > 0) {
+  //       if (barcodeData.product!.allergensTagsEn!.isNotEmpty) {
+  //         for (int i = 0;
+  //             i < barcodeData.product!.allergensTagsEn!.length;
+  //             i++) {
+  //           alerg.add(barcodeData.product!.allergensTagsEn![i].substring(3));
+  //         }
+  //       }
+  //       if (barcodeData.product!.allergensTagsEn!.contains('en:milk') ||
+  //           barcodeData.product!.allergensTagsEn!.contains('en:lactic')) {
+  //         con.add('lactose intolerant');
+  //       }
 
-        for (final ingredient in barcodeData.product!.ingredients!) {
-          if (ingredient.vegan != 'yes') {
-            count++;
-          }
-          if (ingredient.vegetarian != 'yes') {
-            count2++;
-          }
-        }
-        if (count == 0) {
-          con.add('vegan');
-        }
-        if (count2 == 0) {
-          con.add('vegetarian');
-        }
-        item['brand'] =
-            barcodeData.product?.brands ?? barcodeData.product?.productName!;
-        item['categories'] = barcodeData.product?.categoriesTagsEn;
-        item['score'] = barcodeData.product?.nutriscoreScore ?? 0.toString();
-        item['grade'] = barcodeData.product?.nutritionGrades ?? 'No Grade';
-        item['calories'] =
-            barcodeData.product?.nutriments?.energyPerServing ?? 0.toString();
-        item['total fat'] =
-            barcodeData.product?.nutriments?.fatPerServing ?? 0.toString();
-        item['saturated fat'] =
-            barcodeData.product?.nutriments?.saturatedFatPerServing ??
-                0.toString();
-        item['trans fat'] =
-            barcodeData.product?.nutriments?.transFatPerServing ?? 0.toString();
-        item['sodium'] =
-            barcodeData.product?.nutriments?.sodiumPerServing ?? 0.toString();
-        item['total carbohydrate'] =
-            barcodeData.product?.nutriments?.carbohydratesPerServing ??
-                0.toString();
-        item['total sugars'] =
-            barcodeData.product?.nutriments?.sugarsPerServing ?? 0.toString();
-        item['protein'] =
-            barcodeData.product?.nutriments?.proteinsPerServing ?? 0.toString();
-        item['fiber'] =
-            barcodeData.product?.nutriments?.fiberPerServing ?? 0.toString();
-        item['name'] = barcodeData.product?.productName! ?? 'Product';
-        item['picture'] = barcodeData
-                .product?.selectedImages?.front?.small?.en ??
-            'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg';
-        item['allergy'] = alerg;
-        item['condition'] = con;
-        return item;
-      } else {
-        return const AboutDialog();
-      }
-    }
-  }
+  //       for (final ingredient in barcodeData.product!.ingredients!) {
+  //         if (ingredient.vegan != 'yes') {
+  //           count++;
+  //         }
+  //         if (ingredient.vegetarian != 'yes') {
+  //           count2++;
+  //         }
+  //       }
+  //       if (count == 0) {
+  //         con.add('vegan');
+  //       }
+  //       if (count2 == 0) {
+  //         con.add('vegetarian');
+  //       }
+  //       item['brand'] =
+  //           barcodeData.product?.brands ?? barcodeData.product?.productName!;
+  //       item['id'] = false;
+  //       item['categories'] = barcodeData.product?.categoriesTagsEn;
+  //       item['score'] = barcodeData.product?.nutriscoreScore ?? 0.toString();
+  //       item['grade'] = barcodeData.product?.nutritionGrades ?? 'No Grade';
+  //       item['calories'] =
+  //           barcodeData.product?.nutriments?.energyPerServing ?? 0.toString();
+  //       item['total fat'] =
+  //           barcodeData.product?.nutriments?.fatPerServing ?? 0.toString();
+  //       item['saturated fat'] =
+  //           barcodeData.product?.nutriments?.saturatedFatPerServing ??
+  //               0.toString();
+  //       item['trans fat'] =
+  //           barcodeData.product?.nutriments?.transFatPerServing ?? 0.toString();
+  //       item['sodium'] =
+  //           barcodeData.product?.nutriments?.sodiumPerServing ?? 0.toString();
+  //       item['total carbohydrate'] =
+  //           barcodeData.product?.nutriments?.carbohydratesPerServing ??
+  //               0.toString();
+  //       item['total sugars'] =
+  //           barcodeData.product?.nutriments?.sugarsPerServing ?? 0.toString();
+  //       item['protein'] =
+  //           barcodeData.product?.nutriments?.proteinsPerServing ?? 0.toString();
+  //       item['fiber'] =
+  //           barcodeData.product?.nutriments?.fiberPerServing ?? 0.toString();
+  //       item['name'] = barcodeData.product?.productName! ?? 'Product';
+  //       item['picture'] = barcodeData
+  //               .product?.selectedImages?.front?.small?.en ??
+  //           'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg';
+  //       item['allergy'] = alerg;
+  //       item['condition'] = con;
+  //       return item;
+  //     } else {
+  //       return const AboutDialog();
+  //     }
+  //   }
+  // }
 
   //fetchBarcodeData function gets the data with certian fields from barcode and parses it.
 
@@ -334,17 +335,18 @@ class _SearchPageState extends State<SearchPage> {
                                           icon: Icons.favorite,
                                         ),
                                         SlidableAction(
-                                          onPressed: (context) {
+                                          onPressed: (context) async {
                                             snackMessage(true,
                                                 documentSnapshot['barcode']);
-                                            fire.FirebaseCommands()
-                                                .destroyBarcode(
+                                            await FirebaseCommands()
+                                                .destroyRecommendations(
                                                     documentSnapshot['barcode'],
-                                                    false);
-                                            fire.FirebaseCommands()
-                                                .removeFavorite(
-                                                    documentSnapshot[
-                                                        'barcode']);
+                                                    type);
+                                            FirebaseCommands().destroyBarcode(
+                                                documentSnapshot['barcode'],
+                                                type);
+                                            FirebaseCommands().removeFavorite(
+                                                documentSnapshot['barcode']);
                                           },
                                           backgroundColor: Colors.indigo,
                                           icon: Icons.delete,
@@ -353,8 +355,9 @@ class _SearchPageState extends State<SearchPage> {
                                   child: InkWell(
                                     highlightColor: Colors.grey[300],
                                     onTap: () async {
+                                      print('type: $type');
                                       await FirebaseCommands().addBarcode(
-                                          documentSnapshot['barcode']);
+                                          documentSnapshot['barcode'], false);
                                       isFavorite = await favs(
                                           documentSnapshot['barcode']);
                                       Navigator.push(
@@ -681,7 +684,8 @@ class MySearchDelegate extends SearchDelegate {
   List<String> bar = [];
   List<Map<String, dynamic>> data = [];
   List<List<String>> cond = [];
-  Future getSearch(String word) async {
+
+  Future getSearch(String word, bool type) async {
     ProductSearchQueryConfiguration config = ProductSearchQueryConfiguration(
         language: OpenFoodFactsLanguage.ENGLISH,
         parametersList: <Parameter>[
@@ -698,12 +702,17 @@ class MySearchDelegate extends SearchDelegate {
         const User(userId: 'jpadilla3', password: 'abc123!'), config);
 
     for (int i = 0; i < 20; i++) {
+      if (result.products?[i].barcode == null ||
+          result.products?[i].barcode == '') {
+        break;
+      }
       bar.add('${result.products?[i].barcode}');
 
       data.add({
         "brand": result.products?[i].brands ?? result.products?[i].productName,
         "name": result.products?[i].productName ?? "null",
         "grade": result.products?[i].nutriscore ?? "No Grade",
+        "id": type,
         "barcode": result.products?[i].barcode ?? 'null',
         "categories": result.products?[i].categoriesTags,
         "pic": result.products?[i].imageFrontSmallUrl ??
@@ -813,7 +822,7 @@ class MySearchDelegate extends SearchDelegate {
   @override
   Widget buildResults(BuildContext context) => Center(
         child: FutureBuilder(
-            future: getSearch(query),
+            future: getSearch(query, false),
             builder: (context, snaphsot) {
               if (snaphsot.connectionState == ConnectionState.done) {
                 return ListView.builder(
@@ -821,15 +830,24 @@ class MySearchDelegate extends SearchDelegate {
                     itemBuilder: (context, index) {
                       return InkWell(
                         highlightColor: Colors.grey[300],
-                        onTap: () {
-                          fire.FirebaseCommands().searchBarcode(
-                              data[index]['barcode'], data[index]);
-
+                        onTap: () async {
+                          // FirebaseCommands().searchBarcode(
+                          //     data[index]['barcode'], data[index]);
+                          await FirebaseCommands()
+                              .addBarcode(data[index]['barcode'], false);
+                          SearchPageState().isFavorite = await SearchPageState()
+                              .favs(data[index]['barcode']);
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      SearchProduct(data[index])));
+                                  builder: (context) => ProductPage(
+                                      data[index]['barcode'], //barcode
+                                      true, //success
+                                      false, //type
+                                      SearchPageState().isFavorite, //isFavorite
+                                      onFail: () =>
+                                          Navigator.of(context).pop())));
+
                           Timer(const Duration(seconds: 1), () {
                             data.clear();
                           });

@@ -68,10 +68,11 @@ class RecoListState extends State<RecoList> {
                       String title = doc['name'] ?? '';
                       String barcode = doc['barcode'] ?? '';
                       String grade = doc['nutrition']['grade'] ?? '';
+                      bool type = doc['id'];
 
                       return InkWell(
                           onTap: () async {
-                            FirebaseCommands().addBarcode(barcode);
+                            FirebaseCommands().addBarcode(barcode, type);
 
                             bool isFavorite = await FirebaseCommands()
                                 .isProductFavorite(
