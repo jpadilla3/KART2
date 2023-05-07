@@ -73,7 +73,6 @@ class RecoListState extends State<RecoList> {
                       return InkWell(
                           onTap: () async {
                             FirebaseCommands().addBarcode(barcode, type);
-
                             bool isFavorite = await FirebaseCommands()
                                 .isProductFavorite(
                                     barcode); // Add this line to fetch the favorite status
@@ -82,7 +81,10 @@ class RecoListState extends State<RecoList> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => ProductPage(
-                                        barcode, true, true, isFavorite,
+                                        barcode,
+                                        true,
+                                        true,
+                                        isFavorite,
                                         onFail: () =>
                                             Navigator.of(context).pop())));
                           },

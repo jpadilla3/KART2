@@ -16,6 +16,7 @@ class FirebaseCommands {
   Future addBarcode(String productBarcode, bool type) async {
     print('addBarcodeProductBarcode: $productBarcode');
     print('addBarcodeType: $type');
+
     List<String> alerg = [];
     List<String> con = [];
     int count = 0;
@@ -113,6 +114,7 @@ class FirebaseCommands {
         });
         //Gets similar products for the barcode
         getSimilarProducts(productBarcode, categoryList, type, collectionName);
+
         return true;
       } else {
         //CHANGE SO IT GOES BACK TO EITHER RECOMMENDATIONS PAGE OR SEARCH PAGE DEPENDING WHERE IT CAME FROM
@@ -144,14 +146,12 @@ class FirebaseCommands {
 
       final categoryString = categoryList[i];
       final encodedCategory = Uri.encodeQueryComponent(categoryString);
-      print('encodedCategory $encodedCategory');
 
       try {
         final similarProductsResponse = await http
             .get(Uri.parse(
                 'https://us.openfoodfacts.org/api/v2/search?categories_tags_en=$encodedCategory&nutrition_grades_tags=a&fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,code,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json'))
-            .timeout(Duration(seconds: 3));
-
+            .timeout(const Duration(seconds: 3));
         if (similarProductsResponse.statusCode == 200) {
           final similarProductsData =
               searchDataFromJson(similarProductsResponse.body);
@@ -165,6 +165,7 @@ class FirebaseCommands {
               print('recommendationsAdded: $recommendationsAdded');
               //If the number of recommendations added reaches 20, break out of the loop
               if (recommendationsAdded >= 20) {
+
                 break;
               }
               print('categoryString: $categoryString');
@@ -180,6 +181,7 @@ class FirebaseCommands {
             List<bool> addedResults = await Future.wait(recommendationFutures);
 
             // Counts successful recommendations
+
             recommendationsAdded +=
                 addedResults.where((result) => result).length;
           } else {
@@ -201,6 +203,7 @@ class FirebaseCommands {
       String productBarcode, product, bool type, String collectionName) async {
     print('addRecommendationsType: $type');
     print('addRecomendationsCollectionName: $collectionName');
+
 
     List<String> alerg = [];
     List<String> con = [];
@@ -248,12 +251,12 @@ class FirebaseCommands {
         final allergyConflict = result[0];
         final conditionConflict = result[1];
 
-        print("Product Allergies: $alerg");
-        print("Product Conditions: $con");
-        print("Allergies Conflict?: $allergyConflict");
-        print("Conditions Conflict?: $conditionConflict");
+        // print("Product Allergies: $alerg");
+        // print("Product Conditions: $con");
+        // print("Allergies Conflict?: $allergyConflict");
+        // print("Conditions Conflict?: $conditionConflict");
 
-        // If there are allergy or condition conflicts, product will not be added to firebase
+        // If there are no allergy or condition conflicts, product will be added to firebase
         if (allergyConflict == false && conditionConflict == false) {
           // Adds product to firebase
           FirebaseFirestore.instance
@@ -314,13 +317,15 @@ class FirebaseCommands {
       } else {
         print(
             'Categories not found for barcode ${product.code}. Not added to firestore.');
-        // return false;
+        //return false;
+
       }
     } else {
       print(
           'Failed to load product details for barcode ${product.code} due to a server error with status code ${response.statusCode}. Not added to firestore.');
       //return false;
     }
+    // Returns false if the recommendation was not added
     return false;
   }
 

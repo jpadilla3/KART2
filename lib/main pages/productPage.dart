@@ -87,10 +87,10 @@ class ProductPageState extends State<ProductPage> {
 
   // Processes the fetched data
   Future<void> processData(Map<String, dynamic> data) async {
-    print('Processing data: $data');
+    //print('Processing data: $data');
     final gradeData = await GradeCal()
         .gradeCalculateInfo3(data['Allergens'], data['conditions']);
-    print('Processed gradeData: $gradeData');
+    //print('Processed gradeData: $gradeData');
     setState(() {
       if (appBarTitleData != data ||
           productInfoData != data ||
@@ -530,6 +530,7 @@ class ProductPageState extends State<ProductPage> {
           IconButton(
               onPressed: () async {
                 await FirebaseCommands()
+
                     .destroyRecommendations(widget.barcode, widget.type);
                 FirebaseCommands().destroyBarcode(widget.barcode, widget.type);
                 FirebaseCommands().removeFavorite(widget.barcode);
@@ -555,7 +556,7 @@ class ProductPageState extends State<ProductPage> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasData && snapshot.data!.exists) {
-            print('Snapshot data: ${snapshot.data!.data()}');
+            //print('Snapshot data: ${snapshot.data!.data()}');
 
             return FutureBuilder(
               future: _processedDataFuture,
@@ -625,8 +626,8 @@ class ProductPageState extends State<ProductPage> {
                                 return const Center(
                                     child: CircularProgressIndicator());
                               }
-                              print(
-                                  'Recommended products: ${snapshot.data!.docs}');
+                              // print(
+                              //     'Recommended products: ${snapshot.data!.docs}');
 
                               return ListView.builder(
                                 physics: const ClampingScrollPhysics(),
