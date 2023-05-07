@@ -259,11 +259,13 @@ class Nutriments {
   Nutriments({
     this.carbohydrates,
     this.carbohydrates100G,
+    this.carbohydratesPerServing,
     this.carbohydratesUnit,
     this.carbohydratesValue,
     this.energy,
     this.energyKcal,
     this.energyKcal100G,
+    this.energyPerServing,
     this.energyKcalUnit,
     this.energyKcalValue,
     this.energyKcalValueComputed,
@@ -272,9 +274,11 @@ class Nutriments {
     this.energyValue,
     this.fat,
     this.fat100G,
+    this.fatPerServing,
     this.fatUnit,
     this.fatValue,
     this.fiber,
+    this.fiberPerServing,
     this.fruitsVegetablesNutsEstimateFromIngredients100G,
     this.fruitsVegetablesNutsEstimateFromIngredientsServing,
     this.novaGroup,
@@ -284,6 +288,7 @@ class Nutriments {
     this.nutritionScoreFr100G,
     this.proteins,
     this.proteins100G,
+    this.proteinsPerServing,
     this.proteinsUnit,
     this.proteinsValue,
     this.salt,
@@ -292,25 +297,31 @@ class Nutriments {
     this.saltValue,
     this.saturatedFat,
     this.saturatedFat100G,
+    this.saturatedFatPerServing,
     this.saturatedFatUnit,
     this.saturatedFatValue,
     this.sodium,
     this.sodium100G,
+    this.sodiumPerServing,
     this.sodiumUnit,
     this.sodiumValue,
     this.sugars,
     this.sugars100G,
+    this.sugarsPerServing,
     this.sugarsUnit,
     this.sugarsValue,
+    this.transFatPerServing,
   });
 
   String? carbohydrates;
   String? carbohydrates100G;
+  String? carbohydratesPerServing;
   String? carbohydratesUnit;
   String? carbohydratesValue;
   String? energy;
   String? energyKcal;
   String? energyKcal100G;
+  String? energyPerServing;
   String? energyKcalUnit;
   String? energyKcalValue;
   String? energyKcalValueComputed;
@@ -319,6 +330,7 @@ class Nutriments {
   String? energyValue;
   String? fat;
   String? fat100G;
+  String? fatPerServing;
   String? fatUnit;
   String? fatValue;
   String? fruitsVegetablesNutsEstimateFromIngredients100G;
@@ -330,6 +342,7 @@ class Nutriments {
   String? nutritionScoreFr100G;
   String? proteins;
   String? proteins100G;
+  String? proteinsPerServing;
   String? proteinsUnit;
   String? proteinsValue;
   String? salt;
@@ -337,27 +350,34 @@ class Nutriments {
   String? saltUnit;
   String? saltValue;
   String? fiber;
+  String? fiberPerServing;
   String? saturatedFat;
   String? saturatedFat100G;
+  String? saturatedFatPerServing;
   String? saturatedFatUnit;
   String? saturatedFatValue;
   String? sodium;
   String? sodium100G;
+  String? sodiumPerServing;
   String? sodiumUnit;
   String? sodiumValue;
   String? sugars;
   String? sugars100G;
+  String? sugarsPerServing;
   String? sugarsUnit;
   String? sugarsValue;
+  String? transFatPerServing;
 
   factory Nutriments.fromJson(Map<String, dynamic> json) => Nutriments(
         carbohydrates: json["carbohydrates"]?.toString(),
         carbohydrates100G: json["carbohydrates_100g"]?.toString(),
+        carbohydratesPerServing: json["carbohydrates_serving"]?.toString(),
         carbohydratesUnit: json["carbohydrates_unit"]?.toString(),
         carbohydratesValue: json["carbohydrates_value"]?.toString(),
         energy: json["energy"]?.toString(),
         energyKcal: json["energy-kcal"]?.toString(),
         energyKcal100G: json["energy-kcal_100g"]?.toString(),
+        energyPerServing: json["energy-kcal_serving"]?.toString(),
         energyKcalUnit: json["energy-kcal_unit"]?.toString(),
         energyKcalValue: json["energy-kcal_value"]?.toString(),
         energyKcalValueComputed: json["energy-kcal_value_computed"]?.toString(),
@@ -366,9 +386,11 @@ class Nutriments {
         energyValue: json["energy_value"]?.toString(),
         fat: json["fat"]?.toString(),
         fat100G: json["fat_100g"]?.toString(),
+        fatPerServing: json["fat_serving"]?.toString(),
         fatUnit: json["fat_unit"]?.toString(),
         fatValue: json["fat_value"]?.toString(),
         fiber: json["fiber"]?.toString(),
+        fiberPerServing: json["fiber_serving"]?.toString(),
         fruitsVegetablesNutsEstimateFromIngredients100G:
             json["fruits-vegetables-nuts-estimate-from-ingredients_100g"]
                 ?.toString(),
@@ -382,6 +404,7 @@ class Nutriments {
         nutritionScoreFr100G: json["nutrition-score-fr_100g"]?.toString(),
         proteins: json["proteins"]?.toString(),
         proteins100G: json["proteins_100g"]?.toString(),
+        proteinsPerServing: json["proteins_serving"]?.toString(),
         proteinsUnit: json["proteins_unit"]?.toString(),
         proteinsValue: json["proteins_value"]?.toString(),
         salt: json["salt"]?.toString(),
@@ -390,16 +413,20 @@ class Nutriments {
         saltValue: json["salt_value"]?.toString(),
         saturatedFat: json["saturated-fat"]?.toString(),
         saturatedFat100G: json["saturated-fat_100g"]?.toString(),
+        saturatedFatPerServing: json["saturated-fat_serving"]?.toString(),
         saturatedFatUnit: json["saturated-fat_unit"]?.toString(),
         saturatedFatValue: json["saturated-fat_value"]?.toString(),
         sodium: json["sodium"]?.toString(),
         sodium100G: json["sodium_100g"]?.toString(),
+        sodiumPerServing: json["sodium_serving"]?.toString(),
         sodiumUnit: json["sodium_unit"]?.toString(),
         sodiumValue: json["sodium_value"]?.toString(),
         sugars: json["sugars"]?.toString(),
         sugars100G: json["sugars_100g"]?.toString(),
+        sugarsPerServing: json["sugars_serving"]?.toString(),
         sugarsUnit: json["sugars_unit"]?.toString(),
         sugarsValue: json["sugars_value"]?.toString(),
+        transFatPerServing: json["trans-fat_serving"]?.toString(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -458,6 +485,7 @@ class NutriscoreData {
     this.energyPoints,
     this.energyValue,
     this.fiber,
+    this.fiberPerServing,
     this.fiberPoints,
     this.fiberValue,
     this.fruitsVegetablesNutsColzaWalnutOliveOils,
@@ -492,6 +520,7 @@ class NutriscoreData {
   String? energyPoints;
   String? energyValue;
   String? fiber;
+  String? fiberPerServing;
   String? fiberPoints;
   String? fiberValue;
   String? fruitsVegetablesNutsColzaWalnutOliveOils;
@@ -526,6 +555,7 @@ class NutriscoreData {
         energyPoints: json["energy_points"]?.toString(),
         energyValue: json["energy_value"]?.toString(),
         fiber: json["fiber"]?.toString(),
+        fiberPerServing: json["fiber_serving"]?.toString(),
         fiberPoints: json["fiber_points"]?.toString(),
         fiberValue: json["fiber_value"]?.toString(),
         fruitsVegetablesNutsColzaWalnutOliveOils:

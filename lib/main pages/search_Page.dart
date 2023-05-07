@@ -72,7 +72,6 @@ class _SearchPageState extends State<SearchPage> {
       barcodeScanRes =
           await BarcodeScanner.scanBarcode('#ff6666', 'Cancel', true);
       success = await FirebaseCommands().addBarcode(barcodeScanRes);
-      //FirebaseCommands().getSimilarProducts2(barcodeScanRes);
       print('success: $success');
     } on PlatformException catch (e) {
       barcodeScanRes = 'Failed to scan barcode: $e';
@@ -172,24 +171,29 @@ class _SearchPageState extends State<SearchPage> {
         }
         item['brand'] =
             barcodeData.product?.brands ?? barcodeData.product?.productName!;
+        item['categories'] = barcodeData.product?.categoriesTagsEn;
         item['score'] = barcodeData.product?.nutriscoreScore ?? 0.toString();
         item['grade'] = barcodeData.product?.nutritionGrades ?? 'No Grade';
         item['calories'] =
-            barcodeData.product?.nutriments?.energy ?? 0.toString();
+            barcodeData.product?.nutriments?.energyPerServing ?? 0.toString();
         item['total fat'] =
-            barcodeData.product?.nutriments?.fat ?? 0.toString();
+            barcodeData.product?.nutriments?.fatPerServing ?? 0.toString();
         item['saturated fat'] =
-            barcodeData.product?.nutriments?.saturatedFat ?? 0.toString();
+            barcodeData.product?.nutriments?.saturatedFatPerServing ??
+                0.toString();
+        item['trans fat'] =
+            barcodeData.product?.nutriments?.transFatPerServing ?? 0.toString();
         item['sodium'] =
-            barcodeData.product?.nutriments?.sodium ?? 0.toString();
+            barcodeData.product?.nutriments?.sodiumPerServing ?? 0.toString();
         item['total carbohydrate'] =
-            barcodeData.product?.nutriments?.carbohydrates ?? 0.toString();
+            barcodeData.product?.nutriments?.carbohydratesPerServing ??
+                0.toString();
         item['total sugars'] =
-            barcodeData.product?.nutriments?.sugars ?? 0.toString();
+            barcodeData.product?.nutriments?.sugarsPerServing ?? 0.toString();
         item['protein'] =
-            barcodeData.product?.nutriments?.proteins ?? 0.toString();
+            barcodeData.product?.nutriments?.proteinsPerServing ?? 0.toString();
         item['fiber'] =
-            barcodeData.product?.nutriscoreData?.fiber ?? 0.toString();
+            barcodeData.product?.nutriments?.fiberPerServing ?? 0.toString();
         item['name'] = barcodeData.product?.productName! ?? 'Product';
         item['picture'] = barcodeData
                 .product?.selectedImages?.front?.small?.en ??
@@ -198,7 +202,7 @@ class _SearchPageState extends State<SearchPage> {
         item['condition'] = con;
         return item;
       } else {
-        return AboutDialog();
+        return const AboutDialog();
       }
     }
   }
@@ -701,33 +705,37 @@ class MySearchDelegate extends SearchDelegate {
         "name": result.products?[i].productName ?? "null",
         "grade": result.products?[i].nutriscore ?? "No Grade",
         "barcode": result.products?[i].barcode ?? 'null',
-        "pic": result.products?[i].imageFrontUrl ??
+        "categories": result.products?[i].categoriesTags,
+        "pic": result.products?[i].imageFrontSmallUrl ??
             'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg',
         "ingredients": result.products?[i].ingredientsText,
         "nutrients": {
           'calories': result.products?[i].nutriments
-                  ?.getValue(Nutrient.energyKCal, PerSize.oneHundredGrams) ??
+                  ?.getValue(Nutrient.energyKCal, PerSize.serving) ??
               0,
           "total fat": result.products?[i].nutriments
-                  ?.getValue(Nutrient.fat, PerSize.oneHundredGrams) ??
+                  ?.getValue(Nutrient.fat, PerSize.serving) ??
               0,
           "saturated fat": result.products?[i].nutriments
-                  ?.getValue(Nutrient.saturatedFat, PerSize.oneHundredGrams) ??
+                  ?.getValue(Nutrient.saturatedFat, PerSize.serving) ??
+              0,
+          "trans fat": result.products?[i].nutriments
+                  ?.getValue(Nutrient.transFat, PerSize.serving) ??
               0,
           "sodium": result.products?[i].nutriments
-                  ?.getValue(Nutrient.sodium, PerSize.oneHundredGrams) ??
+                  ?.getValue(Nutrient.sodium, PerSize.serving) ??
               0,
           "total carb": result.products?[i].nutriments
-                  ?.getValue(Nutrient.carbohydrates, PerSize.oneHundredGrams) ??
+                  ?.getValue(Nutrient.carbohydrates, PerSize.serving) ??
               0,
           "fiber": result.products?[i].nutriments
-                  ?.getValue(Nutrient.fiber, PerSize.oneHundredGrams) ??
+                  ?.getValue(Nutrient.fiber, PerSize.serving) ??
               0,
           "sugar": result.products?[i].nutriments
-                  ?.getValue(Nutrient.sugars, PerSize.oneHundredGrams) ??
+                  ?.getValue(Nutrient.sugars, PerSize.serving) ??
               0,
           "protein": result.products?[i].nutriments
-                  ?.getValue(Nutrient.proteins, PerSize.oneHundredGrams) ??
+                  ?.getValue(Nutrient.proteins, PerSize.serving) ??
               0,
         },
         "conditions": {
