@@ -132,7 +132,7 @@ class ProductPageState extends State<ProductPage> {
         style: const TextStyle(fontWeight: FontWeight.bold),
       );
     } else {
-      return const CircularProgressIndicator(); // Return a loading indicator when data is not available
+      return const CircularProgressIndicator(); 
     }
   }
 
@@ -588,128 +588,144 @@ class ProductPageState extends State<ProductPage> {
                         const SizedBox(
                           height: 20,
                         ),
-                        SizedBox(
-                          height: 50,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(left: 20),
-                                child: Text(
-                                  "Recommendations",
-                                  style: GoogleFonts.bebasNeue(fontSize: 35),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        SizedBox(
-                          height: 210,
-                          child: StreamBuilder<QuerySnapshot>(
-                            stream: _fetchRecommendedProducts(
-                                widget.type ? 'scanned' : 'search',
-                                widget.barcode),
-                            builder: (BuildContext context,
-                                AsyncSnapshot<QuerySnapshot> snapshot) {
-                              if (snapshot.hasError) {
-                                return Center(
-                                    child: Text('Error: ${snapshot.error}'));
-                              }
-                              if (snapshot.data!.docs.isEmpty) {}
+                        StreamBuilder<QuerySnapshot>(
+                          stream: _fetchRecommendedProducts(
+                              widget.type ? 'scanned' : 'search',
+                              widget.barcode),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (snapshot.hasError) {
+                              return Center(
+                                  child: Text('Error: ${snapshot.error}'));
+                            }
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+                            // Checks if there are any recommended products
+                            bool hasRecommendedProducts =
+                                snapshot.data!.docs.isNotEmpty;
 
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const Center(
-                                    child: CircularProgressIndicator());
-                              }
-                              // print(
-                              //     'Recommended products: ${snapshot.data!.docs}');
-
-                              return ListView.builder(
-                                physics: const ClampingScrollPhysics(),
-                                shrinkWrap: true,
-                                scrollDirection: Axis.horizontal,
-                                itemCount: snapshot.data!.docs.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  DocumentSnapshot doc =
-                                      snapshot.data!.docs[index];
-                                  String imageUrl = doc.get(
-                                      'picture'); // Replace with your image URL field name
-                                  String title = doc.get(
-                                      'name'); // Replace with your title field name
-                                  String barcode = doc.get(
-                                      'barcode'); // Replace with your barcode field name
-
-                                  return InkWell(
-                                    onTap: () async {
-                                      await FirebaseCommands()
-                                          .addBarcode(barcode, widget.type);
-
-                                      bool isFavorite = await FirebaseCommands()
-                                          .isProductFavorite(
-                                              barcode); // Add this line to fetch the favorite status
-
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => ProductPage(
-                                                  barcode, //barcode
-                                                  true, //success
-                                                  widget.type, //type
-                                                  isFavorite, //isFavorite
-                                                  onFail: () =>
-                                                      Navigator.of(context)
-                                                          .pop())));
-                                    },
-                                    child: Container(
-                                      height: 225,
-                                      width: 210,
-                                      child: Card(
-                                        color: Colors.white,
-                                        child: Column(
-                                          children: [
-                                            Container(
-                                              height: 160,
-                                              width: 200,
-                                              color: Colors.transparent,
-                                              child: imageUrl.isNotEmpty
-                                                  ? Image.network(imageUrl,
-                                                      fit: BoxFit.contain)
-                                                  : const Center(
-                                                      child:
-                                                          Text('No picture')),
-                                            ),
-                                            Column(
-                                              children: [
-                                                Center(
-                                                  child: Text(
-                                                    title,
-                                                    style:
-                                                        GoogleFonts.montserrat(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 2,
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                ),
-                                              ],
-                                            )
-                                          ],
+                            return Column(
+                              children: [
+                                // Only displays the Recommendations title if there are recommended products
+                                if (hasRecommendedProducts)
+                                  SizedBox(
+                                    height: 50,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 20),
+                                          child: Text(
+                                            "Recommendations",
+                                            style: GoogleFonts.bebasNeue(
+                                                fontSize: 35),
+                                          ),
                                         ),
-                                      ),
+                                      ],
                                     ),
-                                  );
-                                },
-                              );
-                            },
-                          ),
+                                  ),
+                                if (hasRecommendedProducts)
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                if (hasRecommendedProducts)
+                                  SizedBox(
+                                    height: 210,
+                                    child: ListView.builder(
+                                      physics: const ClampingScrollPhysics(),
+                                      shrinkWrap: true,
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: snapshot.data!.docs.length,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        DocumentSnapshot doc =
+                                            snapshot.data!.docs[index];
+                                        String imageUrl = doc.get(
+                                            'picture'); 
+                                        String title = doc.get(
+                                            'name'); 
+                                        String barcode = doc.get(
+                                            'barcode'); 
+
+                                        return InkWell(
+                                          onTap: () async {
+                                            await FirebaseCommands().addBarcode(
+                                                barcode, widget.type);
+
+                                            bool isFavorite =
+                                                await FirebaseCommands()
+                                                    .isProductFavorite(
+                                                        barcode); 
+
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ProductPage(
+                                                            barcode, //barcode
+                                                            true, //success
+                                                            widget.type, //type
+                                                            isFavorite, //isFavorite
+                                                            onFail: () =>
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop())));
+                                          },
+                                          child: Container(
+                                            height: 225,
+                                            width: 210,
+                                            child: Card(
+                                              color: Colors.white,
+                                              child: Column(
+                                                children: [
+                                                  Container(
+                                                    height: 160,
+                                                    width: 200,
+                                                    color: Colors.transparent,
+                                                    child: imageUrl.isNotEmpty
+                                                        ? Image.network(
+                                                            imageUrl,
+                                                            fit: BoxFit.contain)
+                                                        : const Center(
+                                                            child: Text(
+                                                                'No picture')),
+                                                  ),
+                                                  Column(
+                                                    children: [
+                                                      Center(
+                                                        child: Text(
+                                                          title,
+                                                          style: GoogleFonts
+                                                              .montserrat(
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 2,
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                              ],
+                            );
+                          },
                         ),
                       ],
                     ),
