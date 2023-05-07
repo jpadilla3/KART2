@@ -13,12 +13,16 @@ class FirebaseCommands {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   //add barcode to firebase
-  Future addBarcode(String productBarcode) async {
-    print('addBarcode: $productBarcode');
+  Future addBarcode(String productBarcode, bool type) async {
+    print('addBarcodeProductBarcode: $productBarcode');
+    print('addBarcodeType: $type');
+
     List<String> alerg = [];
     List<String> con = [];
     int count = 0;
     int count2 = 0;
+    String collectionName = type ? "scanned" : "search";
+    print('addBarcodeCollectionName: $collectionName');
 
     final response = await http.get(Uri.parse(
         'https://us.openfoodfacts.org/api/v2/product/$productBarcode?fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json'));
@@ -60,11 +64,11 @@ class FirebaseCommands {
             .collection('users') //go to users
             .doc(FirebaseAuth.instance.currentUser!.email
                 .toString()) // go to current user
-            .collection('scanned') // go to scanned
+            .collection(collectionName) // go to scanned or search
             .doc(productBarcode) // create barcode
             .set({
           'time': FieldValue.serverTimestamp(),
-          "ID": true,
+          "ID": type,
           'barcode': productBarcode,
           'brand': productBarcodeData.product?.brands ??
               productBarcodeData.product?.productName,
@@ -105,10 +109,12 @@ class FirebaseCommands {
           'name': productBarcodeData.product?.productName ?? 'Product',
           'picture': productBarcodeData
                   .product?.selectedImages?.front?.small?.en ??
+              productBarcodeData.product?.imageFrontThumbUrl ??
               'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg',
         });
         //Gets similar products for the barcode
-        getSimilarProducts(productBarcode, categoryList);
+        getSimilarProducts(productBarcode, categoryList, type, collectionName);
+
         return true;
       } else {
         //CHANGE SO IT GOES BACK TO EITHER RECOMMENDATIONS PAGE OR SEARCH PAGE DEPENDING WHERE IT CAME FROM
@@ -123,15 +129,18 @@ class FirebaseCommands {
     }
   }
 
-  Future getSimilarProducts(productBarcode, categoryList) async {
+  Future getSimilarProducts(String productBarcode, List categoryList, bool type,
+      String collectionName) async {
+    print('getSimilarProductsType: $type');
     // print('getSimilarProductsBarcode: $barcode');
     // print('getSimilarProductsbarcodeData: $barcodeData');
     // print('getSimilarProductsCategoryList: $categoryList');
+    print('getSimilarProductsCollectionName: $collectionName');
     int recommendationsAdded = 0;
 
     for (int i = categoryList.length - 1; i >= 0; i--) {
-      //If the number of recommendations added reaches 30, breaks out of the loop
-      if (recommendationsAdded >= 30) {
+      //If the number of recommendations added reaches 20, breaks out of the loop
+      if (recommendationsAdded >= 20) {
         break;
       }
 
@@ -154,8 +163,9 @@ class FirebaseCommands {
             List<Future<bool>> recommendationFutures = [];
             for (final product in products) {
               print('recommendationsAdded: $recommendationsAdded');
-              //If the number of recommendations added reaches 30, break out of the loop
-              if (recommendationsAdded >= 30) {
+              //If the number of recommendations added reaches 20, break out of the loop
+              if (recommendationsAdded >= 20) {
+
                 break;
               }
               print('categoryString: $categoryString');
@@ -163,13 +173,15 @@ class FirebaseCommands {
               print('product.code: ${product.code}');
               print('product.nutriscoreGrade: ${product.nutriscoreGrade}');
               print('product.productName: ${product.productName}');
-              recommendationFutures
-                  .add(addRecomendations(productBarcode, product));
+
+              recommendationFutures.add(addRecomendations(
+                  productBarcode, product, type, collectionName));
             }
-            // Wait for all recommendations to complete
+            // Waits for all recommendations to complete
             List<bool> addedResults = await Future.wait(recommendationFutures);
 
-            // Count successful recommendations
+            // Counts successful recommendations
+
             recommendationsAdded +=
                 addedResults.where((result) => result).length;
           } else {
@@ -187,7 +199,12 @@ class FirebaseCommands {
     }
   }
 
-  Future<bool> addRecomendations(productBarcode, product) async {
+  Future<bool> addRecomendations(
+      String productBarcode, product, bool type, String collectionName) async {
+    print('addRecommendationsType: $type');
+    print('addRecomendationsCollectionName: $collectionName');
+
+
     List<String> alerg = [];
     List<String> con = [];
     int count1 = 0;
@@ -246,13 +263,13 @@ class FirebaseCommands {
               .collection('users') //go to users
               .doc(FirebaseAuth.instance.currentUser!.email
                   .toString()) // go to current user
-              .collection('scanned') // go to scanned
+              .collection(collectionName) // go to scanned or search
               .doc(productBarcode)
               .collection('recommended')
               .doc(product.code)
               .set({
             'time': FieldValue.serverTimestamp(),
-            "ID": true,
+            "ID": type,
             'barcode': product.code,
             'brand':
                 barcodeData.product?.brands ?? barcodeData.product?.productName,
@@ -287,6 +304,7 @@ class FirebaseCommands {
             "conditions": con, //set conditions
             'name': product?.productName ?? 'Product',
             'picture': product?.selectedImages?.front?.small?.en ??
+                product?.imageFrontThumbUrl ??
                 'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg',
           });
           // Returns true if the recommendation was added
@@ -300,6 +318,7 @@ class FirebaseCommands {
         print(
             'Categories not found for barcode ${product.code}. Not added to firestore.');
         //return false;
+
       }
     } else {
       print(

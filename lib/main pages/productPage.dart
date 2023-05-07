@@ -245,7 +245,7 @@ class ProductPageState extends State<ProductPage> {
           ExpansionTile(
             title: const Text("Total Fat"),
             leading: const Icon(
-              Icons.cookie_outlined,
+              Ionicons.water_outline,
               size: 30,
             ),
             trailing: SizedBox(
@@ -272,15 +272,15 @@ class ProductPageState extends State<ProductPage> {
                 trailing: Text(
                     '${double.parse(productNutritionInfoData?['nutrition']['saturated fat']).toStringAsFixed(1)} g'),
               ),
-              // ListTile(
-              //   title: const Text('Trans Fat'),
-              //   leading: const Icon(
-              //     Ionicons.water_outline,
-              //     color: Colors.black,
-              //   ),
-              //   trailing: Text(
-              //       '${double.parse(productNutritionInfoData?['nutrition']['trans fat']).toStringAsFixed(1)} g'),
-              // ),
+              ListTile(
+                title: const Text('Trans Fat'),
+                leading: const Icon(
+                  Ionicons.water_outline,
+                  color: Colors.black,
+                ),
+                trailing: Text(
+                    '${double.parse(productNutritionInfoData?['nutrition']['trans fat']).toStringAsFixed(1)} g'),
+              ),
             ],
           ),
           rowInfo(
@@ -295,7 +295,7 @@ class ProductPageState extends State<ProductPage> {
           ExpansionTile(
             title: const Text("Total Carbohydrate"),
             leading: const Icon(
-              Ionicons.water_outline,
+              Icons.cookie_outlined,
               size: 30,
             ),
             trailing: SizedBox(
@@ -529,7 +529,8 @@ class ProductPageState extends State<ProductPage> {
                     )),
           IconButton(
               onPressed: () async {
-                FirebaseCommands()
+                await FirebaseCommands()
+
                     .destroyRecommendations(widget.barcode, widget.type);
                 FirebaseCommands().destroyBarcode(widget.barcode, widget.type);
                 FirebaseCommands().removeFavorite(widget.barcode);
@@ -646,7 +647,7 @@ class ProductPageState extends State<ProductPage> {
                                   return InkWell(
                                     onTap: () async {
                                       await FirebaseCommands()
-                                          .addBarcode(barcode);
+                                          .addBarcode(barcode, widget.type);
 
                                       bool isFavorite = await FirebaseCommands()
                                           .isProductFavorite(
@@ -658,7 +659,7 @@ class ProductPageState extends State<ProductPage> {
                                               builder: (context) => ProductPage(
                                                   barcode, //barcode
                                                   true, //success
-                                                  true, //type
+                                                  widget.type, //type
                                                   isFavorite, //isFavorite
                                                   onFail: () =>
                                                       Navigator.of(context)

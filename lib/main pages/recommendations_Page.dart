@@ -28,7 +28,7 @@ class RecommendationsPage extends StatefulWidget {
 
 class RecPageState extends State<RecommendationsPage> {
   bool isLoading = false;
-  late String _lastScannedBarcode;
+  //late String _lastScannedBarcode;
   List<String> docIDs = [];
   bool type = true;
   late bool isFavorite;
@@ -71,7 +71,7 @@ class RecPageState extends State<RecommendationsPage> {
     try {
       barcodeScanRes =
           await BarcodeScanner.scanBarcode('#ff6666', 'Cancel', true);
-      success = await FirebaseCommands().addBarcode(barcodeScanRes);
+      success = await FirebaseCommands().addBarcode(barcodeScanRes, true);
     } on PlatformException catch (e) {
       barcodeScanRes = 'Failed to scan barcode: $e';
       success = false;
@@ -106,7 +106,7 @@ class RecPageState extends State<RecommendationsPage> {
       //print('addBarcodeSuccess1: $addBarcodeSucess');
       isLoading = false;
       type = true;
-      _lastScannedBarcode = barcodeScanRes;
+      //_lastScannedBarcode = barcodeScanRes;
     });
   }
 
