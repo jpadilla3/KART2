@@ -29,7 +29,7 @@ class RecommendationsPage extends StatefulWidget {
 class RecPageState extends State<RecommendationsPage> {
   bool isLoading = false;
   late String _lastScannedBarcode;
-
+  List<String> docIDs = [];
   bool type = true;
   late bool isFavorite;
   final CollectionReference _barcodes = FirebaseFirestore.instance
@@ -72,7 +72,6 @@ class RecPageState extends State<RecommendationsPage> {
       barcodeScanRes =
           await BarcodeScanner.scanBarcode('#ff6666', 'Cancel', true);
       success = await FirebaseCommands().addBarcode(barcodeScanRes);
-      print('success: $success');
     } on PlatformException catch (e) {
       barcodeScanRes = 'Failed to scan barcode: $e';
       success = false;
@@ -111,15 +110,14 @@ class RecPageState extends State<RecommendationsPage> {
     });
   }
 
-  Future<List<String>> getRecommendedDocIds(
-      DocumentSnapshot documentSnapshot) async {
+  Future<List<String>> getRecommendedDocIds(String barcode) async {
     List<String> docIDs = [];
 
     await FirebaseFirestore.instance
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.email.toString())
         .collection('scanned')
-        .doc(documentSnapshot['barcode'])
+        .doc(barcode)
         .collection('recommended')
         .get()
         .then((snapshot) => snapshot.docs.forEach((document) {
@@ -129,18 +127,51 @@ class RecPageState extends State<RecommendationsPage> {
     return docIDs;
   }
 
-  Future<String> getRecommendedProductName(
-      String barcode, String barcode2) async {
+  Stream<List<String>> getRecommendedDocIdsStream(String barcode) async* {
+    List<String> docIDs = [];
+
+    await for (var snapshot in FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.email.toString())
+        .collection('scanned')
+        .doc(barcode)
+        .collection('recommended')
+        .snapshots()) {
+      snapshot.docs.forEach((document) {
+        docIDs.add(document.reference.id);
+      });
+
+      yield List<String>.from(
+          docIDs); // Creates a copy of the docIDs list before yielding it
+      docIDs.clear();
+    }
+  }
+
+  Future<Map<String, dynamic>> getNameAndPicture(
+    String barcode,
+    String barcode2,
+  ) async {
     DocumentSnapshot snapshot = await _barcodes
         .doc(barcode)
         .collection('recommended')
         .doc(barcode2)
         .get();
-
-    Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-
-    return data['name'];
+    Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
+    return data;
   }
+
+  // Future<String> getRecommendedProductName(
+  //     String barcode, String barcode2) async {
+  //   DocumentSnapshot snapshot = await _barcodes
+  //       .doc(barcode)
+  //       .collection('recommended')
+  //       .doc(barcode2)
+  //       .get();
+
+  //   Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+
+  //   return data['name'];
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -216,68 +247,6 @@ class RecPageState extends State<RecommendationsPage> {
                             itemBuilder: (context, index) {
                               final DocumentSnapshot documentSnapshot =
                                   streamSnapshot.data!.docs[index];
-
-                              FutureBuilder<List<String>>(
-                                future: getRecommendedDocIds(documentSnapshot),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.done) {
-                                    String barcode2 = snapshot.data![0];
-                                    return FutureBuilder<String>(
-                                      future: getRecommendedProductName(
-                                          documentSnapshot['barcode'],
-                                          barcode2),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.done) {
-                                          return SizedBox(
-                                            child: Text(
-                                              '${snapshot.data}',
-                                              textAlign: TextAlign.center,
-                                              overflow: TextOverflow.ellipsis,
-                                              softWrap: false,
-                                              maxLines: 2,
-                                            ),
-                                          );
-                                        }
-                                        return const Text('loading');
-                                      },
-                                    );
-                                  } else {
-                                    return const Text('loading');
-                                  }
-                                },
-                              );
-
-                              List<String> docIDs = [];
-
-                              Stream getDocId() async* {
-                                await FirebaseFirestore.instance
-                                    .collection('users')
-                                    .doc(FirebaseAuth
-                                        .instance.currentUser!.email
-                                        .toString())
-                                    .collection('scanned')
-                                    .doc(documentSnapshot['barcode'])
-                                    .collection('recommended')
-                                    .get()
-                                    .then((snapshot) =>
-                                        snapshot.docs.forEach((document) {
-                                          docIDs.add(document.reference.id);
-                                        }));
-                              }
-
-                              Future<Map<String, dynamic>> getNameAndPicture(
-                                  String barcode2) async {
-                                DocumentSnapshot snapshot = await _barcodes
-                                    .doc(documentSnapshot['barcode'])
-                                    .collection('recommended')
-                                    .doc(barcode2)
-                                    .get();
-                                Map<String, dynamic> data =
-                                    snapshot.data()! as Map<String, dynamic>;
-                                return data;
-                              }
 
                               return Padding(
                                 padding: const EdgeInsets.only(left: 0),
@@ -604,97 +573,120 @@ class RecPageState extends State<RecommendationsPage> {
                                               height: 180,
                                               width: 120,
                                               alignment: Alignment.center,
-                                              child: StreamBuilder(
-                                                stream: getDocId(),
+                                              child:
+                                                  StreamBuilder<List<String>>(
+                                                stream:
+                                                    getRecommendedDocIdsStream(
+                                                        documentSnapshot[
+                                                            'barcode']),
                                                 builder: (context, snapshot) {
-                                                  if (snapshot
-                                                          .connectionState ==
-                                                      ConnectionState.done) {
-                                                    return FutureBuilder<
-                                                        Map<String, dynamic>>(
-                                                      future: getNameAndPicture(
-                                                          docIDs[0]),
-                                                      builder: (BuildContext
-                                                              context,
-                                                          AsyncSnapshot<
-                                                                  Map<String,
-                                                                      dynamic>>
-                                                              snapshot) {
-                                                        if (snapshot
-                                                                .connectionState ==
-                                                            ConnectionState
-                                                                .done) {
+                                                  print(
+                                                      'StreamBuilder connectionState: ${snapshot.connectionState}');
+                                                  if (snapshot.hasData) {
+                                                    List<String> docIDs =
+                                                        snapshot.data ?? [];
+
+                                                    print(
+                                                        'StreamBuilder received data: $docIDs');
+
+                                                    if (docIDs.isEmpty) {
+                                                      return Text(
+                                                          'No recommendations found');
+                                                    } else {
+                                                      return FutureBuilder<
+                                                          Map<String, dynamic>>(
+                                                        future:
+                                                            getNameAndPicture(
+                                                                documentSnapshot[
+                                                                    'barcode'],
+                                                                docIDs[0]),
+                                                        builder: (BuildContext
+                                                                context,
+                                                            AsyncSnapshot<
+                                                                    Map<String,
+                                                                        dynamic>>
+                                                                snapshot) {
+                                                          print(
+                                                              'FutureBuilder connectionState: ${snapshot.connectionState}');
                                                           if (snapshot
-                                                              .hasError) {
-                                                            return Text(
-                                                                'Error: ${snapshot.error}');
-                                                          }
-                                                          String picture =
-                                                              snapshot.data![
-                                                                  'picture'];
-                                                          String name = snapshot
-                                                              .data!['name'];
-                                                          return SingleChildScrollView(
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .stretch,
-                                                              children: [
-                                                                Padding(
-                                                                  padding: const EdgeInsets
-                                                                          .only(
-                                                                      top: 15),
-                                                                  child:
-                                                                      Container(
-                                                                    height: 120,
-                                                                    width: 120,
+                                                                  .connectionState ==
+                                                              ConnectionState
+                                                                  .done) {
+                                                            if (snapshot
+                                                                .hasError) {
+                                                              return Text(
+                                                                  'Error: ${snapshot.error}');
+                                                            }
+                                                            String picture =
+                                                                snapshot.data![
+                                                                    'picture'];
+                                                            String name =
+                                                                snapshot.data![
+                                                                    'name'];
+                                                            return SingleChildScrollView(
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .stretch,
+                                                                children: [
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .only(
+                                                                        top:
+                                                                            15),
+                                                                    child:
+                                                                        Container(
+                                                                      height:
+                                                                          120,
+                                                                      width:
+                                                                          120,
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .center,
+                                                                      color: Colors
+                                                                          .transparent,
+                                                                      child: picture ==
+                                                                              ''
+                                                                          ? const Text(
+                                                                              'loading')
+                                                                          : Image
+                                                                              .network(
+                                                                              picture,
+                                                                            ),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 45,
                                                                     alignment:
                                                                         Alignment
                                                                             .center,
-                                                                    color: Colors
-                                                                        .transparent,
-                                                                    child: picture ==
-                                                                            ''
-                                                                        ? const Text(
-                                                                            'loading')
-                                                                        : Image
-                                                                            .network(
-                                                                            picture,
-                                                                          ),
+                                                                    child: Text(
+                                                                        name,
+                                                                        textAlign:
+                                                                            TextAlign
+                                                                                .center,
+                                                                        overflow:
+                                                                            TextOverflow
+                                                                                .ellipsis,
+                                                                        softWrap:
+                                                                            false,
+                                                                        maxLines:
+                                                                            2,
+                                                                        style: const TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold)),
                                                                   ),
-                                                                ),
-                                                                Container(
-                                                                  height: 45,
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .center,
-                                                                  child: Text(name,
-                                                                      textAlign:
-                                                                          TextAlign
-                                                                              .center,
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                      softWrap:
-                                                                          false,
-                                                                      maxLines:
-                                                                          2,
-                                                                      style: const TextStyle(
-                                                                          fontWeight:
-                                                                              FontWeight.bold)),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          );
-                                                        } else {
-                                                          return const Text(
-                                                              'loading');
-                                                        }
-                                                      },
-                                                    );
+                                                                ],
+                                                              ),
+                                                            );
+                                                          } else {
+                                                            return const CircularProgressIndicator();
+                                                          }
+                                                        },
+                                                      );
+                                                    }
                                                   } else {
-                                                    return const Text(
-                                                        'loading');
+                                                    return const CircularProgressIndicator();
                                                   }
                                                 },
                                               ),

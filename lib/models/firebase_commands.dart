@@ -68,21 +68,30 @@ class FirebaseCommands {
           'barcode': barcode,
           'brand':
               barcodeData.product?.brands ?? barcodeData.product?.productName,
+          'categories': barcodeData.product?.categoriesTagsEn,
           "nutrition": {
             'score': barcodeData.product?.nutriscoreScore ?? 0.toString(),
             'grade': barcodeData.product?.nutritionGrades ?? 'No Grade',
-            'calories': barcodeData.product?.nutriments?.energy ?? 0.toString(),
-            'total fat': barcodeData.product?.nutriments?.fat ?? 0.toString(),
+            'calories': barcodeData.product?.nutriments?.energyPerServing ??
+                0.toString(),
+            'total fat':
+                barcodeData.product?.nutriments?.fatPerServing ?? 0.toString(),
             'saturated fat':
-                barcodeData.product?.nutriments?.saturatedFat ?? 0.toString(),
-            'sodium': barcodeData.product?.nutriments?.sodium ?? 0.toString(),
+                barcodeData.product?.nutriments?.saturatedFatPerServing ??
+                    0.toString(),
+            'trans fat': barcodeData.product?.nutriments?.transFatPerServing ??
+                0.toString(),
+            'sodium': barcodeData.product?.nutriments?.sodiumPerServing ??
+                0.toString(),
             'total carbohydrate':
-                barcodeData.product?.nutriments?.carbohydrates ?? 0.toString(),
-            'total sugars':
-                barcodeData.product?.nutriments?.sugars ?? 0.toString(),
-            'protein':
-                barcodeData.product?.nutriments?.proteins ?? 0.toString(),
-            'fiber': barcodeData.product?.nutriments?.fiber ?? 0.toString(),
+                barcodeData.product?.nutriments?.carbohydratesPerServing ??
+                    0.toString(),
+            'total sugars': barcodeData.product?.nutriments?.sugarsPerServing ??
+                0.toString(),
+            'protein': barcodeData.product?.nutriments?.proteinsPerServing ??
+                0.toString(),
+            'fiber': barcodeData.product?.nutriments?.fiberPerServing ??
+                0.toString(),
           },
           "Allergens": alerg, //set allergens
           "conditions": con, //set conditions
@@ -119,8 +128,10 @@ class FirebaseCommands {
       print('encodedCategory $encodedCategory');
 
       try {
-        final similarProductsResponse = await http.get(Uri.parse(
-            'https://us.openfoodfacts.org/api/v2/search?categories_tags_en=$encodedCategory&nutrition_grades_tags=a&fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,code,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json'));
+        final similarProductsResponse = await http
+            .get(Uri.parse(
+                'https://us.openfoodfacts.org/api/v2/search?categories_tags_en=$encodedCategory&nutrition_grades_tags=a&fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,code,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json'))
+            .timeout(Duration(seconds: 3));
 
         if (similarProductsResponse.statusCode == 200) {
           final similarProductsData =
@@ -138,9 +149,6 @@ class FirebaseCommands {
               addRecomendations(barcode, product);
               count++;
               print(count);
-              // if (count == 50) {
-              //   break;
-              // }
             }
           } else {
             throw Exception(
@@ -152,6 +160,7 @@ class FirebaseCommands {
         }
       } catch (e) {
         print('Error while fetching similar products: $e');
+        continue;
       }
     }
   }
@@ -222,20 +231,35 @@ class FirebaseCommands {
               .set({
             'time': FieldValue.serverTimestamp(),
             "ID": true,
-            'barcode': product.code,
-            'brand': product.brands ?? product.productName,
+            'barcode': barcode,
+            'brand':
+                barcodeData.product?.brands ?? barcodeData.product?.productName,
+            'categories': barcodeData.product?.categoriesTagsEn,
             "nutrition": {
-              'score': product.nutriscoreScore ?? 0.toString(),
-              'grade': product.nutritionGrades ?? 'No Grade',
-              'calories': product.nutriments?.energy ?? 0.toString(),
-              'total fat': product.nutriments?.fat ?? 0.toString(),
-              'saturated fat': product.nutriments?.saturatedFat ?? 0.toString(),
-              'sodium': product.nutriments?.sodium ?? 0.toString(),
+              'score': barcodeData.product?.nutriscoreScore ?? 0.toString(),
+              'grade': barcodeData.product?.nutritionGrades ?? 'No Grade',
+              'calories': barcodeData.product?.nutriments?.energyPerServing ??
+                  0.toString(),
+              'total fat': barcodeData.product?.nutriments?.fatPerServing ??
+                  0.toString(),
+              'saturated fat':
+                  barcodeData.product?.nutriments?.saturatedFatPerServing ??
+                      0.toString(),
+              'trans fat':
+                  barcodeData.product?.nutriments?.transFatPerServing ??
+                      0.toString(),
+              'sodium': barcodeData.product?.nutriments?.sodiumPerServing ??
+                  0.toString(),
               'total carbohydrate':
-                  product.nutriments?.carbohydrates ?? 0.toString(),
-              'total sugars': product.nutriments?.sugars ?? 0.toString(),
-              'protein': product.nutriments?.proteins ?? 0.toString(),
-              'fiber': product.nutriscoreData?.fiber ?? 0.toString(),
+                  barcodeData.product?.nutriments?.carbohydratesPerServing ??
+                      0.toString(),
+              'total sugars':
+                  barcodeData.product?.nutriments?.sugarsPerServing ??
+                      0.toString(),
+              'protein': barcodeData.product?.nutriments?.proteinsPerServing ??
+                  0.toString(),
+              'fiber': barcodeData.product?.nutriments?.fiberPerServing ??
+                  0.toString(),
             },
             "Allergens": alerg, //set allergens
             "conditions": con, //set conditions
