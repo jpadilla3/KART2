@@ -86,16 +86,7 @@ class RecPageState extends State<RecommendationsPage> {
             barcodeScanRes, success, true, isFavorite,
             onFail: () => Navigator.of(context).pop()),
       ),
-    ).then((result) {
-      if (result is bool && !result) {
-        // Show an error message, e.g., using a SnackBar
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content:
-                  Text('An error occurred while loading the product details.')),
-        );
-      }
-    });
+    );
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
@@ -580,14 +571,14 @@ class RecPageState extends State<RecommendationsPage> {
                                                         documentSnapshot[
                                                             'barcode']),
                                                 builder: (context, snapshot) {
-                                                  print(
-                                                      'StreamBuilder connectionState: ${snapshot.connectionState}');
+                                                  //print(
+                                                  //'StreamBuilder connectionState: ${snapshot.connectionState}');
                                                   if (snapshot.hasData) {
                                                     List<String> docIDs =
                                                         snapshot.data ?? [];
 
-                                                    print(
-                                                        'StreamBuilder received data: $docIDs');
+                                                    // print(
+                                                    //     'StreamBuilder received data: $docIDs');
 
                                                     if (docIDs.isEmpty) {
                                                       return Text(
@@ -606,8 +597,8 @@ class RecPageState extends State<RecommendationsPage> {
                                                                     Map<String,
                                                                         dynamic>>
                                                                 snapshot) {
-                                                          print(
-                                                              'FutureBuilder connectionState: ${snapshot.connectionState}');
+                                                          // print(
+                                                          //     'FutureBuilder connectionState: ${snapshot.connectionState}');
                                                           if (snapshot
                                                                   .connectionState ==
                                                               ConnectionState
