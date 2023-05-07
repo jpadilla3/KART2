@@ -143,7 +143,6 @@ class FirebaseCommands {
       }
 
       final categoryString = categoryList[i];
-
       final encodedCategory = Uri.encodeQueryComponent(categoryString);
       print('encodedCategory $encodedCategory');
 
@@ -160,6 +159,8 @@ class FirebaseCommands {
           bool hasProducts = products != null && products != [];
 
           if (hasProducts) {
+            // Process multiple products concurrently using Future.wait
+            List<Future<bool>> recommendationFutures = [];
             for (final product in products) {
               print('recommendationsAdded: $recommendationsAdded');
               //If the number of recommendations added reaches 20, break out of the loop
@@ -171,9 +172,16 @@ class FirebaseCommands {
               print('product.code: ${product.code}');
               print('product.nutriscoreGrade: ${product.nutriscoreGrade}');
               print('product.productName: ${product.productName}');
-              // recommendationFutures.add(addRecomendations(
-              //productBarcode, product, type, collectionName));
+
+              recommendationFutures.add(addRecomendations(
+                  productBarcode, product, type, collectionName));
             }
+            // Waits for all recommendations to complete
+            List<bool> addedResults = await Future.wait(recommendationFutures);
+
+            // Counts successful recommendations
+            recommendationsAdded +=
+                addedResults.where((result) => result).length;
           } else {
             throw Exception(
                 'Products list is empty with category: $encodedCategory');
