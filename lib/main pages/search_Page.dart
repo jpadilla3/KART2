@@ -712,31 +712,31 @@ class MySearchDelegate extends SearchDelegate {
         "nutrients": {
           'calories': result.products?[i].nutriments
                   ?.getValue(Nutrient.energyKCal, PerSize.serving) ??
-              0,
+              0.toString(),
           "total fat": result.products?[i].nutriments
                   ?.getValue(Nutrient.fat, PerSize.serving) ??
-              0,
+              0.toString(),
           "saturated fat": result.products?[i].nutriments
                   ?.getValue(Nutrient.saturatedFat, PerSize.serving) ??
-              0,
+              0.toString(),
           "trans fat": result.products?[i].nutriments
                   ?.getValue(Nutrient.transFat, PerSize.serving) ??
-              0,
+              0.toString(),
           "sodium": result.products?[i].nutriments
                   ?.getValue(Nutrient.sodium, PerSize.serving) ??
-              0,
+              0.toString(),
           "total carb": result.products?[i].nutriments
                   ?.getValue(Nutrient.carbohydrates, PerSize.serving) ??
-              0,
+              0.toString(),
           "fiber": result.products?[i].nutriments
                   ?.getValue(Nutrient.fiber, PerSize.serving) ??
-              0,
+              0.toString(),
           "sugar": result.products?[i].nutriments
                   ?.getValue(Nutrient.sugars, PerSize.serving) ??
-              0,
+              0.toString(),
           "protein": result.products?[i].nutriments
                   ?.getValue(Nutrient.proteins, PerSize.serving) ??
-              0,
+              0.toString(),
         },
         "conditions": {
           "vegan": result.products?[i].ingredientsAnalysisTags?.veganStatus

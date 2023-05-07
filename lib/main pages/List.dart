@@ -66,22 +66,27 @@ class RecoListState extends State<RecoList> {
 
                       String imageUrl = doc['picture'] ?? '';
                       String title = doc['name'] ?? '';
-                      String barcode = doc['barcode'] ?? '';
+                      String recommendedBarcode = doc['barcode'] ?? '';
+                      print('recommendedBarcode: $recommendedBarcode');
                       String grade = doc['nutrition']['grade'] ?? '';
 
                       return InkWell(
                           onTap: () async {
-                            FirebaseCommands().addBarcode(barcode);
+                            print('recommendedBarcode: $recommendedBarcode');
+                            FirebaseCommands().addBarcode(recommendedBarcode);
 
                             bool isFavorite = await FirebaseCommands()
                                 .isProductFavorite(
-                                    barcode); // Add this line to fetch the favorite status
+                                    recommendedBarcode); // Add this line to fetch the favorite status
 
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => ProductPage(
-                                        barcode, true, true, isFavorite,
+                                        recommendedBarcode,
+                                        true,
+                                        true,
+                                        isFavorite,
                                         onFail: () =>
                                             Navigator.of(context).pop())));
                           },

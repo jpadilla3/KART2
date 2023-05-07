@@ -87,10 +87,10 @@ class ProductPageState extends State<ProductPage> {
 
   // Processes the fetched data
   Future<void> processData(Map<String, dynamic> data) async {
-    print('Processing data: $data');
+    //print('Processing data: $data');
     final gradeData = await GradeCal()
         .gradeCalculateInfo3(data['Allergens'], data['conditions']);
-    print('Processed gradeData: $gradeData');
+    //print('Processed gradeData: $gradeData');
     setState(() {
       if (appBarTitleData != data ||
           productInfoData != data ||
@@ -272,6 +272,15 @@ class ProductPageState extends State<ProductPage> {
                 trailing: Text(
                     '${double.parse(productNutritionInfoData?['nutrition']['saturated fat']).toStringAsFixed(1)} g'),
               ),
+              // ListTile(
+              //   title: const Text('Trans Fat'),
+              //   leading: const Icon(
+              //     Ionicons.water_outline,
+              //     color: Colors.black,
+              //   ),
+              //   trailing: Text(
+              //       '${double.parse(productNutritionInfoData?['nutrition']['trans fat']).toStringAsFixed(1)} g'),
+              // ),
             ],
           ),
           rowInfo(
@@ -519,7 +528,9 @@ class ProductPageState extends State<ProductPage> {
                       color: Colors.indigo[400],
                     )),
           IconButton(
-              onPressed: () {
+              onPressed: () async {
+                FirebaseCommands()
+                    .destroyRecommendations(widget.barcode, widget.type);
                 FirebaseCommands().destroyBarcode(widget.barcode, widget.type);
                 FirebaseCommands().removeFavorite(widget.barcode);
                 snackMessage(true, widget.barcode);
@@ -544,7 +555,7 @@ class ProductPageState extends State<ProductPage> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasData && snapshot.data!.exists) {
-            print('Snapshot data: ${snapshot.data!.data()}');
+            //print('Snapshot data: ${snapshot.data!.data()}');
 
             return FutureBuilder(
               future: _processedDataFuture,
@@ -614,8 +625,8 @@ class ProductPageState extends State<ProductPage> {
                                 return const Center(
                                     child: CircularProgressIndicator());
                               }
-                              print(
-                                  'Recommended products: ${snapshot.data!.docs}');
+                              // print(
+                              //     'Recommended products: ${snapshot.data!.docs}');
 
                               return ListView.builder(
                                 physics: const ClampingScrollPhysics(),
