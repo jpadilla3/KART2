@@ -134,66 +134,78 @@ class FirebaseCommands {
     print('getSimilarProductsType: $type');
     // print('getSimilarProductsBarcode: $barcode');
     // print('getSimilarProductsbarcodeData: $barcodeData');
-    // print('getSimilarProductsCategoryList: $categoryList');
+    print('getSimilarProductsCategoryList: $categoryList');
     print('getSimilarProductsCollectionName: $collectionName');
     int recommendationsAdded = 0;
 
-    for (int i = categoryList.length - 1; i >= 0; i--) {
-      //If the number of recommendations added reaches 30, breaks out of the loop
-      if (recommendationsAdded >= 30) {
+    // Calculates the starting index (half the length of categoryList)
+    int startIndex = (categoryList.length > 1) ? categoryList.length ~/ 2 : 0;
+
+    // List of nutrition grades
+    List<String> nutritionGrades = ['a', 'b'];
+
+    // Loops from the end of the list and iterates to the startIndex
+    for (int i = categoryList.length - 1; i >= startIndex; i--) {
+      //If the number of recommendations added reaches 50, breaks out of the loop
+      if (recommendationsAdded >= 50) {
         break;
       }
 
       final categoryString = categoryList[i];
       final encodedCategory = Uri.encodeQueryComponent(categoryString);
 
-      try {
-        final similarProductsResponse = await http
-            .get(Uri.parse(
-                'https://us.openfoodfacts.org/api/v2/search?categories_tags_en=$encodedCategory&nutrition_grades_tags=a&fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,code,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json'))
-            .timeout(const Duration(seconds: 2));
-        if (similarProductsResponse.statusCode == 200) {
-          final similarProductsData =
-              searchDataFromJson(similarProductsResponse.body);
-          final products = similarProductsData.products;
-          bool hasProducts = products != null && products != [];
+      //Loops through nutritionGrades
+      for (String grade in nutritionGrades) {
+        try {
+          final similarProductsResponse = await http
+              .get(Uri.parse(
+                  'https://us.openfoodfacts.org/api/v2/search?categories_tags_en=$encodedCategory&nutrition_grades_tags=$grade&fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,code,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json'))
+              .timeout(const Duration(seconds: 3));
+          if (similarProductsResponse.statusCode == 200) {
+            final similarProductsData =
+                searchDataFromJson(similarProductsResponse.body);
+            final products = similarProductsData.products;
+            bool hasProducts = products != null && products != [];
 
-          if (hasProducts) {
-            // Process multiple products concurrently using Future.wait
-            List<Future<bool>> recommendationFutures = [];
-            for (final product in products) {
-              print('recommendationsAdded: $recommendationsAdded');
-              //If the number of recommendations added reaches 30, break out of the loop
-              if (recommendationsAdded >= 30) {
-                break;
+            if (hasProducts) {
+              // Processes multiple products concurrently using Future.wait
+              List<Future<bool>> recommendationFutures = [];
+              for (final product in products) {
+                print('recommendationsAdded: $recommendationsAdded');
+                //If the number of recommendations added reaches 50, breaks out of the loop
+                if (recommendationsAdded >= 50) {
+                  break;
+                }
+                print('categoryString: $categoryString');
+                print('encodedCategory: $encodedCategory');
+                print('product.code: ${product.code}');
+                print('product.nutriscoreGrade: ${product.nutriscoreGrade}');
+                print('product.productName: ${product.productName}');
+
+                recommendationFutures.add(addRecomendations(
+                    productBarcode, product, type, collectionName));
               }
-              print('categoryString: $categoryString');
-              print('encodedCategory: $encodedCategory');
-              print('product.code: ${product.code}');
-              print('product.nutriscoreGrade: ${product.nutriscoreGrade}');
-              print('product.productName: ${product.productName}');
+              // Waits for all recommendations to complete
+              List<bool> addedResults =
+                  await Future.wait(recommendationFutures);
 
-              recommendationFutures.add(addRecomendations(
-                  productBarcode, product, type, collectionName));
+              // Counts successful recommendations
+              recommendationsAdded +=
+                  addedResults.where((result) => result).length;
+              print('recommendationsAdded: $recommendationsAdded');
+            } else {
+              throw Exception(
+                  'Products list is empty with category: $encodedCategory');
             }
-            // Waits for all recommendations to complete
-            List<bool> addedResults = await Future.wait(recommendationFutures);
-
-            // Counts successful recommendations
-            recommendationsAdded +=
-                addedResults.where((result) => result).length;
-            print('recommendationsAdded: $recommendationsAdded');
           } else {
             throw Exception(
-                'Products list is empty with category: $encodedCategory');
+                'Failed to load products with error ${similarProductsResponse.statusCode}');
           }
-        } else {
-          throw Exception(
-              'Failed to load products with error ${similarProductsResponse.statusCode}');
+        } catch (e) {
+          print(
+              'Error while fetching similar products with category: $encodedCategory: $e');
+          continue;
         }
-      } catch (e) {
-        print('Error while fetching similar products: $e');
-        continue;
       }
     }
   }
@@ -258,10 +270,10 @@ class FirebaseCommands {
         if (allergyConflict == false && conditionConflict == false) {
           // Adds product to firebase
           FirebaseFirestore.instance
-              .collection('users') //go to users
+              .collection('users') //goes to users
               .doc(FirebaseAuth.instance.currentUser!.email
-                  .toString()) // go to current user
-              .collection(collectionName) // go to scanned or search
+                  .toString()) // goes to current user
+              .collection(collectionName) // goes to scanned or search
               .doc(productBarcode)
               .collection('recommended')
               .doc(product.code)
@@ -298,8 +310,8 @@ class FirebaseCommands {
               'fiber': barcodeData.product?.nutriments?.fiberPerServing ??
                   0.toString(),
             },
-            "Allergens": alerg, //set allergens
-            "conditions": con, //set conditions
+            "Allergens": alerg, //sets allergens
+            "conditions": con, //sets conditions
             'name': product?.productName ?? 'Product',
             'picture': product?.selectedImages?.front?.small?.en ??
                 product?.imageFrontThumbUrl ??
@@ -510,7 +522,7 @@ class FirebaseCommands {
               'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg',
           'Allergens': data['allergens'] ?? "Not Avaliable",
           'conditions': con,
-        }); //input searched barcodes
+        }); //inputs searched barcodes
       }
     }
   }
@@ -557,11 +569,11 @@ class FirebaseCommands {
   Future favoriteBarcode(String barcode, String name, String grade, bool ID,
       String pic, List<dynamic> allergy, List<dynamic> condition) async {
     return FirebaseFirestore.instance
-        .collection('users') //go to general collection
+        .collection('users') //gos to users
         .doc(FirebaseAuth.instance.currentUser!.email
-            .toString()) //go to current user
-        .collection('favorites') //go to favorites
-        .doc(barcode) //create barcode
+            .toString()) //goes to current user
+        .collection('favorites') //goes to favorites
+        .doc(barcode) //creates barcode
         .set({
       'time': FieldValue.serverTimestamp(),
       'barcode': barcode,
@@ -583,7 +595,7 @@ class FirebaseCommands {
         .delete();
   }
 
-  //destroy barcode from firebase
+  //destroys barcode from firebase
   Future<void> destroyBarcode(String barcode, bool choice) async {
     choice
         ? await FirebaseFirestore.instance
@@ -602,11 +614,11 @@ class FirebaseCommands {
 
   //deletes recommendations from firebase
   Future<void> destroyRecommendations(String barcode, bool type) async {
-    // Determine the parent collection name based on the input boolean 'type'
+    //Determines the parent collection name based on the input boolean 'type'
     final choice = type ? 'scanned' : 'search';
-    // Get the current user's email
+    //Gets the current user's email
     String userEmail = FirebaseAuth.instance.currentUser!.email.toString();
-    // Get the reference to the 'recommended' subcollection
+    //Gets the reference to the 'recommended' subcollection
     CollectionReference collection = FirebaseFirestore.instance
         .collection('users')
         .doc(userEmail)
@@ -614,7 +626,7 @@ class FirebaseCommands {
         .doc(barcode)
         .collection('recommended');
 
-    // Retrieve and delete documents in the collection
+    //Retrieves and deletes documents in the collection
     QuerySnapshot querySnapshot = await collection.get();
     for (QueryDocumentSnapshot doc in querySnapshot.docs) {
       await collection.doc(doc.id).delete();
