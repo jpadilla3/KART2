@@ -67,7 +67,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 highlightColor: Colors.indigo,
                 onTap: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Conditions()));
+                      MaterialPageRoute(builder: (context) => const Conditions()));
                 },
                 child: Container(
                   height: 60,
