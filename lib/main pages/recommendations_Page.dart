@@ -785,12 +785,12 @@ class RecPageState extends State<RecommendationsPage> {
                                                                                 return Text('${snapshot.error} occurred');
                                                                               } else {
                                                                                 final data = snapshot.data as List<bool>;
-                                                                                if (data[1] == false) {
+                                                                                if (data[0] == false) {
                                                                                   return const SizedBox(
                                                                                     child: Padding(
                                                                                       padding: EdgeInsets.only(right: 2),
                                                                                       child: Icon(
-                                                                                        Icons.eco_outlined,
+                                                                                        Icons.energy_savings_leaf,
                                                                                         color: Colors.green,
                                                                                       ),
                                                                                     ),
