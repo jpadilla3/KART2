@@ -162,8 +162,8 @@ class FirebaseCommands {
     print('getSimilarProductsnutritionGrades: $nutritionGrades');
     //Loops from the end of the list and iterates to the startIndex
     for (int i = endIndex; i >= startIndex; i--) {
-      //If the number of recommendations added reaches 30, breaks out of the loop
-      if (recommendationsAdded >= 30) {
+      //If the number of recommendations added reaches 50, breaks out of the loop
+      if (recommendationsAdded >= 50) {
         break;
       }
 
@@ -188,8 +188,8 @@ class FirebaseCommands {
               List<Future<bool>> recommendationFutures = [];
               for (final product in products) {
                 print('recommendationsAdded: $recommendationsAdded');
-                //If the number of recommendations added reaches 30, breaks out of the loop
-                if (recommendationsAdded >= 30) {
+                //If the number of recommendations added reaches 50, breaks out of the loop
+                if (recommendationsAdded >= 50) {
                   break;
                 }
                 print('categoryString: $categoryString');
@@ -283,7 +283,9 @@ class FirebaseCommands {
         // print("Conditions Conflict?: $conditionConflict");
 
         // If there are no allergy or condition conflicts, product will be added to firebase
-        if (allergyConflict == false && conditionConflict == false) {
+        if (allergyConflict == false &&
+            conditionConflict == false &&
+            productBarcode != product.code) {
           // Adds product to firebase
           FirebaseFirestore.instance
               .collection('users') //goes to users
