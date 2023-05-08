@@ -127,14 +127,17 @@ class RecoListState extends State<RecoList> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        title,
-                                        textAlign: TextAlign.start,
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 2,
-                                        softWrap: false,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
+                                      SizedBox(
+                                        width: 150,
+                                        child: Text(
+                                          title,
+                                          textAlign: TextAlign.start,
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 2,
+                                          softWrap: false,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
                                       const SizedBox(height: 3.0),
