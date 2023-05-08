@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kart2/main%20pages/productPage.dart';
 import 'package:kart2/main%20pages/shimmerlist.dart';
+import 'package:kart2/models/grade_cal.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../models/firebase_commands.dart';
@@ -155,6 +156,144 @@ class RecoListState extends State<RecoList> {
                                     ],
                                   ),
                                 ),
+                                FutureBuilder(
+                                    future: GradeCal().gradeCalculate(
+                                        docData?['Allergens'],
+                                        docData?['conditions']),
+                                    builder: (BuildContext context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.done) {
+                                        if (snapshot.hasError) {
+                                          return Text(
+                                              '${snapshot.error} occurred');
+                                        } else {
+                                          final data =
+                                              snapshot.data as List<bool>;
+
+                                          if (data[0] == false) {
+                                            return const SizedBox(
+                                              child: Padding(
+                                                padding:
+                                                    EdgeInsets.only(right: 2),
+                                                child: Icon(
+                                                  Icons.energy_savings_leaf,
+                                                  color: Colors.green,
+                                                ),
+                                              ),
+                                            );
+                                          } else {
+                                            return const Text('');
+                                          }
+                                        }
+                                      } else {
+                                        return const Text('');
+                                      }
+                                    }),
+
+                                //vegetarian
+                                FutureBuilder(
+                                    future: GradeCal().gradeCalculate(
+                                        docData?['Allergens'],
+                                        docData?['conditions']),
+                                    builder: (BuildContext context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.done) {
+                                        if (snapshot.hasError) {
+                                          return Text(
+                                              '${snapshot.error} occurred');
+                                        } else {
+                                          final data =
+                                              snapshot.data as List<bool>;
+
+                                          if (data[1] == false) {
+                                            return const SizedBox(
+                                              child: Padding(
+                                                padding:
+                                                    EdgeInsets.only(right: 2),
+                                                child: Icon(
+                                                  Icons.eco_outlined,
+                                                  color: Colors.green,
+                                                ),
+                                              ),
+                                            );
+                                          } else {
+                                            return const Text('');
+                                          }
+                                        }
+                                      } else {
+                                        return const Text('');
+                                      }
+                                    }),
+                                //lactose
+                                FutureBuilder(
+                                    future: GradeCal().gradeCalculate(
+                                        docData?['Allergens'],
+                                        docData?['conditions']),
+                                    builder: (BuildContext context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.done) {
+                                        if (snapshot.hasError) {
+                                          return Text(
+                                              '${snapshot.error} occurred');
+                                        } else {
+                                          final data =
+                                              snapshot.data as List<bool>;
+
+                                          if (data[2] == true) {
+                                            return SizedBox(
+                                              child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          right: 2),
+                                                  child: Image.asset(
+                                                    'assets/images/milk.png',
+                                                    width: 30,
+                                                    height: 30,
+                                                  )),
+                                            );
+                                          } else {
+                                            return const Text('');
+                                          }
+                                        }
+                                      } else {
+                                        return const Text('');
+                                      }
+                                    }),
+                                //allergy
+                                FutureBuilder(
+                                    future: GradeCal().gradeCalculate(
+                                        docData?['Allergens'],
+                                        docData?['conditions']),
+                                    builder: (BuildContext context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.done) {
+                                        if (snapshot.hasError) {
+                                          return Text(
+                                              '${snapshot.error} occurred');
+                                        } else {
+                                          final data =
+                                              snapshot.data as List<bool>;
+
+                                          if (data[3] == true) {
+                                            return const SizedBox(
+                                              child: Padding(
+                                                padding:
+                                                    EdgeInsets.only(right: 2),
+                                                child: Icon(
+                                                  Icons.info_outline,
+                                                  color: Colors.red,
+                                                ),
+                                              ),
+                                            );
+                                          } else {
+                                            return const Text('');
+                                          }
+                                        }
+                                      } else {
+                                        return const Text('');
+                                      }
+                                    }),
+
                                 Icon(Icons.arrow_forward_ios_rounded,
                                     size: 25, color: Colors.indigo[400]),
                               ],

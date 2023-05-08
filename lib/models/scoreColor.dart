@@ -141,7 +141,7 @@ class ScoreColors {
           height: 50,
           width: 325,
           child: Text(
-            'This Product is Not $condition Friendly',
+            'This Product contains lactose',
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.red[700]),
           ),
