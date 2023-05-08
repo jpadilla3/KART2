@@ -163,7 +163,7 @@ class FirebaseCommands {
           final similarProductsResponse = await http
               .get(Uri.parse(
                   'https://us.openfoodfacts.org/api/v2/search?categories_tags_en=$encodedCategory&nutrition_grades_tags=$grade&fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,code,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json'))
-              .timeout(const Duration(seconds: 4));
+              .timeout(const Duration(seconds: 3));
           if (similarProductsResponse.statusCode == 200) {
             final similarProductsData =
                 searchDataFromJson(similarProductsResponse.body);
