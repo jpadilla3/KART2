@@ -46,8 +46,7 @@ class _ProfilePageState extends State<ProfilePage> {
               Container(
                 height: 100,
                 width: 100,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle, color: Colors.indigo[400]),
+                child: Image.asset('assets/images/logo.png'),
               ),
               const SizedBox(
                 height: 20,
@@ -66,8 +65,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 highlightShape: BoxShape.rectangle,
                 highlightColor: Colors.indigo,
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const Conditions()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const Conditions()));
                 },
                 child: Container(
                   height: 60,
