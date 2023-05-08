@@ -37,7 +37,8 @@ class FirebaseCommands {
           for (int i = 0;
               i < productBarcodeData.product!.allergensTagsEn!.length;
               i++) {
-            alerg.add(productBarcodeData.product!.allergensTagsEn![i]);
+            alerg.add(
+                productBarcodeData.product!.allergensTagsEn![i].toLowerCase());
           }
         }
         if (productBarcodeData.product!.allergensTagsEn!.contains('Milk') ||
@@ -234,7 +235,7 @@ class FirebaseCommands {
           for (int i = 0;
               i < barcodeData.product!.allergensTagsEn!.length;
               i++) {
-            alerg.add(barcodeData.product!.allergensTagsEn![i]);
+            alerg.add(barcodeData.product!.allergensTagsEn![i].toLowerCase());
           }
           if (barcodeData.product!.allergensTagsEn!.contains('Milk') ||
               barcodeData.product!.allergensTagsEn!.contains('Lactic')) {
