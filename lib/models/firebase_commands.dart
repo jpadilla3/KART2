@@ -133,20 +133,22 @@ class FirebaseCommands {
   Future getSimilarProducts(String productBarcode, List categoryList, bool type,
       String collectionName) async {
     print('getSimilarProductsType: $type');
-    // print('getSimilarProductsBarcode: $barcode');
-    // print('getSimilarProductsbarcodeData: $barcodeData');
+    //print('getSimilarProductsBarcode: $barcode');
+    //print('getSimilarProductsbarcodeData: $barcodeData');
     print('getSimilarProductsCategoryList: $categoryList');
     print('getSimilarProductsCollectionName: $collectionName');
     int recommendationsAdded = 0;
 
-    // Calculates the starting index (half the length of categoryList)
-    int startIndex = (categoryList.length > 1) ? categoryList.length ~/ 2 : 0;
+    //Calculates the starting index (half the length of categoryList)
+    //int startIndex = (categoryList.length > 1) ? categoryList.length ~/ 2 : 0;
 
-    // List of nutrition grades
-    List<String> nutritionGrades = ['a', 'b'];
+    //List of nutrition grades
+    List<String> nutritionGrades = ['a', 'b', 'c'];
 
-    // Loops from the end of the list and iterates to the startIndex
-    for (int i = categoryList.length - 1; i >= startIndex; i--) {
+    int endIndex = categoryList.length - 1;
+    int startIndex = endIndex - 2 >= 0 ? endIndex - 2 : 0;
+    //Loops from the end of the list and iterates to the startIndex
+    for (int i = endIndex; i >= startIndex; i--) {
       //If the number of recommendations added reaches 50, breaks out of the loop
       if (recommendationsAdded >= 50) {
         break;
