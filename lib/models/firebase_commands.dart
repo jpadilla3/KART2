@@ -113,7 +113,8 @@ class FirebaseCommands {
               'https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg',
         });
         //Gets similar products for the barcode
-        getSimilarProducts(productBarcode, categoryList, type, collectionName);
+        getSimilarProducts(productBarcode, categoryList, type, collectionName,
+            productBarcodeData.product?.nutritionGrades);
 
         return true;
       } else {
@@ -130,22 +131,35 @@ class FirebaseCommands {
   }
 
   Future getSimilarProducts(String productBarcode, List categoryList, bool type,
-      String collectionName) async {
+      String collectionName, String? gradeLetter) async {
     print('getSimilarProductsType: $type');
     //print('getSimilarProductsBarcode: $barcode');
     //print('getSimilarProductsbarcodeData: $barcodeData');
     print('getSimilarProductsCategoryList: $categoryList');
     print('getSimilarProductsCollectionName: $collectionName');
+    print('getSimilarProductsgradeLetter: $gradeLetter');
+
     int recommendationsAdded = 0;
 
     //Calculates the starting index (half the length of categoryList)
     //int startIndex = (categoryList.length > 1) ? categoryList.length ~/ 2 : 0;
 
-    //List of nutrition grades
-    List<String> nutritionGrades = ['a', 'b', 'c'];
-
     int endIndex = categoryList.length - 1;
     int startIndex = endIndex - 2 >= 0 ? endIndex - 2 : 0;
+    //List of nutrition grades
+    List<String> nutritionGrades = ['a', 'b', 'c', 'd', 'e'];
+    //Filters nutritionGrades based on gradeLetter
+    if (gradeLetter != null) {
+      int gradeLetterIndex = nutritionGrades.indexOf(gradeLetter.toLowerCase());
+      if (gradeLetterIndex == 0) {
+        nutritionGrades = ['a'];
+      } else {
+        nutritionGrades = nutritionGrades.sublist(0, gradeLetterIndex);
+      }
+    } else if (gradeLetter == null) {
+      nutritionGrades = ['a', 'b'];
+    }
+    print('getSimilarProductsnutritionGrades: $nutritionGrades');
     //Loops from the end of the list and iterates to the startIndex
     for (int i = endIndex; i >= startIndex; i--) {
       //If the number of recommendations added reaches 30, breaks out of the loop
