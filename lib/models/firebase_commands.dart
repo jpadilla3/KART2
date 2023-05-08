@@ -148,8 +148,8 @@ class FirebaseCommands {
     int startIndex = endIndex - 2 >= 0 ? endIndex - 2 : 0;
     //Loops from the end of the list and iterates to the startIndex
     for (int i = endIndex; i >= startIndex; i--) {
-      //If the number of recommendations added reaches 50, breaks out of the loop
-      if (recommendationsAdded >= 50) {
+      //If the number of recommendations added reaches 30, breaks out of the loop
+      if (recommendationsAdded >= 30) {
         break;
       }
 
@@ -162,7 +162,7 @@ class FirebaseCommands {
           final similarProductsResponse = await http
               .get(Uri.parse(
                   'https://us.openfoodfacts.org/api/v2/search?categories_tags_en=$encodedCategory&nutrition_grades_tags=$grade&fields=_keywords,allergens,allergens_tags_en,brands,categories,categories_tags_en,code,compared_to_category,food_groups,food_groups_tags_en,image_front_thumb_url,ingredients,nutrient_levels,nutrient_levels_tags_en,nutriments,nutriscore_data,nutriscore_grade,nutriscore_score,nutrition_grades,product_name,selected_images,traces,.json'))
-              .timeout(const Duration(seconds: 3));
+              .timeout(const Duration(seconds: 4));
           if (similarProductsResponse.statusCode == 200) {
             final similarProductsData =
                 searchDataFromJson(similarProductsResponse.body);
@@ -174,8 +174,8 @@ class FirebaseCommands {
               List<Future<bool>> recommendationFutures = [];
               for (final product in products) {
                 print('recommendationsAdded: $recommendationsAdded');
-                //If the number of recommendations added reaches 50, breaks out of the loop
-                if (recommendationsAdded >= 50) {
+                //If the number of recommendations added reaches 30, breaks out of the loop
+                if (recommendationsAdded >= 30) {
                   break;
                 }
                 print('categoryString: $categoryString');
