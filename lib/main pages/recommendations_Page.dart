@@ -600,8 +600,19 @@ class RecPageState extends State<RecommendationsPage> {
                                                     //     'StreamBuilder received data: $docIDs');
 
                                                     if (docIDs.isEmpty) {
-                                                      return Image.asset(
-                                                          'assets/images/NRPF.png');
+                                                      return Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(top: 1),
+                                                        child: Container(
+                                                          height: 120,
+                                                          width: 120,
+                                                          alignment:
+                                                              Alignment.center,
+                                                          child: Image.asset(
+                                                              'assets/images/NRPF.png'),
+                                                        ),
+                                                      );
                                                     } else {
                                                       return FutureBuilder<
                                                           Map<String, dynamic>>(
@@ -712,8 +723,19 @@ class RecPageState extends State<RecommendationsPage> {
                                                     List<String> docIDs =
                                                         snapshot.data ?? [];
                                                     if (docIDs.isEmpty) {
-                                                      return Text(
-                                                          'No Recommendations Found');
+                                                      return SizedBox(
+                                                        height: 39,
+                                                        width: 130,
+                                                        child: Text(
+                                                          'Recommendations Not Found',
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: const TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                      );
                                                     } else {
                                                       return FutureBuilder<
                                                               Map<String,
@@ -778,7 +800,7 @@ class RecPageState extends State<RecommendationsPage> {
                                                                                 }
                                                                               }
                                                                             } else {
-                                                                              return const CircularProgressIndicator();
+                                                                              return Center(child: SizedBox(height: 5, width: 5, child: const CircularProgressIndicator()));
                                                                             }
                                                                           }),
                                                                       //vegetarian
@@ -808,7 +830,7 @@ class RecPageState extends State<RecommendationsPage> {
                                                                                 }
                                                                               }
                                                                             } else {
-                                                                              return const CircularProgressIndicator();
+                                                                              return Center(child: SizedBox(height: 5, width: 5, child: const CircularProgressIndicator()));
                                                                             }
                                                                           }),
 
@@ -839,7 +861,7 @@ class RecPageState extends State<RecommendationsPage> {
                                                                                 }
                                                                               }
                                                                             } else {
-                                                                              return const CircularProgressIndicator();
+                                                                              return Center(child: SizedBox(height: 5, width: 5, child: const CircularProgressIndicator()));
                                                                             }
                                                                           }),
                                                                       //allergy
@@ -869,7 +891,7 @@ class RecPageState extends State<RecommendationsPage> {
                                                                                 }
                                                                               }
                                                                             } else {
-                                                                              return const CircularProgressIndicator();
+                                                                              return Center(child: SizedBox(height: 5, width: 5, child: const CircularProgressIndicator()));
                                                                             }
                                                                           })
                                                                     ],
